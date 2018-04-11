@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ADI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Objects>
+		<Object ElementType="Package" ID="91050001000010020000000000000004"
+			Action="REGIST" Code="91050001000010020000000000000004">
+			<Property Name="Name">拉贝课堂</Property>
+			<Property Name="Type">0</Property>
+			<Property Name="SortName"></Property>
+			<Property Name="SearchName"></Property>
+			<Property Name="RentalPeriod"></Property>
+			<Property Name="OrderNumber">1</Property>
+			<Property Name="LicensingWindowStart">20160801000000</Property>
+			<Property Name="LicensingWindowEnd">20350801000000</Property>
+			<Property Name="Price">1</Property>
+			<Property Name="Status">1</Property>
+			<Property Name="Description"></Property>
+			<Property Name="Keywords"></Property>
+			<Property Name="Tags"></Property>
+			<Property Name="Reserve1"></Property>
+			<Property Name="Reserve2"></Property>
+			<Property Name="Reserve3"></Property>
+			<Property Name="Reserve4"></Property>
+			<Property Name="Reserve5"></Property>
+			<Property Name="Result">1</Property>
+			<Property Name="ErrorDescription"></Property>
+		</Object>
+	</Objects>
+</ADI>

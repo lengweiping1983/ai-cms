@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<ehcache updateCheck="false" name="defaultCache">
+
+	<diskStore path="java.io.tmpdir/app/ehcache" />
+
+	<defaultCache maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+
+	<cache name="FileManageController.UserAccessPath"
+		maxEntriesLocalHeap="100" eternal="false" timeToIdleSeconds="360000"
+		timeToLiveSeconds="360000" overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="FileManageController.FtpFile" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="360000" timeToLiveSeconds="360000"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+	<cache name="SiteRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="CpRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+
+	<cache name="SeriesRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="ProgramRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="MediaFileRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+	<cache name="ChannelRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="ScheduleRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="ChannelConfigRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+	<cache name="StarRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="ClubRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+
+	<cache name="LeagueRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="LeagueSeasonRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="LeagueSeasonStarRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="LeagueSeasonStarViewRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="LeagueSeasonClubRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="LeagueSeasonClubViewRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="LeagueMatchRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="LeagueMatchCodeRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+	<cache name="AppRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="EntryRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="ChargeRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+
+	<cache name="AlbumRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="AlbumItemRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="AlbumItemViewRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+	<cache name="CategoryRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="CategoryItemRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="CategoryItemViewRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+	<cache name="WidgetRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="WidgetItemRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="WidgetItemViewRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+
+	<cache name="TemplateRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="TemplateParamRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+	<cache name="TemplateDefaultRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+	<cache name="UriRepository" maxEntriesLocalHeap="100" eternal="false"
+		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
+		maxEntriesLocalDisk="100000" />
+	<cache name="UriParamRepository" maxEntriesLocalHeap="100"
+		eternal="false" timeToIdleSeconds="1" timeToLiveSeconds="15"
+		overflowToDisk="true" maxEntriesLocalDisk="100000" />
+
+</ehcache>

@@ -1,0 +1,136 @@
+datasource:
+  epg:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/ai_epg?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+    username: epg
+    password: epg@ai
+    test-on-borrow: false
+    test-on-return: false
+    test-while-idle: true
+    max-wait-millis: 30000
+    validation-query: select 1
+    time-between-eviction-runs-millis: 30000
+    max-active: 20
+    max-idle: 5
+    min-idle: 2
+    initial-size: 3
+  cms:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/ai_cms?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+    username: epg
+    password: epg@ai
+    test-on-borrow: false
+    test-on-return: false
+    test-while-idle: true
+    max-wait-millis: 30000
+    validation-query: select 1
+    time-between-eviction-runs-millis: 30000
+    max-active: 20
+    max-idle: 5
+    min-idle: 1
+    initial-size: 1
+  sys:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/ai_sys?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+    username: epg
+    password: epg@ai
+    test-on-borrow: false
+    test-on-return: false
+    test-while-idle: true
+    max-wait-millis: 30000
+    validation-query: select 1
+    time-between-eviction-runs-millis: 30000
+    max-active: 20
+    max-idle: 5
+    min-idle: 1
+    initial-size: 1
+
+            
+image:
+  upload:
+    path: /usr/local/nginx/html/image
+  web:
+    path: http://172.25.137.2/image
+  ftp:
+    path: ftp://epg:epg123@172.25.137.2:21/image
+      
+xml:
+  upload:
+    path: /usr/local/nginx/html/xml
+  web:
+    path: http://172.25.137.2/xml
+  ftp:
+    path: ftp://epg:epg123@172.25.137.2:21/xml
+    
+video:
+  upload:
+    path: /usr/local/nginx/html/video
+  web:
+    path: http://172.25.137.2/video
+  ftp:
+    path: ftp://epg:epg123@172.25.137.2:21/video
+  
+site:
+  # 站点代码
+  code: 'FUJIANGD'
+
+injection:
+  # 是否开启分发
+  enabled: true
+  # 是否开启媒资分发
+  media: true
+  # 是否开启直播分发
+  live: true
+  # 是否开启栏目分发
+  category: true
+  # 是否开启服务分发
+  service: true
+  
+ftp:
+  # 媒资FTP服务地址
+  address: ftp://download:123.com@172.25.137.2:21
+  # 转码方式:passive=被动模式,active=主动模式
+  mode: active
+  # FTP根目录
+  root:
+    path: /
+  # 默认访问目录
+  default:
+    access.path: /
+
+cloud:
+  storage:
+    clientId: bestv
+    password: bestv_upload
+    url: http://115.231.111.201/cig
+    filePathPrefix: ''
+  video:
+    download:
+      url: http://115.231.111.181:8088
+ 
+transcode:
+  # 是否启动转码
+  enabled: true
+  # 转码方式:local=本地,online=线上
+  mode: local
+  # 转码输出根目录
+  output.path: /transcode
+  callback:
+    # 上传回调
+    offlineUpload.url: http://10.4.12.127/cmsadmin/api/transcode/offlineUploadCallback
+    # 转码回调
+    encode.url: http://10.4.12.127/cmsadmin/api/transcode/encodeCallback
+    # 抽帧回调
+    image.url: http://10.4.12.127/cmsadmin/api/transcode/imageCallback
+  task.schedule: 0 0/2 * * * ?
+  task.maxNum: 30
+  task.maxRequestTimes: 3
+  task.timeout: 5
+  
+# 数据库版本同步 文件存放resources/db/migration/
+flyway.baselineOnMigrate: true
+
+# 是否开启登录验证码
+login:
+  verificationFlag: true
+  

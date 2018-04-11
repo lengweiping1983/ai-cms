@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ADI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Reply>
+		<Property Name="Result">$adi.Reply.Result</Property>
+		<Property Name="Description">$adi.Reply.Description</Property>
+	</Reply>		
+</ADI>

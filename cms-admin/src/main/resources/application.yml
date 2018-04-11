@@ -1,0 +1,36 @@
+## dev | test | 
+## 演示环境 demo | 
+## 福建广电 fujiangd | 
+
+spring:
+  profiles.active: dev
+---
+
+server:
+  port: 8080
+  contextPath: /
+
+spring:
+  jpa:
+    database: MYSQL
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+
+  jmx:
+    enabled: false
+    
+  application:
+    name: 'EPG Admin'
+
+info:
+  version: 1.0
+  name: ${spring.application.name}
+  
+logging:
+  path: /opt/logs/epgadmin
+  file: ${logging.path}/epgadmin.log
+  

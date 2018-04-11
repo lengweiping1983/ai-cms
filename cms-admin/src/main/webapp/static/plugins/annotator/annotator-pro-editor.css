@@ -1,0 +1,540 @@
+/*img { max-width: 100%; }*/
+
+h1 {
+	font-size: 36px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+header {
+	margin: 0 0 40px 0;
+}
+
+#panel-disabler {
+	z-index: 1000;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: rgba(255, 255, 255, 0.5);
+	width: 100%;
+	height: 100%;
+}
+
+#wrap {
+	padding: 20px;
+}
+
+.ndd-drawable-canvas {
+	position: relative;
+	cursor: crosshair;
+}
+
+.ndd-drawable-active-area {
+	position: absolute;
+	z-index: 9999;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+}
+
+#panel-canvas {
+/* 	max-height: 600px; */
+}
+
+.ndd-drawable-canvas-image {
+	width: 100%;
+	height: 100%;
+}
+
+.ndd-drawable, .ndd-drawable-rect {
+	position: absolute;
+	cursor: pointer;
+}
+
+.ndd-drawable.ndd-selected, .ndd-drawable-rect.ndd-selected {
+	cursor: -webkit-grab;
+	z-index: 9999;
+}
+
+.ndd-drawable.ndd-selected.ndd-moving, .ndd-drawable-rect.ndd-selected.ndd-moving {
+	cursor: -webkit-grabbing;
+}
+
+.ndd-drawable.ndd-selected .ndd-drawable-marquee {
+	display: block;
+	position: absolute;
+	left: -4px;
+	top: -4px;
+	width: 52px;
+	height: 52px;
+	border: 2px dashed white;
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+}
+
+.ndd-drawable.ndd-selected .ndd-drawable-marquee:before {
+	display: block;
+	content: "";
+	position: absolute;
+	left: -2px;
+	top: -2px;
+	width: 52px;
+	height: 52px;
+	border: 2px dashed black;
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+	-webkit-transform: rotate(14deg);
+	    -ms-transform: rotate(14deg);
+	        transform: rotate(14deg);
+}
+
+.ndd-drawable-rect-handle {
+	width: 10px;
+	height: 10px;
+	position: absolute;
+	background: white;
+	display: none;
+}
+
+.ndd-drawable-rect.ndd-selected .ndd-drawable-rect-handle {
+	display: block;
+	z-index: 10000;
+}
+
+.ndd-drawable-rect-handle-1 {
+	left: 0;
+	top: 0;
+	cursor: nwse-resize;
+}
+
+.ndd-drawable-rect-handle-2 {
+	left: 50%;
+	top: 0;
+	margin-left: -5px;
+	cursor: ns-resize;
+}
+
+.ndd-drawable-rect-handle-3 {
+	right: 0;
+	top: 0;
+	cursor: nesw-resize;
+}
+
+.ndd-drawable-rect-handle-4 {
+	right: 0;
+	top: 50%;
+	margin-top: -5px;
+	cursor: ew-resize;
+}
+
+.ndd-drawable-rect-handle-5 {
+	right: 0;
+	bottom: 0;
+	cursor: nwse-resize;
+}
+
+.ndd-drawable-rect-handle-6 {
+	left: 50%;
+	bottom: 0;
+	margin-left: -5px;
+	cursor: ns-resize;
+}
+
+.ndd-drawable-rect-handle-7 {
+	left: 0;
+	bottom: 0;
+	cursor: nesw-resize;
+}
+
+.ndd-drawable-rect-handle-8 {
+	left: 0;
+	top: 50%;
+	margin-top: -5px;
+	cursor: ew-resize;
+}
+
+/* ANNOTATIONS */
+
+.ndd-annotation-container {
+	position: absolute;
+	display: none;
+	left: 0;
+	top: 0;
+	width: 0;
+	height: 0;
+}
+
+.ndd-annotation-container.ndd-annotation-visible {
+	display: block;
+}
+
+.ndd-annotation-box {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: auto;
+	height: auto;
+	background: rgba(0, 0, 0, 1);
+	border-radius: 6px !important;
+	-webkit-border-radius: 6px !important;
+}
+
+.ndd-annotation-content {
+	padding: 20px;
+}
+
+.ndd-annotation-content h1 {
+	font: 18px sans-serif;
+	color: white;
+	margin: 0;
+}
+
+.ndd-annotation-content p {
+	font: 12px sans-serif;
+	color: white;
+	margin-top: 10px;
+}
+
+/* arrows */
+
+.ndd-annotation-arrow-up {
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+
+	border-bottom: 10px solid rgba(255, 255, 51, 1);
+}
+
+.ndd-annotation-arrow-down {
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid rgba(255, 255, 51, 1);
+}
+
+.ndd-annotation-arrow-right {
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+
+	border-left: 10px solid rgba(255, 255, 51, 1);
+}
+
+.ndd-annotation-arrow-left {
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+
+	border-right:10px solid rgba(255, 255, 51, 1);
+}
+
+/* icon-styles */
+
+
+
+.btn-group-no-margin label {
+	margin: 0 -1px -1px 0 !important;
+}
+
+/* rect ICON styles */
+
+.icon-style-rect-1 .ndd-icon-main-element {
+	width: 44px;
+	height: 44px;
+	border-radius: 8px !important;
+	-webkit-border-radius: 8px !important;
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.icon-style-rect-2 .ndd-icon-main-element {
+	background: rgba(0, 0, 0, 0.4);
+	border-radius: 8px !important;
+	-webkit-border-radius: 8px !important;
+	width: 34px;
+	height: 34px;
+	left: 5px;
+	top: 5px;
+}
+
+.icon-style-rect-2 .ndd-icon-border-element {
+	position: absolute;
+	content: "";
+	display: block;
+	width: 44px;
+	height: 44px;
+	border: 4px solid rgba(0, 0, 0, 1);
+	left: 0;
+	top: 0;
+	border-radius: 12px !important;
+	-webkit-border-radius: 12px !important;
+}
+
+.icon-style-rect-3 .ndd-icon-main-element {
+	background: rgba(0, 0, 0, 0.4);
+	border-radius: 8px !important;
+	-webkit-border-radius: 8px !important;
+	width: 38px;
+	height: 38px;
+	margin: 3px;
+}
+
+.icon-style-rect-3 .ndd-icon-border-element {
+	position: absolute;
+	content: "";
+	display: block;
+	width: 44px;
+	height: 44px;
+	border: 1px solid rgba(0, 0, 0, 1);
+	left: 0;
+	top: 0;
+	border-radius: 10px !important;
+	-webkit-border-radius: 10px !important;
+}
+
+.icon-style-rect-4 .ndd-icon-main-element {
+	background: none;
+	border-radius: 8px !important;
+	-webkit-border-radius: 8px !important;
+	width: 34px;
+	height: 34px;
+	margin: 5px;
+}
+
+.icon-style-rect-4 .ndd-icon-border-element {
+	position: absolute;
+	content: "";
+	display: block;
+	width: 44px;
+	height: 44px;
+	border: 4px solid rgba(0, 0, 0, 1);
+	left: 0;
+	top: 0;
+	border-radius: 12px !important;
+	-webkit-border-radius: 12px !important;
+}
+
+.icon-in-label {
+	position: relative;
+}
+
+/* CIRCLE SPOT */
+
+.ndd-spot-icon {
+	z-index: 0;
+	width: 44px;
+	height: 44px;
+}
+
+.ndd-spot-icon .ndd-icon-main-element {
+	display: block;
+	position: absolute;
+}
+
+.icon-style-1 .ndd-icon-main-element {
+	background: rgba(0, 0, 0, 1);
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+	width: 44px;
+	height: 44px;
+}
+
+.icon-style-2 .ndd-icon-main-element {
+	background: rgba(0, 0, 0, 1);
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+	width: 34px;
+	height: 34px;
+	left: 5px;
+	top: 5px;
+}
+
+.icon-style-2 .ndd-icon-border-element {
+	position: absolute;
+	width: 44px;
+	height: 44px;
+	border: 4px solid rgba(0, 0, 0, 1);
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+}
+
+.icon-style-3 .ndd-icon-main-element {
+	display: block;
+	background: rgba(0, 0, 0, 1);
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+	width: 38px;
+	height: 38px;
+	margin: 3px;
+}
+
+.icon-style-3 .ndd-icon-border-element {
+	position: absolute;
+	display: block;
+	width: 44px;
+	height: 44px;
+	border: 1px solid rgba(0, 0, 0, 1);
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+}
+
+.icon-style-4 .ndd-icon-main-element {
+	display: block;
+	background-color: transparent !important;
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+	width: 34px;
+	height: 34px;
+	margin: 5px;
+}
+
+.icon-style-4 .ndd-icon-border-element {
+	position: absolute;
+	display: block;
+	width: 44px;
+	height: 44px;
+	border: 4px solid rgba(0, 0, 0, 1);
+	border-radius: 100px !important;
+	-webkit-border-radius: 100px !important;
+}
+
+.icon-style-5 img, .icon-style-6 img, .icon-style-7 img, .icon-style-8 img, .icon-style-9 img, .icon-style-10 img, .icon-style-11 img, .icon-style-12 img, .icon-style-13 img {
+	width: 44px;
+	height: 44px;
+}
+
+.icon-style-0 .ndd-icon-main-element {
+	background: transparent !important;
+}
+
+.icon-style-0 .ndd-icon-border-element {
+	border: none !important;
+}
+
+/* icons position offsets */
+.ndd-drawable-canvas .icon-style-5 img {
+	margin-top: -19px;
+}
+.ndd-drawable-canvas .icon-style-6 img {
+	margin-top: -19px;
+}
+.ndd-drawable-canvas .icon-style-7 img {
+	margin-top: -19px;
+}
+.ndd-drawable-canvas .icon-style-8 img {
+	margin-left: 21px;
+	margin-top: -20px;
+}
+.ndd-drawable-canvas .icon-style-9 img {
+	margin-top: -19px;
+}
+.ndd-drawable-canvas .icon-style-10 img {
+	margin-top: -19px;
+}
+.ndd-drawable-canvas .icon-style-11 img {
+	margin-left: -4px;
+	margin-top: -16px;
+}
+.ndd-drawable-canvas .icon-style-12 img {
+	margin-left: 9px;
+	margin-top: -18px;
+}
+.ndd-drawable-canvas .icon-style-13 img {
+	margin-left: -1px;
+	margin-top: -17px;
+}
+
+/* RECT SPOT */
+
+.ndd-spot-rect {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.ndd-spot-rect .ndd-icon-main-element, .ndd-spot-rect .ndd-icon-border-element {
+	position: absolute;
+}
+
+.ndd-rect-style-1 .ndd-icon-main-element {
+	border-radius: 8px !important;
+	-webkit-border-radius: 8px !important;
+	background: rgba(0, 0, 0, 0.2);
+	width: 100%;
+	height: 100%;
+}
+
+.ndd-rect-style-2 .ndd-icon-main-element {
+	border-radius: 8px !important;
+	-webkit-border-radius: 8px !important;
+	background: rgba(0, 0, 0, 0.2);
+	width: 100%;
+	height: 100%;
+	left: 5px;
+	top: 5px;
+}
+
+.ndd-rect-style-2 .ndd-icon-border-element {
+	border-radius: 12px !important;
+	-webkit-border-radius: 12px !important;
+	left: 0;
+	top: 0;
+	border: 4px solid black;
+	width: 100%;
+	height: 100%;
+}
+
+.ndd-rect-style-3 .ndd-icon-main-element {
+	border-radius: 8px !important;
+	-webkit-border-radius: 8px !important;
+	background: rgba(0, 0, 0, 0.2);
+	width: 100%;
+	height: 100%;
+	left: 3px;
+	top: 3px;
+}
+
+.ndd-rect-style-3 .ndd-icon-border-element {
+	border-radius: 10px !important;
+	-webkit-border-radius: 10px !important;
+	left: 0;
+	top: 0;
+	border: 1px solid black;
+	width: 100%;
+	height: 100%;
+}
+
+.ndd-rect-style-4 .ndd-icon-main-element {
+	display: none;
+}
+
+.ndd-rect-style-4 .ndd-icon-border-element {
+	border-radius: 12px !important;
+	-webkit-border-radius: 12px !important;
+	left: 0;
+	top: 0;
+	border: 4px solid black;
+	width: 100%;
+	height: 100%;
+}
+
+.ndd-rect-style-0 .ndd-icon-main-element {
+	background: transparent !important;
+}
+
+.ndd-rect-style-0 .ndd-icon-border-element {
+	border: none !important;
+}

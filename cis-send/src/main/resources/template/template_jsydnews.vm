@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<ADI StaffID="$!adi.StaffID" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Priority="$!adi.Priority">
+	<Objects>
+	#foreach($objectBean in $adi.Objects)
+	#if($objectBean.ElementType == "Series")
+<Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
+			<Property Name="Name"><![CDATA[$!objectBean.Name]]></Property>
+			#if($!objectBean.Action != "DELETE")
+            <Property Name="EnName"></Property>
+            <Property Name="Pinyin"><![CDATA[$!objectBean.SearchName]]></Property>
+            <Property Name="Code"><![CDATA[$!objectBean.Code]]></Property>
+            <Property Name="ActorDisplay"><![CDATA[$!objectBean.Director]]></Property>
+            <Property Name="WriterDisplay"><![CDATA[$!objectBean.ActorDisplay]]></Property>
+            <Property Name="OrgAirDate"><![CDATA[$!objectBean.OrgAirDate]]></Property>
+            <Property Name="IsCharge">0</Property>
+            <Property Name="ChargeDesc"></Property>
+            <Property Name="Score"><![CDATA[$!objectBean.rating]]></Property>
+            <Property Name="VolumnCount"><![CDATA[$!objectBean.VolumnCount]]></Property>
+            <Property Name="Description"><![CDATA[$!objectBean.Description]]></Property>
+            <Property Name="Tag"><![CDATA[$!objectBean.Tags]]></Property>
+            <Property Name="StarLevel">6</Property>
+            <Property Name="PictureURL1"><![CDATA[$!objectBean.image1]]></Property>
+            <Property Name="ProgramType"><![CDATA[$!objectBean.Type]]></Property>
+            <Property Name="ProgramType2"><![CDATA[]]></Property>
+            <Property Name="OriginalCountry"><![CDATA[$!objectBean.OriginalCountry]]></Property>
+            <Property Name="Language"><![CDATA[$!objectBean.Language]]></Property>
+			<Property Name="ReleaseYear"><![CDATA[$!objectBean.ReleaseYear]]></Property>
+            <Property Name="Duration"><![CDATA[$!objectBean.Duration]]></Property>
+            <Property Name="Definition"><![CDATA[$!objectBean.DefinitionFlag]]></Property>
+            <Property Name="Is3d">0</Property>
+            <Property Name="Compere"><![CDATA[$!objectBean.Compere]]></Property>
+            <Property Name="Guest"><![CDATA[$!objectBean.Guest]]></Property>
+            <Property Name="OnlineTime"><![CDATA[$!objectBean.OnlineTime]]></Property>
+            <Property Name="Recommendation"><![CDATA[$!objectBean.viewpoint]]></Property>
+            <Property Name="HorizontalPoster"><![CDATA[$!objectBean.image2]]></Property>
+			<Property Name="ContentProvider"><![CDATA[$!objectBean.ContentProvider]]></Property>
+			#end
+		</Object>
+	#end#if($objectBean.ElementType == "Program")
+<Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
+			<Property Name="Name"><![CDATA[$!objectBean.Name]]></Property>
+			#if($!objectBean.Action != "DELETE")
+			<Property Name="Code"><![CDATA[$!objectBean.Code]]></Property>
+			<Property Name="Pinyin"><![CDATA[$!objectBean.SearchName]]></Property>
+            <Property Name="ActorDisplay"><![CDATA[$!objectBean.Director]]></Property>
+            <Property Name="WriterDisplay"><![CDATA[$!objectBean.ActorDisplay]]></Property>
+            <Property Name="OrgAirDate"><![CDATA[$!objectBean.OrgAirDate]]></Property>
+            <Property Name="VolumnCount"><![CDATA[$!objectBean.episodeIndex]]></Property>
+            <Property Name="Description"><![CDATA[$!objectBean.Description]]></Property>
+            <Property Name="Tag"><![CDATA[$!objectBean.Tags]]></Property>
+            <Property Name="OriginalCountry"><![CDATA[$!objectBean.OriginalCountry]]></Property>
+            <Property Name="Language"><![CDATA[$!objectBean.Language]]></Property>
+			<Property Name="ReleaseYear"><![CDATA[$!objectBean.ReleaseYear]]></Property>
+            <Property Name="Duration"><![CDATA[$!objectBean.Duration]]></Property>
+            <Property Name="ProgramType"><![CDATA[$!objectBean.Type]]></Property>
+            <Property Name="ProgramType2"><![CDATA[]]></Property>
+            <Property Name="EnName"></Property>
+            <Property Name="Definition"><![CDATA[$!objectBean.DefinitionFlag]]></Property>
+            <Property Name="Is3d">0</Property>
+            <Property Name="PictureURL1"><![CDATA[$!objectBean.image1]]></Property>
+            <Property Name="Compere"><![CDATA[$!objectBean.Compere]]></Property>
+            <Property Name="Guest"><![CDATA[$!objectBean.Guest]]></Property>
+            <Property Name="OnlineTime"><![CDATA[$!objectBean.OnlineTime]]></Property>
+            <Property Name="Recommendation"><![CDATA[$!objectBean.viewpoint]]></Property>
+            <Property Name="HorizontalPoster"><![CDATA[$!objectBean.image2]]></Property>
+			<Property Name="ContentProvider"><![CDATA[$!objectBean.ContentProvider]]></Property>
+			#end
+		</Object>
+	#end#if($objectBean.ElementType == "Movie")
+<Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
+			#if($!objectBean.Action != "DELETE")
+			<Property Name="Code"><![CDATA[$!objectBean.Code]]></Property>
+            <Property Name="FileURL"><![CDATA[$!objectBean.FileURL]]></Property>
+            <Property Name="PlayURL"><![CDATA[$!objectBean.PlayURL]]></Property>
+            <Property Name="CdnPlatform"><![CDATA[$!objectBean.platformId]]></Property>
+            <Property Name="Definition"><![CDATA[$!objectBean.DefinitionFlag]]></Property>
+            <Property Name="BitRateId">1</Property>
+			<Property Name="Dispatch">1</Property>
+			<Property Name="Md5"><![CDATA[$!objectBean.fileMd5]]></Property>
+			<Property Name="IsTranscode">0</Property>
+			#end
+		</Object>
+	#end#if($objectBean.ElementType == "Category")
+<Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action" ParentID="$!objectBean.ParentCode" ParentCode="$!objectBean.ParentCode">
+			#if($!objectBean.Action != "DELETE")
+			<Property Name="Description"><![CDATA[$!objectBean.Description]]></Property>
+			<Property Name="Sequence"><![CDATA[$!objectBean.Sequence]]></Property>
+			<Property Name="Status"><![CDATA[$!objectBean.Status]]></Property>
+			<Property Name="Name"><![CDATA[$!objectBean.Name]]></Property>
+			<Property Name="ParentID"><![CDATA[$!objectBean.ParentCode]]></Property>
+			#end
+		</Object>		
+	#end#if($objectBean.ElementType == "Picture")
+<Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
+			#if($!objectBean.Action != "DELETE")
+			<Property Name="FileURL"><![CDATA[$!objectBean.FileURL]]></Property>
+			#if($objectBean.Description)
+			<Property Name="Description"><![CDATA[$!objectBean.Description]]></Property>
+			#end
+			#end
+		</Object>
+	#end#if($objectBean.ElementType == "Schedule")
+<Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
+			<Property Name="ChannelCode"><![CDATA[$!objectBean.ChannelCode]]></Property>
+			<Property Name="ChannelID"><![CDATA[$!objectBean.ChannelCode]]></Property>
+			<Property Name="Duration"><![CDATA[$!objectBean.Duration]]></Property>
+			<Property Name="Genre"><![CDATA[$!objectBean.Genre]]></Property>
+			<Property Name="ObjectID">0</Property> 
+			<Property Name="ObjectType">1</Property> 
+			<Property Name="ProgramName"><![CDATA[$!objectBean.ProgramName]]></Property>
+			<Property Name="StartDate"><![CDATA[$!objectBean.StartDate]]></Property>
+			<Property Name="StartTime"><![CDATA[$!objectBean.StartTime]]></Property>
+			<Property Name="Status"><![CDATA[$!objectBean.Status]]></Property>
+		</Object>
+	#end#if($objectBean.ElementType == "Package")
+<Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
+			<Property Name="Name"><![CDATA[$!objectBean.Name]]></Property>
+			#if($!objectBean.Action != "DELETE")
+			<Property Name="Type"><![CDATA[$!objectBean.Type]]></Property>
+			<Property Name="SortName"/>
+			<Property Name="SearchName"/>
+			<Property Name="RentalPeriod"/>
+			<Property Name="OrderNumber"></Property>
+			<Property Name="LicensingWindowStart"><![CDATA[$!objectBean.LicensingWindowStart]]></Property>
+			<Property Name="LicensingWindowEnd"><![CDATA[$!objectBean.LicensingWindowEnd]]></Property>
+			<Property Name="Price"><![CDATA[$!objectBean.Price]]></Property>
+			<Property Name="Status"><![CDATA[$!objectBean.Status]]></Property>
+			<Property Name="Description"/>
+			<Property Name="Keywords"/>
+			<Property Name="Tags"/>
+			<Property Name="Reserve1"/>
+			<Property Name="Reserve2"/>
+			<Property Name="Reserve3"/>
+			<Property Name="Reserve4"/>
+			<Property Name="Reserve5"/>
+			#end
+		</Object>
+	#end#end
+</Objects>
+	#if($adi.Mappings.size() > 0)
+  	<Mappings>
+  	#foreach($mappingBean in $adi.Mappings)
+	<Mapping ParentType="$!mappingBean.ParentType" ParentID="$!mappingBean.ParentCode" ParentCode="$!mappingBean.ParentCode" ElementType="$!mappingBean.ElementType" ElementID="$!mappingBean.ElementCode" ElementCode="$!mappingBean.ElementCode" Action="$!mappingBean.Action">
+			#if($!mappingBean.Action != "DELETE")
+			#if($mappingBean.Type)
+			<Property Name="Type"><![CDATA[$!mappingBean.Type]]></Property>
+			#end
+			#if($mappingBean.Sequence)
+			<Property Name="Sequence"><![CDATA[$!mappingBean.Sequence]]></Property>
+			#end
+			#if($mappingBean.ElementName)
+			<Property Name="ElementName"><![CDATA[$!mappingBean.ElementName]]></Property>
+			#end
+			#if($mappingBean.ParentName)
+			<Property Name="ParentName"><![CDATA[$!mappingBean.ParentName]]></Property>
+			#end
+			#if($mappingBean.ParentType == "Package")
+			#if($mappingBean.ParentSubType == "4")
+			#if($mappingBean.ValidStart)
+			<Property Name="ValidStart"><![CDATA[$!mappingBean.ValidStart]]></Property>
+			#end
+			#if($mappingBean.ValidEnd)
+			<Property Name="ValidEnd"><![CDATA[$!mappingBean.ValidEnd]]></Property>
+			#end
+			#end
+			#end
+			#end
+		</Mapping>
+	#end</Mappings>
+	#end
+</ADI>

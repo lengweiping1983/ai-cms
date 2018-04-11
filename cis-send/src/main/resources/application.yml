@@ -1,0 +1,36 @@
+## dev | test | 
+## 演示环境 demo | 
+## 福建广电 fujiangd | 
+
+spring:
+  profiles.active: dev
+---
+
+server:
+  port: 9010
+  contextPath: /cissend
+
+spring:
+  jpa:
+    database: MYSQL
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+
+  jmx:
+    enabled: false
+    
+  application:
+    name: 'CIS SEND'
+
+info:
+  version: 1.0
+  name: ${spring.application.name}
+  
+logging:
+  path: /opt/logs/cissend
+  file: ${logging.path}/cissend.log
+  

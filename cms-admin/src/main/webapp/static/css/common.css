@@ -1,0 +1,9 @@
+.input-small-ext {
+	width: 100px !important;
+}
+
+.form-control-static-ext {
+	display: inline-block;
+	margin: 0;
+	font-size: 16px;
+}
