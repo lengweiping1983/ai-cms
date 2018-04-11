@@ -62,7 +62,7 @@
 						class="table dataTable table-striped table-bordered table-hover">
 						<thead>
 							<tr>
-								<th class="sorting" abbr="id">渠道id</th>
+								<th class="sorting" abbr="id">渠道ID</th>
 								<th class="sorting" abbr="code">渠道代码</th>
 								<th class="sorting" abbr="name">渠道名称</th>
 								<th class="sorting" abbr="status">状态</th>
@@ -71,7 +71,7 @@
 						</thead>
 						<tfoot>
 							<tr>
-								<th class="sorting" abbr="id">渠道id</th>
+								<th class="sorting" abbr="id">渠道ID</th>
 								<th class="sorting" abbr="code">渠道代码</th>
 								<th class="sorting" abbr="name">渠道名称</th>
 								<th class="sorting" abbr="status">状态</th>

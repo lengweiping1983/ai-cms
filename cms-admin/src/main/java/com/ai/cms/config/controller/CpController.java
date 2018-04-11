@@ -44,6 +44,9 @@ public class CpController extends AbstractController {
 
 	@RequestMapping(value = { "add" }, method = RequestMethod.GET)
 	public String toAdd(Model model) {
+		Cp cp = new Cp();
+		model.addAttribute("cp", cp);
+		
 		model.addAttribute("typeEnum", CpTypeEnum.values());
 		model.addAttribute("statusEnum", ValidStatusEnum.values());
 

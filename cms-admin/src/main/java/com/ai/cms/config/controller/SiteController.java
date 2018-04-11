@@ -46,7 +46,9 @@ public class SiteController extends AbstractController {
 
 	@RequestMapping(value = { "add" }, method = RequestMethod.GET)
 	public String toAdd(Model model) {
-
+		Site site = new Site();
+		model.addAttribute("site", site);
+		
 		setModel(model);
 
 		return "config/site/edit";

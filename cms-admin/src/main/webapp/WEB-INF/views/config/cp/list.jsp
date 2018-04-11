@@ -63,7 +63,7 @@
 						<thead>
 							<tr>
 								<th>序号</th>
-								<th class="sorting" abbr="id">提供商id</th>
+								<th class="sorting" abbr="id">提供商ID</th>
 								<th class="sorting" abbr="code">提供商代码</th>
 								<th class="sorting" abbr="name">提供商名称</th>
 								<th class="sorting" abbr="shortName">提供商简称</th>
@@ -75,7 +75,7 @@
 						<tfoot>
 							<tr>
 								<th>序号</th>
-								<th class="sorting" abbr="id">提供商id</th>
+								<th class="sorting" abbr="id">提供商ID</th>
 								<th class="sorting" abbr="code">提供商代码</th>
 								<th class="sorting" abbr="name">提供商名称</th>
 								<th class="sorting" abbr="shortName">提供商简称</th>
