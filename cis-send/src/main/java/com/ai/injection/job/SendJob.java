@@ -144,8 +144,8 @@ public class SendJob {
 		}
 
 		PageRequest pageRequest = new PageRequest(0, newTaskMaxNum);
-		Page<SendTask> page = sendTaskRepository
-				.findNeedGenSendTask(pageRequest);
+		Page<SendTask> page = sendTaskRepository.findNeedGenSendTask(
+				new Date(), pageRequest);
 		List<SendTask> taskList = page.getContent();
 		for (SendTask sendTask : taskList) {
 			boolean result = false;
@@ -153,16 +153,21 @@ public class SendJob {
 				if (sendTask.getPlatformId() == null) {
 					throw new DataException("数据错误！");
 				}
+				InjectionPlatform platform = injectionService
+						.findOneInjectionPlatform(sendTask.getPlatformId());
+				if (platform == null) {
+					throw new DataException("数据错误！");
+				}
 				if (sendTask.getType() == InjectionObjectTypeEnum.OBJECT
 						.getKey()
 						&& sendTask.getItemType() == InjectionItemTypeEnum.SERIES
 								.getKey()) {
-					result = genSeriesService.genTask(sendTask);
+					result = genSeriesService.genTask(sendTask, platform);
 				} else if (sendTask.getType() == InjectionObjectTypeEnum.OBJECT
 						.getKey()
 						&& sendTask.getItemType() == InjectionItemTypeEnum.PROGRAM
 								.getKey()) {
-					result = genProgramService.genTask(sendTask);
+					result = genProgramService.genTask(sendTask, platform);
 				}
 			} catch (DataException e) {
 				logger.error(e.getMessage(), e);

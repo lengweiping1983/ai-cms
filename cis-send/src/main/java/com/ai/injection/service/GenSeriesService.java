@@ -1,7 +1,11 @@
 package com.ai.injection.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +18,10 @@ import com.ai.cms.injection.entity.InjectionObject;
 import com.ai.cms.injection.entity.InjectionPlatform;
 import com.ai.cms.injection.entity.SendTask;
 import com.ai.cms.injection.enums.InjectionActionTypeEnum;
+import com.ai.cms.injection.enums.InjectionDirectionEnum;
 import com.ai.cms.injection.enums.InjectionItemTypeEnum;
 import com.ai.cms.injection.enums.InjectionStatusEnum;
+import com.ai.cms.injection.enums.PlatformTypeEnum;
 import com.ai.cms.injection.enums.SendTaskStatusEnum;
 import com.ai.cms.media.entity.Series;
 import com.ai.common.enums.ContentTypeEnum;
@@ -31,20 +37,48 @@ public class GenSeriesService extends GenCommonService {
 	 * 生成剧头任务
 	 * 
 	 * @param sendTask
+	 * @param platform
+	 * @return
 	 */
-	public boolean genTask(SendTask sendTask) {
+	public boolean genTask(SendTask sendTask, InjectionPlatform platform) {
 		// 1.获取对象
 		Series series = seriesRepository.findOne(sendTask.getItemId());
 		if (series == null) {
-			throw new DataException("series is null.");
+			throw new DataException("剧头不存在！");
 		}
 		InjectionObject seriesInjectionObject = injectionService
 				.getAndNewInjectionObject(series, sendTask.getPlatformId(),
 						sendTask.getCategory());
 
+		// 如是业务系统，需要检查依赖平台是否都分发成功，如都分发成功才向业务系统发送
+		if ((sendTask.getAction() == InjectionActionTypeEnum.CREATE.getKey() || sendTask
+				.getAction() == InjectionActionTypeEnum.UPDATE.getKey())
+				&& platform.getDirection() == InjectionDirectionEnum.SEND
+						.getKey()
+				&& platform.getType() == PlatformTypeEnum.BUSINESS_SYSTEM
+						.getKey()
+				&& StringUtils.isNotEmpty(platform.getDependPlatformId())) {
+			List<InjectionObject> injectionObjectListAll = injectionService
+					.findInjectionObjectList(InjectionItemTypeEnum.SERIES,
+							series.getId());
+			for (String dependPlatformId : platform.getDependPlatformId()
+					.split(",")) {
+				for (InjectionObject injectionObject : injectionObjectListAll) {
+					if (dependPlatformId.equals(""
+							+ injectionObject.getPlatformId())
+							&& injectionObject.getInjectionStatus() != InjectionStatusEnum.INJECTION_SUCCESS
+									.getKey()) {
+						// 该依赖平台没有分发成功
+						// 等待5分钟
+						sendTask.setNextCheckTime(DateUtils.addMinutes(
+								new Date(), 5));
+						return false;
+					}
+				}
+			}
+		}
+
 		// 2.设置基本属性
-		InjectionPlatform platform = injectionPlatformRepository
-				.findOne(sendTask.getPlatformId());
 		String correlateId = StringUtils.trimToEmpty(platform
 				.getCorrelatePrefix()) + sendTask.getId();
 		sendTask.setCorrelateId(correlateId);

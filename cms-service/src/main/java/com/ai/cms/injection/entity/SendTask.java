@@ -44,6 +44,10 @@ public class SendTask extends AbstractEntity {
 	@Column(name = "sub_item_id")
 	private String subItemId;// 子元素id
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "next_check_time")
+	private Date nextCheckTime;// 下一次检查时间
+
 	private String name; // 任务名称
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -182,6 +186,14 @@ public class SendTask extends AbstractEntity {
 
 	public void setSubItemId(String subItemId) {
 		this.subItemId = subItemId;
+	}
+
+	public Date getNextCheckTime() {
+		return nextCheckTime;
+	}
+
+	public void setNextCheckTime(Date nextCheckTime) {
+		this.nextCheckTime = nextCheckTime;
 	}
 
 	public String getName() {

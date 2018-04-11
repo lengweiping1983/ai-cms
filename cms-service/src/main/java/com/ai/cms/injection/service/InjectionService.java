@@ -281,6 +281,13 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	}
 
 	public List<InjectionObject> findInjectionObjectList(
+			InjectionItemTypeEnum injectionItemTypeEnum, Long itemId) {
+		List<InjectionObject> injectionObjectList = injectionObjectRepository
+				.findByItemTypeAndItemId(injectionItemTypeEnum.getKey(), itemId);
+		return injectionObjectList;
+	}
+
+	public List<InjectionObject> findInjectionObjectList(
 			InjectionItemTypeEnum injectionItemTypeEnum, List<Long> itemIdList) {
 		List<InjectionObject> injectionObjectList = injectionObjectRepository
 				.findByItemTypeAndItemIdIn(injectionItemTypeEnum.getKey(),

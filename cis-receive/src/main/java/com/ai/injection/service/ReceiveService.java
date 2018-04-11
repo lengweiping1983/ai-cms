@@ -208,8 +208,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveSeries(SeriesBean seriesBean, ReceiveTask receiveTask,
 			InjectionPlatform platform, String currentCpId) {
-		Series series = mediaService
-				.findSeriesByCloudCode(seriesBean.getCode());
+		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
+				+ "_" + seriesBean.getCode());
 		// 检查该媒资是否属于该CP
 		if (series != null) {
 			String cpId = StringUtils.trimToEmpty(series.getCpId());
@@ -227,8 +227,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			series = new Series();
 			series.setSource(SourceEnum.INJECTION.getKey());
 			series.setCpId(currentCpId);
-			series.setCloudId(seriesBean.getID());
-			series.setCloudCode(seriesBean.getCode());
+			series.setCloudId(platform.getCspId() + "_" + seriesBean.getID());
+			series.setCloudCode(platform.getCspId() + "_"
+					+ seriesBean.getCode());
 		}
 		if (StringUtils.isNotEmpty(seriesBean.getName())) {
 			series.setName(seriesBean.getName());
@@ -369,8 +370,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveProgram(ProgramBean programBean, ReceiveTask receiveTask,
 			InjectionPlatform platform, String currentCpId) {
-		Program program = mediaService.findProgramByCloudCode(programBean
-				.getCode());
+		Program program = mediaService.findProgramByCloudCode(platform
+				.getCspId() + "_" + programBean.getCode());
 		// 检查该媒资是否属于该CP
 		if (program != null) {
 			String cpId = StringUtils.trimToEmpty(program.getCpId());
@@ -388,8 +389,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			program = new Program();
 			program.setSource(SourceEnum.INJECTION.getKey());
 			program.setCpId(currentCpId);
-			program.setCloudId(programBean.getID());
-			program.setCloudCode(programBean.getCode());
+			program.setCloudId(platform.getCspId() + "_" + programBean.getID());
+			program.setCloudCode(platform.getCspId() + "_"
+					+ programBean.getCode());
 		}
 		if (StringUtils.isNotEmpty(programBean.getName())) {
 			program.setName(programBean.getName());
@@ -546,8 +548,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveMediaFile(MovieBean movieBean, ReceiveTask receiveTask,
 			InjectionPlatform platform, String currentCpId) {
-		MediaFile mediaFile = mediaService.findMediaFileByCloudCode(movieBean
-				.getCode());
+		MediaFile mediaFile = mediaService.findMediaFileByCloudCode(platform
+				.getCspId() + "_" + movieBean.getCode());
 		if (mediaFile != null) {
 			Program program = mediaService.findProgramById(mediaFile
 					.getProgramId());
@@ -568,8 +570,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (mediaFile == null) {
 			mediaFile = new MediaFile();
 			mediaFile.setSource(SourceEnum.INJECTION.getKey());
-			mediaFile.setCloudId(movieBean.getID());
-			mediaFile.setCloudCode(movieBean.getCode());
+			mediaFile.setCloudId(platform.getCspId() + "_" + movieBean.getID());
+			mediaFile.setCloudCode(platform.getCspId() + "_"
+					+ movieBean.getCode());
 		}
 		if (StringUtils.isNotEmpty(movieBean.getType())) {
 			int type = NumberUtils.toInt(movieBean.getType(),
@@ -649,10 +652,10 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	private void saveSeriesProgramMapping(MappingBean mappingBean,
 			ReceiveTask receiveTask, InjectionPlatform platform,
 			String currentCpId) {
-		Series series = mediaService.findSeriesByCloudCode(mappingBean
-				.getParentCode());
-		Program program = mediaService.findProgramByCloudCode(mappingBean
-				.getElementCode());
+		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
+				+ "_" + mappingBean.getParentCode());
+		Program program = mediaService.findProgramByCloudCode(platform
+				.getCspId() + "_" + mappingBean.getElementCode());
 		if (series == null) {
 			throw new DataException("Series[" + mappingBean.getParentCode()
 					+ "]不存在！");
@@ -701,10 +704,10 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	private void saveProgramMediaFileMapping(MappingBean mappingBean,
 			ReceiveTask receiveTask, InjectionPlatform platform,
 			String currentCpId) {
-		Program program = mediaService.findProgramByCloudCode(mappingBean
-				.getParentCode());
-		MediaFile mediaFile = mediaService.findMediaFileByCloudCode(mappingBean
-				.getElementCode());
+		Program program = mediaService.findProgramByCloudCode(platform
+				.getCspId() + "_" + mappingBean.getParentCode());
+		MediaFile mediaFile = mediaService.findMediaFileByCloudCode(platform
+				.getCspId() + "_" + mappingBean.getElementCode());
 		if (program == null) {
 			throw new DataException("Program[" + mappingBean.getParentCode()
 					+ "]不存在！");
@@ -756,8 +759,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	private void saveSeriesPictureMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
 			InjectionPlatform platform, String currentCpId) {
-		Series series = mediaService.findSeriesByCloudCode(mappingBean
-				.getParentCode());
+		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
+				+ "_" + mappingBean.getParentCode());
 		if (series == null) {
 			throw new DataException("Series[" + mappingBean.getParentCode()
 					+ "]不存在！");
@@ -857,8 +860,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	private void saveProgramPictureMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
 			InjectionPlatform platform, String currentCpId) {
-		Program program = mediaService.findProgramByCloudCode(mappingBean
-				.getParentCode());
+		Program program = mediaService.findProgramByCloudCode(platform
+				.getCspId() + "_" + mappingBean.getParentCode());
 		if (program == null) {
 			throw new DataException("Program[" + mappingBean.getParentCode()
 					+ "]不存在！");
