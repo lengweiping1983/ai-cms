@@ -216,7 +216,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			List<String> cpIds = Arrays.asList(cpId.split(","));
 			if (!cpIds.contains(currentCpId)) {
 				throw new DataException("Series[" + seriesBean.getCode()
-						+ "]不存在!");
+						+ "]不存在！");
 			}
 		}
 		if ("DELETE".equalsIgnoreCase(seriesBean.getAction())) {
@@ -377,7 +377,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			List<String> cpIds = Arrays.asList(cpId.split(","));
 			if (!cpIds.contains(currentCpId)) {
 				throw new DataException("Program[" + programBean.getCode()
-						+ "]不存在!");
+						+ "]不存在！");
 			}
 		}
 		if ("DELETE".equalsIgnoreCase(programBean.getAction())) {
@@ -557,7 +557,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				List<String> cpIds = Arrays.asList(cpId.split(","));
 				if (!cpIds.contains(currentCpId)) {
 					throw new DataException("Movie[" + movieBean.getCode()
-							+ "]不存在!");
+							+ "]不存在！");
 				}
 			}
 		}
@@ -590,7 +590,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				mediaFile.setMediaStatus(MediaStatusEnum.DOWNLOAD.getKey());
 			}
 		} else {
-			throw new DataException("Movie[" + movieBean.getCode() + "]没有视频地址!");
+			throw new DataException("Movie[" + movieBean.getCode() + "]没有视频地址！");
 		}
 		if (StringUtils.isNotEmpty(movieBean.getOCSURL())) {
 		}
@@ -655,11 +655,11 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				.getElementCode());
 		if (series == null) {
 			throw new DataException("Series[" + mappingBean.getParentCode()
-					+ "]不存在!");
+					+ "]不存在！");
 		}
 		if (program == null) {
 			throw new DataException("Program[" + mappingBean.getElementCode()
-					+ "]不存在!");
+					+ "]不存在！");
 		}
 		// 检查该媒资是否属于该CP
 		if (series != null) {
@@ -667,7 +667,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			List<String> cpIds = Arrays.asList(cpId.split(","));
 			if (!cpIds.contains(currentCpId)) {
 				throw new DataException("Series[" + mappingBean.getParentCode()
-						+ "]不存在!");
+						+ "]不存在！");
 			}
 		}
 		// 检查该媒资是否属于该CP
@@ -676,7 +676,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			List<String> cpIds = Arrays.asList(cpId.split(","));
 			if (!cpIds.contains(currentCpId)) {
 				throw new DataException("Program["
-						+ mappingBean.getElementCode() + "]不存在!");
+						+ mappingBean.getElementCode() + "]不存在！");
 			}
 		}
 		if ("DELETE".equalsIgnoreCase(mappingBean.getAction())) {
@@ -693,7 +693,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 					mappingBean.getSequence(), 1));
 		} else {
 			throw new DataException("Mapping[" + mappingBean.getElementCode()
-					+ "]不正确!");
+					+ "]不正确！");
 		}
 		mediaService.saveProgramAndMediaStatus(program, true);
 	}
@@ -707,11 +707,11 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				.getElementCode());
 		if (program == null) {
 			throw new DataException("Program[" + mappingBean.getParentCode()
-					+ "]不存在!");
+					+ "]不存在！");
 		}
 		if (mediaFile == null) {
 			throw new DataException("Movie[" + mappingBean.getElementCode()
-					+ "]不存在!");
+					+ "]不存在！");
 		}
 		// 检查该媒资是否属于该CP
 		if (program != null) {
@@ -719,7 +719,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			List<String> cpIds = Arrays.asList(cpId.split(","));
 			if (!cpIds.contains(currentCpId)) {
 				throw new DataException("Program["
-						+ mappingBean.getParentCode() + "]不存在!");
+						+ mappingBean.getParentCode() + "]不存在！");
 			}
 		}
 		if ("DELETE".equalsIgnoreCase(mappingBean.getAction())) {
@@ -760,7 +760,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				.getParentCode());
 		if (series == null) {
 			throw new DataException("Series[" + mappingBean.getParentCode()
-					+ "]不存在!");
+					+ "]不存在！");
 		}
 		// 检查该媒资是否属于该CP
 		if (series != null) {
@@ -768,7 +768,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			List<String> cpIds = Arrays.asList(cpId.split(","));
 			if (!cpIds.contains(currentCpId)) {
 				throw new DataException("Series[" + mappingBean.getParentCode()
-						+ "]不存在!");
+						+ "]不存在！");
 			}
 		}
 
@@ -861,7 +861,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				.getParentCode());
 		if (program == null) {
 			throw new DataException("Program[" + mappingBean.getParentCode()
-					+ "]不存在!");
+					+ "]不存在！");
 		}
 		// 检查该媒资是否属于该CP
 		if (program != null) {
@@ -869,7 +869,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			List<String> cpIds = Arrays.asList(cpId.split(","));
 			if (!cpIds.contains(currentCpId)) {
 				throw new DataException("Program["
-						+ mappingBean.getParentCode() + "]不存在!");
+						+ mappingBean.getParentCode() + "]不存在！");
 			}
 		}
 
@@ -977,7 +977,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				downloadFile(source, AdminGlobal.getImageUploadPath(filePath));
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
-				throw new DataException("下载[" + source + "]错误!");
+				throw new DataException("下载[" + source + "]错误！");
 			}
 		} else if (source.indexOf("ftp") == 0) {
 			try {
@@ -985,7 +985,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 						AdminGlobal.getImageUploadPath(filePath), true);
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
-				throw new DataException("下载[" + source + "]错误!");
+				throw new DataException("下载[" + source + "]错误！");
 			}
 		}
 		return filePath;

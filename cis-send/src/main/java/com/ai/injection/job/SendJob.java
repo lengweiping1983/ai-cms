@@ -151,7 +151,7 @@ public class SendJob {
 			boolean result = false;
 			try {
 				if (sendTask.getPlatformId() == null) {
-					throw new DataException("data is error.");
+					throw new DataException("数据错误！");
 				}
 				if (sendTask.getType() == InjectionObjectTypeEnum.OBJECT
 						.getKey()
@@ -167,12 +167,11 @@ public class SendJob {
 			} catch (DataException e) {
 				logger.error(e.getMessage(), e);
 				sendTask.setStatus(SendTaskStatusEnum.STOP.getKey());
-				injectionService.saveSendTask(sendTask);
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				sendTask.setStatus(SendTaskStatusEnum.STOP.getKey());
-				injectionService.saveSendTask(sendTask);
 			}
+			injectionService.saveSendTask(sendTask);
 			if (result) {
 				boolean sendResult = sendTask(sendTask);
 				if (sendResult) {

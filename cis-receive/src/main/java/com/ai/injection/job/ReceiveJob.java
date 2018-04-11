@@ -130,12 +130,12 @@ public class ReceiveJob {
 			}
 			if (receiveTask.getPlatformId() == null) {
 				// 属于数据异常
-				throw new DataException("data is error.");
+				throw new DataException("数据错误！");
 			}
 			platform = injectionPlatformRepository.findOne(receiveTask
 					.getPlatformId());
 			if (platform == null) {
-				throw new DataException("platform is null！");
+				throw new DataException("配置错误！");
 			}
 
 			String dirPath = "/receive/"
@@ -165,7 +165,6 @@ public class ReceiveJob {
 				if (receiveTask.getDownloadTimes() >= taskMaxRequestTimes) {
 					throw new DataException("XML文件下载失败！");
 				}
-				return;
 			}
 
 			// 3.解析XML
@@ -176,7 +175,7 @@ public class ReceiveJob {
 				receiveTask.setRequestXmlFileContent(getXmlFileContent(adi));
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
-				throw new DataException("XML文件解析出错！", e);
+				throw new DataException("XML文件解析出错！");
 			}
 
 			// 4.保存元数据
@@ -213,9 +212,10 @@ public class ReceiveJob {
 		receiveService.saveReceiveTask(receiveTask);
 
 		logger.info("handle task end. CorrelateId={"
-				+ receiveTask.getCorrelateId() + "}" + ",result={"
-				+ receiveTask.getResponseResult() + "}" + ",errorDescription={"
-				+ receiveTask.getResponseErrorDescription() + "}");
+				+ receiveTask.getCorrelateId() + "}" + ",ReplyResult={"
+				+ receiveTask.getReplyResult() + "}"
+				+ ",ReplyErrorDescription={"
+				+ receiveTask.getReplyErrorDescription() + "}");
 	}
 
 	private void sendTask() {
@@ -239,13 +239,12 @@ public class ReceiveJob {
 			// 1.验证数据
 			if (receiveTask.getPlatformId() == null) {
 				// 属于数据异常
-				throw new DataException("data is error.");
+				throw new DataException("数据错误！");
 			}
 			platform = injectionPlatformRepository.findOne(receiveTask
 					.getPlatformId());
 			if (platform == null) {
-				// 属于数据异常
-				throw new DataException("platform is null.");
+				throw new DataException("配置错误！");
 			}
 
 			// 2.生成结果XML
@@ -260,7 +259,7 @@ public class ReceiveJob {
 				// .readTxtFile(AdminGlobal.getXmlUploadPath(resultFileURL)));
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
-				throw new DataException(e.getMessage(), e);
+				throw new DataException("生成结果XML错误！");
 			}
 
 			// 3.发送结果
@@ -291,7 +290,7 @@ public class ReceiveJob {
 
 				receiveTask.setResponseStatus(ReceiveResponseStatusEnum.FAIL
 						.getKey());// 发送失败
-				throw new DataException(e.getMessage(), e);
+				throw new DataException("发送结果失败！");
 			}
 		} catch (DataException e) {
 			logger.error(e.getMessage(), e);
@@ -301,8 +300,9 @@ public class ReceiveJob {
 		receiveService.saveReceiveTask(receiveTask);
 
 		logger.info("send task end. CorrelateId={"
-				+ receiveTask.getCorrelateId() + "}" + ",result={"
-				+ receiveTask.getResponseResult() + "}" + ",errorDescription={"
+				+ receiveTask.getCorrelateId() + "}" + ",ResponseResult={"
+				+ receiveTask.getResponseResult() + "}"
+				+ ",ResponseErrorDescription={"
 				+ receiveTask.getResponseErrorDescription() + "}");
 	}
 

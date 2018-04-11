@@ -130,12 +130,12 @@ public class DownloadJob {
 				downloadService.calculateFailDownloadTask(downloadTask);
 
 				newTaskMaxNum++;
-				logger.info("download find timeout task!");
+				logger.info("download find timeout task！");
 			}
 		}
 
 		if (newTaskMaxNum <= 0) {
-			logger.info("download task pool is full, wait next time!");
+			logger.info("download task pool is full, wait next time！");
 			return;
 		}
 
@@ -183,7 +183,7 @@ public class DownloadJob {
 				return false;
 			}
 			downloadTask.setResponseCode("0");
-			downloadTask.setResponseMsg("下载成功!");
+			downloadTask.setResponseMsg("下载成功！");
 			downloadTask.setResponseTime(new Date());
 			downloadTask.setPercent(100);
 			downloadTask.setStatus(DownloadTaskStatusEnum.SUCCESS.getKey());
