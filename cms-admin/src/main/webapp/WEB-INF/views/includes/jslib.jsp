@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/views/includes/taglib.jsp"%>
 
-<c:set var="staticFileVersion" value="5" />
+<c:set var="staticFileVersion" value="6" />
 <c:choose>
 	<c:when test="${fn:contains(profiles, 'dev') || fn:contains(profiles, 'demo')}">
 		<c:set var="staticFileVersion" value="<%=System.currentTimeMillis()%>" />

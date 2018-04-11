@@ -39,15 +39,11 @@ public class InjectionPlatform extends AbstractEntity {
 
 	@NotNull
 	@Column(name = "provider")
-	private Integer provider = ProviderTypeEnum.HUAWEI.getKey(); // 平台服务公司
+	private Integer provider = ProviderTypeEnum.DEFAULT.getKey(); // 平台服务公司
 
 	@NotNull
 	@Column(name = "interface_mode")
 	private Integer interfaceMode = ProviderInterfaceModeEnum.C2.getKey();// 接口方式
-
-	@NotNull
-	@Column(name = "need_download_image")
-	private Integer needDownloadImage = YesNoEnum.NO.getKey();// 是否要下载海报
 
 	@NotNull
 	@Column(name = "need_download_video")
@@ -60,6 +56,9 @@ public class InjectionPlatform extends AbstractEntity {
 	@NotNull
 	@Column(name = "need_injection")
 	private Integer needInjection = YesNoEnum.NO.getKey();// 是否要自动分发
+
+	@Column(name = "injection_platform_id")
+	private String injectionPlatformId; // 自动分发平台
 
 	@NotNull
 	@Column(name = "csp_id")
@@ -162,14 +161,6 @@ public class InjectionPlatform extends AbstractEntity {
 		this.interfaceMode = interfaceMode;
 	}
 
-	public Integer getNeedDownloadImage() {
-		return needDownloadImage;
-	}
-
-	public void setNeedDownloadImage(Integer needDownloadImage) {
-		this.needDownloadImage = needDownloadImage;
-	}
-
 	public Integer getNeedDownloadVideo() {
 		return needDownloadVideo;
 	}
@@ -192,6 +183,14 @@ public class InjectionPlatform extends AbstractEntity {
 
 	public void setNeedInjection(Integer needInjection) {
 		this.needInjection = needInjection;
+	}
+
+	public String getInjectionPlatformId() {
+		return injectionPlatformId;
+	}
+
+	public void setInjectionPlatformId(String injectionPlatformId) {
+		this.injectionPlatformId = injectionPlatformId;
 	}
 
 	public String getCspId() {

@@ -50,8 +50,8 @@ public class InjectionPlatformController extends AbstractController {
 		model.addAttribute("mediaTemplateList",
 				configService.findAllMediaTemplate());
 
-		model.addAttribute("injectionPlatformList",
-				injectionPlatformRepository.findAllByValid());
+		model.addAttribute("injectionPlatformList", injectionPlatformRepository
+				.findAllByDirection(InjectionDirectionEnum.SEND.getKey()));
 	}
 
 	@RequestMapping(value = { "" })
@@ -122,7 +122,7 @@ public class InjectionPlatformController extends AbstractController {
 					.bean2bean(
 							injectionPlatform,
 							injectionPlatformInfo,
-							"siteCode,name,type,dependPlatformId,provider,interfaceMode,needDownloadImage,needDownloadVideo,needAudit,needInjection"
+							"siteCode,name,type,dependPlatformId,provider,interfaceMode,needDownloadVideo,needAudit,needInjection,injectionPlatformId"
 									+ ",cspId,lspId,serviceUrl,liveServiceUrl,isWSDL,namespace"
 									+ ",templateId,description,direction,isCallback,status"
 									+ ",templateCustom,playCodeCustom,codePrefix,correlatePrefix");

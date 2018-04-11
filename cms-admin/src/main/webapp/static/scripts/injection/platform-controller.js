@@ -14,6 +14,7 @@ $(function () {
                 success: function () {
                 	$("input:checkbox[name='templateId']").uniform();
                 	$("input:checkbox[name='dependPlatformId']").uniform();
+                	$("input:checkbox[name='injectionPlatformId']").uniform();
                 	
                     $("#editForm").validationEngine({
                         ajaxFormValidationMethod: 'post',
@@ -64,6 +65,7 @@ $(function () {
             var json = $("#editForm").serializeObject();
             json.templateId = $.InjectionPlatformController.getCheckboxValue('templateId');
             json.dependPlatformId = $.InjectionPlatformController.getCheckboxValue('dependPlatformId');
+            json.injectionPlatformId = $.InjectionPlatformController.getCheckboxValue('injectionPlatformId');
 
             $.common.ajaxAction({
                 url: path,

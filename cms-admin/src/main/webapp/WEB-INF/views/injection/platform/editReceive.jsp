@@ -159,19 +159,20 @@
 									<div class="col-md-9">
 										<div class="checkbox-list">
 											<c:forEach var="item" items="${injectionPlatformList}">
-												<c:set var="dependPlatformSelected" value="" />
-												<c:forEach var="dependPlatformId"
-													items="${injectionPlatform.dependPlatformId}">
-													<c:if test="${item.id eq dependPlatformId}">
-														<c:set var="dependPlatformSelected" value="1" />
+												<c:set var="injectionPlatformSelected" value="" />
+												<c:forEach var="injectionPlatformId"
+													items="${injectionPlatform.injectionPlatformId}">
+													<c:if test="${item.id eq injectionPlatformId}">
+														<c:set var="injectionPlatformSelected" value="1" />
 													</c:if>
 												</c:forEach>
-												<label><input name="dependPlatformId"
-													<c:if test="${dependPlatformSelected eq 1}"> checked </c:if>
+												<label><input name="injectionPlatformId"
+													<c:if test="${injectionPlatformSelected eq 1}"> checked </c:if>
 													class="validate[required]" type="checkbox"
 													value="${item.id}"><span
 													class="badge badge-success">${item.name}</span> </label>
 											</c:forEach>
+											<p class="help-block">自动分发.</p>
 										</div>
 									</div>
 								</div>
@@ -191,6 +192,32 @@
 													<c:if test="${! empty injectionPlatform.interfaceMode && item.key eq injectionPlatform.interfaceMode}"> selected="selected" </c:if>>${item.value}</option>
 											</c:forEach>
 										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">依赖平台: </label>
+
+									<div class="col-md-9">
+										<div class="checkbox-list">
+											<c:forEach var="item" items="${injectionPlatformList}">
+												<c:if test="${item.direction eq 0 && item.type eq 1}">
+													<c:set var="dependPlatformSelected" value="" />
+													<c:forEach var="dependPlatformId"
+														items="${injectionPlatform.dependPlatformId}">
+														<c:if test="${item.id eq dependPlatformId}">
+															<c:set var="dependPlatformSelected" value="1" />
+														</c:if>
+													</c:forEach>
+													<label><input name="dependPlatformId"
+														<c:if test="${dependPlatformSelected eq 1}"> checked </c:if>
+														type="checkbox" value="${item.id}"><span
+														class="badge badge-success">${item.name}</span> </label>
+												</c:if>
+											</c:forEach>
+										</div>
+										<p class="help-block">等依赖平台都处理后，才回复消息.</p>
 									</div>
 								</div>
 							</div>
