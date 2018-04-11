@@ -101,7 +101,7 @@
 								<div class="row">
 									<div class="col-md-12">
 										<div class="col-md-4">
-											<label class="control-label">请求标识: <input type="text"
+											<label class="control-label">工单标识: <input type="text"
 												name="search_correlateId__LIKE_S"
 												class="form-control input-small input-inline"
 												value="${param.search_correlateId__LIKE_S}">
@@ -130,7 +130,7 @@
 								<th class="sorting" abbr="receiveTime">接收时间</th>
 								<th class="sorting" abbr="status">工单状态</th>
 								<th class="sorting" abbr="priority">优先级</th>
-								<th class="sorting" abbr="correlateId">请求标识</th>
+								<th class="sorting" abbr="correlateId">工单标识</th>
 								<th class="sorting" abbr="responseTotalTimes">发送响应总次数</th>
 								<th class="sorting" abbr="lastResponseTime">最后发送响应时间</th>
 								<th class="sorting" abbr="requestResult">请求结果</th>
@@ -150,7 +150,7 @@
 								<th class="sorting" abbr="receiveTime">接收时间</th>
 								<th class="sorting" abbr="status">工单状态</th>
 								<th class="sorting" abbr="priority">优先级</th>
-								<th class="sorting" abbr="correlateId">请求标识</th>
+								<th class="sorting" abbr="correlateId">工单标识</th>
 								<th class="sorting" abbr="responseTotalTimes">发送响应总次数</th>
 								<th class="sorting" abbr="lastResponseTime">最后发送响应时间</th>
 								<th class="sorting" abbr="requestResult">请求结果</th>

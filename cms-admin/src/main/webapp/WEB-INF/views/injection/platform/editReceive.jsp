@@ -152,7 +152,9 @@
 							<div class="col-md-6">
 								<div class="form-group" id="needInjection_div_2"
 									<c:if test="${injectionPlatform.needInjection != 1}"> style="display: none" </c:if>>
-									<label class="control-label col-md-3">分发平台: </label>
+									<label class="control-label col-md-3">自动分发平台(<span
+										class="required">*</span>):
+									</label>
 
 									<div class="col-md-9">
 										<div class="checkbox-list">
@@ -166,7 +168,8 @@
 												</c:forEach>
 												<label><input name="dependPlatformId"
 													<c:if test="${dependPlatformSelected eq 1}"> checked </c:if>
-													type="checkbox" value="${item.id}"><span
+													class="validate[required]" type="checkbox"
+													value="${item.id}"><span
 													class="badge badge-success">${item.name}</span> </label>
 											</c:forEach>
 										</div>

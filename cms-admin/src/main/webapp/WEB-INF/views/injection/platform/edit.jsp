@@ -136,6 +136,7 @@
 												</c:if>
 											</c:forEach>
 										</div>
+										<p class="help-block">先分发到依赖平台，等依赖平台都成功后，才分发到该平台.</p>
 									</div>
 								</div>
 							</div>
@@ -303,26 +304,27 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">代码前缀(<span
+									<label class="control-label col-md-3">播放代码前缀(<span
 										class="required">*</span>):
 									</label>
 
 									<div class="col-md-9">
 										<input type="text" name="codePrefix"
 											value="${injectionPlatform.codePrefix}"
-											class="form-control validate[required]" placeholder="请输入代码前缀">
+											class="form-control validate[required]"
+											placeholder="请输入播放代码前缀">
 										<p class="help-block">全局代码前8位.</p>
 									</div>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">工单前缀: </label>
+									<label class="control-label col-md-3">工单标识前缀: </label>
 
 									<div class="col-md-9">
 										<input type="text" name="correlatePrefix"
 											value="${injectionPlatform.correlatePrefix}"
-											class="form-control" placeholder="请输入工单前缀">
+											class="form-control" placeholder="请输入工单标识前缀">
 										<p class="help-block">可以不填写.</p>
 									</div>
 								</div>
