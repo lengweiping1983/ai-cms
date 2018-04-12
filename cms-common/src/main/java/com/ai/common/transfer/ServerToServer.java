@@ -1,4 +1,4 @@
-package com.ai.common.download;
+package com.ai.common.transfer;
 
 import java.io.IOException;
 import java.net.InetAddress;

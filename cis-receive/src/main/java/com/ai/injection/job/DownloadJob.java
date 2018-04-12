@@ -20,9 +20,9 @@ import com.ai.cms.injection.entity.DownloadTask;
 import com.ai.cms.injection.enums.DownloadTaskStatusEnum;
 import com.ai.cms.injection.repository.DownloadTaskRepository;
 import com.ai.cms.injection.service.DownloadService;
-import com.ai.common.download.FTPTransferMode;
-import com.ai.common.download.ServerToClient;
-import com.ai.common.download.TaskCallback;
+import com.ai.common.transfer.FTPTransferMode;
+import com.ai.common.transfer.ServerToClient;
+import com.ai.common.transfer.TaskCallback;
 import com.ai.common.utils.MD5Util;
 
 @Service

@@ -1,7 +1,7 @@
 package com.ai.cms.injection.enums;
 
 public enum PlatformTypeEnum {
-	MEDIA_SYSTEM(1, "媒资系统"), BUSINESS_SYSTEM(2, "业务系统");
+	BUSINESS_SYSTEM(1, "业务平台"), APP_SYSTEM(2, "应用系统");
 
 	int key;
 	String value;

@@ -1,4 +1,4 @@
-package com.ai.common.download;
+package com.ai.common.transfer;
 
 public class TaskCallback {
 	public boolean begining(long taskId, long totalSize, long beginSize) {

@@ -1,4 +1,4 @@
-package com.ai.common.download;
+package com.ai.common.transfer;
 
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;

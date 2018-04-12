@@ -1,4 +1,4 @@
-package com.ai.common.download;
+package com.ai.common.transfer;
 
 public class FTPFileInfoVO {
 	private String ip;

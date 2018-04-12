@@ -63,7 +63,7 @@ public class GenProgramService extends GenCommonService {
 				.getAction() == InjectionActionTypeEnum.UPDATE.getKey())
 				&& platform.getDirection() == InjectionDirectionEnum.SEND
 						.getKey()
-				&& platform.getType() == PlatformTypeEnum.BUSINESS_SYSTEM
+				&& platform.getType() == PlatformTypeEnum.APP_SYSTEM
 						.getKey()
 				&& StringUtils.isNotEmpty(platform.getDependPlatformId())) {
 			List<InjectionObject> injectionObjectListAll = injectionService

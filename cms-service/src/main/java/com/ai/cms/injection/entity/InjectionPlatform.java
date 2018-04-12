@@ -32,7 +32,7 @@ public class InjectionPlatform extends AbstractEntity {
 
 	@NotNull
 	@Column(name = "type")
-	private Integer type = PlatformTypeEnum.MEDIA_SYSTEM.getKey(); // 平台类型
+	private Integer type = PlatformTypeEnum.BUSINESS_SYSTEM.getKey(); // 平台类型
 
 	@Column(name = "depend_platform_id")
 	private String dependPlatformId; // 依赖平台
