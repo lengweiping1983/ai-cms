@@ -24,7 +24,6 @@ public abstract class AbstractFTPClient {
 	private int currentRetryTimes = 0;
 	private long retryWaitTime = 1L * 1000L;
 	private boolean resumeBroken = true;
-	private boolean renew = false;
 
 	public int getRetryTimes() {
 		return retryTimes;
@@ -52,14 +51,6 @@ public abstract class AbstractFTPClient {
 
 	public void setResumeBroken(boolean resumeBroken) {
 		this.resumeBroken = resumeBroken;
-	}
-
-	public boolean isRenew() {
-		return renew;
-	}
-
-	public void setRenew(boolean renew) {
-		this.renew = renew;
 	}
 
 	protected boolean doTransferFlow() {

@@ -247,7 +247,7 @@ public class DownloadJob {
 		private Long downloadTaskId;
 		private String inputFilePath;
 		private String outputFilePath;
-		private boolean renew = false;
+		private boolean resumeBroken = true;
 
 		public DownloadThread(DownloadTask downloadTask) {
 			downloadTaskId = downloadTask.getId();
@@ -256,7 +256,7 @@ public class DownloadJob {
 					.getOutputFilePath());
 			if (downloadTask.getStatus() == DownloadTaskStatusEnum.REDOWNLOAD
 					.getKey()) {
-				renew = true;
+				resumeBroken = false;
 			}
 		}
 
@@ -270,7 +270,7 @@ public class DownloadJob {
 						+ " DownloadTaskId=" + downloadTaskId + " filePath{"
 						+ inputFilePath + "} download begin...");
 				ServerToClient stc = new ServerToClient();
-				stc.setRenew(renew);
+				stc.setResumeBroken(resumeBroken);
 				stc.setRetryTimes(taskMaxRequestTimes);
 				stc.setRetryWaitTime(1L);
 				stc.setTransferMode(FTPTransferMode.DOWNLOAD);

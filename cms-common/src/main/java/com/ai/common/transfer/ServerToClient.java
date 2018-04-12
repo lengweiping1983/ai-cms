@@ -92,7 +92,7 @@ public class ServerToClient extends AbstractFTPClient {
 			double finishPercent = 0.0;
 
 			if (localFile.exists()) {
-				if (isResumeBroken() && !isRenew()) {
+				if (isResumeBroken()) {
 					long localSize = localFile.length();
 					if (localSize > totalSize) {
 						logger.error("Local file exists and greater than remote file's size.");
@@ -178,7 +178,7 @@ public class ServerToClient extends AbstractFTPClient {
 			double finishPercent = 0.0;
 
 			if (files.length != 0) {
-				if (isResumeBroken() && !isRenew()) {
+				if (isResumeBroken()) {
 					long remoteSize = files[0].getSize();
 					if (totalSize < remoteSize) {
 						logger.error("Remote file exists and greater than local file's size.");
