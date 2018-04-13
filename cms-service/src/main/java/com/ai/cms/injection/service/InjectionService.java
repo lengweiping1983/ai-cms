@@ -78,6 +78,151 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		sendTaskRepository.save(sendTask);
 	}
 
+	public void saveInjectionObject(InjectionObject injectionObject) {
+		injectionObjectRepository.save(injectionObject);
+	}
+
+	public void updateMediaFileInjectionObjectAndInjectionStatus(
+			InjectionPlatform injectionPlatform, String category,
+			Long mediaFileId) {
+		if (injectionPlatform == null) {
+			return;
+		}
+		if (mediaFileId == null) {
+			return;
+		}
+		MediaFile mediaFile = mediaFileRepository.findOne(mediaFileId);
+		if (mediaFile == null) {
+			return;
+		}
+		updateInjectionStatus(injectionPlatform, mediaFile);
+
+		updateProgramInjectionObjectAndInjectionStatus(injectionPlatform,
+				category, mediaFile.getProgramId());
+	}
+
+	public void updateProgramInjectionObjectAndInjectionStatus(
+			InjectionPlatform injectionPlatform, String category, Long programId) {
+		if (injectionPlatform == null) {
+			return;
+		}
+		if (programId == null) {
+			return;
+		}
+		Program program = programRepository.findOne(programId);
+		if (program == null) {
+			return;
+		}
+
+		List<InjectionObject> subInjectionObjectList = injectionObjectRepository
+				.findByPlatformIdAndCategoryAndItemTypeAndItemParentId(
+						injectionPlatform.getId(), category,
+						InjectionItemTypeEnum.MOVIE.getKey(), programId);
+
+		Integer injectionStatus = getInjectionObjectInjectionStatus(subInjectionObjectList);
+
+		InjectionObject programInjectionObject = getAndNewInjectionObject(
+				program, injectionPlatform.getId(), category);
+		programInjectionObject.setInjectionStatus(injectionStatus);
+		injectionObjectRepository.save(programInjectionObject);
+
+		updateInjectionStatus(injectionPlatform, program, false);
+
+		updateSeriesInjectionObjectAndInjectionStatus(injectionPlatform,
+				category, program.getSeriesId());
+	}
+
+	public void updateSeriesInjectionObjectAndInjectionStatus(
+			InjectionPlatform injectionPlatform, String category, Long seriesId) {
+		if (injectionPlatform == null) {
+			return;
+		}
+		if (seriesId == null) {
+			return;
+		}
+		Series series = seriesRepository.findOne(seriesId);
+		if (series == null) {
+			return;
+		}
+
+		List<InjectionObject> subInjectionObjectList = injectionObjectRepository
+				.findByPlatformIdAndCategoryAndItemTypeAndItemParentId(
+						injectionPlatform.getId(), category,
+						InjectionItemTypeEnum.PROGRAM.getKey(), seriesId);
+
+		Integer injectionStatus = getInjectionObjectInjectionStatus(subInjectionObjectList);
+
+		InjectionObject seriesInjectionObject = getAndNewInjectionObject(
+				series, injectionPlatform.getId(), category);
+		seriesInjectionObject.setInjectionStatus(injectionStatus);
+		injectionObjectRepository.save(seriesInjectionObject);
+
+		updateInjectionStatus(injectionPlatform, series, false);
+	}
+
+	public Integer getInjectionObjectInjectionStatus(
+			List<InjectionObject> subInjectionObjectList) {
+		boolean allInjectionSuccess = true;
+		boolean hasInjectionIng = false;
+		boolean hasInjectionSuccess = false;
+		boolean hasInjectionFail = false;
+
+		boolean allRecoverySuccess = true;
+		boolean hasRecoveryIng = false;
+		boolean hasRecoverySuccess = false;
+		boolean hasRecoveryFail = false;
+
+		for (InjectionObject subInjectionObject : subInjectionObjectList) {
+			if (subInjectionObject.getInjectionStatus() != InjectionStatusEnum.INJECTION_SUCCESS
+					.getKey()) {
+				allInjectionSuccess = false;
+			}
+			if (subInjectionObject.getInjectionStatus() != InjectionStatusEnum.RECOVERY_SUCCESS
+					.getKey()) {
+				allRecoverySuccess = false;
+			}
+			if (subInjectionObject.getInjectionStatus() == InjectionStatusEnum.INJECTION_ING
+					.getKey()) {
+				hasInjectionIng = true;
+			} else if (subInjectionObject.getInjectionStatus() == InjectionStatusEnum.INJECTION_SUCCESS
+					.getKey()) {
+				hasInjectionSuccess = true;
+			} else if (subInjectionObject.getInjectionStatus() == InjectionStatusEnum.INJECTION_FAIL
+					.getKey()) {
+				hasInjectionFail = true;
+			} else if (subInjectionObject.getInjectionStatus() == InjectionStatusEnum.RECOVERY_ING
+					.getKey()) {
+				hasRecoveryIng = true;
+			} else if (subInjectionObject.getInjectionStatus() == InjectionStatusEnum.RECOVERY_SUCCESS
+					.getKey()) {
+				hasRecoverySuccess = true;
+			} else if (subInjectionObject.getInjectionStatus() == InjectionStatusEnum.RECOVERY_FAIL
+					.getKey()) {
+				hasRecoveryFail = true;
+			}
+		}
+		Integer injectionStatus = InjectionStatusEnum.INJECTION_WAIT.getKey();
+		if (hasInjectionFail) {
+			injectionStatus = InjectionStatusEnum.INJECTION_FAIL.getKey();
+		} else if (hasRecoveryFail) {
+			injectionStatus = InjectionStatusEnum.RECOVERY_FAIL.getKey();
+		} else if (hasRecoverySuccess || hasRecoveryIng) {
+			if (allRecoverySuccess) {
+				injectionStatus = InjectionStatusEnum.RECOVERY_SUCCESS.getKey();
+			} else {
+				injectionStatus = InjectionStatusEnum.RECOVERY_ING.getKey();
+			}
+		} else if (hasInjectionSuccess || hasInjectionIng) {
+			if (allInjectionSuccess) {
+				injectionStatus = InjectionStatusEnum.INJECTION_SUCCESS
+						.getKey();
+			} else {
+				injectionStatus = InjectionStatusEnum.INJECTION_ING.getKey();
+			}
+		}
+		return injectionStatus;
+	}
+
 	public void resetSendTask(SendTask sendTask) {
 		sendTask.setRequestTimes(0);
 		sendTask.setStatus(SendTaskStatusEnum.WAIT.getKey());
@@ -107,14 +252,14 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				&& sendTask.getItemType() == InjectionItemTypeEnum.SERIES
 						.getKey()) {
 			Series series = seriesRepository.findOne(sendTask.getItemId());
-			updateInjectionStatus(injectionPlatform, series);
+			updateInjectionStatus(injectionPlatform, series, false);
 		} else if (sendTask.getItemId() != null
 				&& sendTask.getType() == InjectionObjectTypeEnum.OBJECT
 						.getKey()
 				&& sendTask.getItemType() == InjectionItemTypeEnum.PROGRAM
 						.getKey()) {
 			Program program = programRepository.findOne(sendTask.getItemId());
-			updateInjectionStatus(injectionPlatform, program);
+			updateInjectionStatus(injectionPlatform, program, false);
 		}
 	}
 
@@ -185,15 +330,15 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				String partnerItemCode = StringUtils.trimToEmpty(idArray[4]);
 				switch (typeEnum) {
 				case PROGRAM:
-					if (platform.getIsCallback() == YesNoEnum.YES.getKey()
-							&& result == 0) {
-						// 需要回写的等待回写成功后，再更新状态为已分发(在回写接口中实现)
-						injectionObjectRepository.updateInjectionCode(
-								platformId, category,
-								InjectionItemTypeEnum.PROGRAM.getKey(), id,
-								currentTime, partnerItemCode);
-						break;
-					}
+					// if (platform.getIsCallback() == YesNoEnum.YES.getKey()
+					// && result == 0) {
+					// // 需要回写的等待回写成功后，再更新状态为已分发(在回写接口中实现)
+					// injectionObjectRepository.updateInjectionCode(
+					// platformId, category,
+					// InjectionItemTypeEnum.PROGRAM.getKey(), id,
+					// currentTime, partnerItemCode);
+					// break;
+					// }
 					injectionObjectRepository.updateInjectionStatus(platformId,
 							category, InjectionItemTypeEnum.PROGRAM.getKey(),
 							id, status, currentTime, partnerItemCode);
@@ -204,15 +349,15 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 							id, status, currentTime, partnerItemCode);
 					break;
 				case MOVIE:
-					if (platform.getIsCallback() == YesNoEnum.YES.getKey()
-							&& result == 0) {
-						// 需要回写的等待回写成功后，再更新状态为已分发(在回写接口中实现)
-						injectionObjectRepository.updateInjectionCode(
-								platformId, category,
-								InjectionItemTypeEnum.MOVIE.getKey(), id,
-								currentTime, partnerItemCode);
-						break;
-					}
+					// if (platform.getIsCallback() == YesNoEnum.YES.getKey()
+					// && result == 0) {
+					// // 需要回写的等待回写成功后，再更新状态为已分发(在回写接口中实现)
+					// injectionObjectRepository.updateInjectionCode(
+					// platformId, category,
+					// InjectionItemTypeEnum.MOVIE.getKey(), id,
+					// currentTime, partnerItemCode);
+					// break;
+					// }
 					injectionObjectRepository.updateInjectionStatus(platformId,
 							category, InjectionItemTypeEnum.MOVIE.getKey(), id,
 							status, currentTime, partnerItemCode);
@@ -299,14 +444,27 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		return injectionPlatformRepository.findOne(id);
 	}
 
-	public List<InjectionPlatform> findAllReceiveInjectionPlatform() {
-		return injectionPlatformRepository
-				.findAllByDirection(InjectionDirectionEnum.RECEIVE.getKey());
+	public List<InjectionPlatform> findAllInjectionPlatform(List<Long> ids) {
+		return injectionPlatformRepository.findAll(ids);
 	}
 
 	public List<InjectionPlatform> findAllSendInjectionPlatform() {
 		return injectionPlatformRepository
 				.findAllByDirection(InjectionDirectionEnum.SEND.getKey());
+	}
+
+	public List<InjectionPlatform> findAllReceiveInjectionPlatform() {
+		return injectionPlatformRepository
+				.findAllByDirection(InjectionDirectionEnum.RECEIVE.getKey());
+	}
+
+	public List<InjectionPlatform> findAllIndirectInjectionPlatform() {
+		return injectionPlatformRepository
+				.findAllByDirection(InjectionDirectionEnum.INDIRECT.getKey());
+	}
+
+	public List<InjectionPlatform> findAllInjectionPlatform() {
+		return injectionPlatformRepository.findAllByValid();
 	}
 
 	public Map<Long, InjectionPlatform> findAllInjectionPlatformMap(
@@ -319,12 +477,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		return injectionPlatformMap;
 	}
 
-	public void updateInjectionStatus(Series series) {
-		updateInjectionStatus(null, series);
-	}
-
 	public void updateInjectionStatus(InjectionPlatform injectionPlatform,
-			Series series) {
+			Series series, boolean deliver) {
 		if (series == null) {
 			return;
 		}
@@ -355,19 +509,18 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		}
 
 		seriesRepository.save(series);
-		List<Program> programList = programRepository.findBySeriesId(series
-				.getId());
-		for (Program program : programList) {
-			updateInjectionStatus(injectionPlatform, program);
+
+		if (deliver) {
+			List<Program> programList = programRepository.findBySeriesId(series
+					.getId());
+			for (Program program : programList) {
+				updateInjectionStatus(injectionPlatform, program, deliver);
+			}
 		}
 	}
 
-	public void updateInjectionStatus(Program program) {
-		updateInjectionStatus(null, program);
-	}
-
 	public void updateInjectionStatus(InjectionPlatform injectionPlatform,
-			Program program) {
+			Program program, boolean deliver) {
 		if (program == null) {
 			return;
 		}
@@ -398,15 +551,14 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		}
 
 		programRepository.save(program);
-		List<MediaFile> mediaFileList = mediaFileRepository
-				.findByProgramId(program.getId());
-		for (MediaFile mediaFile : mediaFileList) {
-			updateInjectionStatus(injectionPlatform, mediaFile);
-		}
-	}
 
-	public void updateInjectionStatus(MediaFile mediaFile) {
-		updateInjectionStatus(null, mediaFile);
+		if (deliver) {
+			List<MediaFile> mediaFileList = mediaFileRepository
+					.findByProgramId(program.getId());
+			for (MediaFile mediaFile : mediaFileList) {
+				updateInjectionStatus(injectionPlatform, mediaFile);
+			}
+		}
 	}
 
 	public void updateInjectionStatus(InjectionPlatform injectionPlatform,
@@ -498,47 +650,66 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 
 	public InjectionObject getAndNewInjectionObject(Series series,
 			Long platformId, String category) {
-		InjectionObject seriesInjectionObject = injectionObjectRepository
+		InjectionObject injectionObject = injectionObjectRepository
 				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(platformId,
 						category, InjectionItemTypeEnum.SERIES.getKey(),
 						series.getId());
-		if (seriesInjectionObject == null) {
-			seriesInjectionObject = new InjectionObject(platformId, category);
-			seriesInjectionObject.setItemType(InjectionItemTypeEnum.SERIES
-					.getKey());
-			seriesInjectionObject.setItemId(series.getId());
+		if (injectionObject == null) {
+			injectionObject = new InjectionObject(platformId, category);
+			injectionObject.setItemType(InjectionItemTypeEnum.SERIES.getKey());
+			injectionObject.setItemId(series.getId());
 		}
-		return seriesInjectionObject;
+		if (StringUtils.isNotEmpty(series.getPlayCode())) {
+			injectionObject.setPartnerItemCode(series.getPlayCode());
+		}
+		return injectionObject;
 	}
 
 	public InjectionObject getAndNewInjectionObject(Program program,
 			Long platformId, String category) {
-		InjectionObject programInjectionObject = injectionObjectRepository
+		InjectionObject injectionObject = injectionObjectRepository
 				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(platformId,
 						category, InjectionItemTypeEnum.PROGRAM.getKey(),
 						program.getId());
-		if (programInjectionObject == null) {
-			programInjectionObject = new InjectionObject(platformId, category);
-			programInjectionObject.setItemType(InjectionItemTypeEnum.PROGRAM
-					.getKey());
-			programInjectionObject.setItemId(program.getId());
+		if (injectionObject == null) {
+			injectionObject = new InjectionObject(platformId, category);
+			injectionObject.setItemType(InjectionItemTypeEnum.PROGRAM.getKey());
+			injectionObject.setItemId(program.getId());
+			injectionObject.setItemParentId(program.getSeriesId());
 		}
-		return programInjectionObject;
+		if (StringUtils.isNotEmpty(program.getPlayCode())) {
+			injectionObject.setPartnerItemCode(program.getPlayCode());
+		}
+		return injectionObject;
 	}
 
 	public InjectionObject getAndNewInjectionObject(MediaFile mediaFile,
 			Long platformId, String category) {
-		InjectionObject mediaFileInjectionObject = injectionObjectRepository
+		InjectionObject injectionObject = injectionObjectRepository
 				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(platformId,
 						category, InjectionItemTypeEnum.MOVIE.getKey(),
 						mediaFile.getId());
-		if (mediaFileInjectionObject == null) {
-			mediaFileInjectionObject = new InjectionObject(platformId, category);
-			mediaFileInjectionObject.setItemType(InjectionItemTypeEnum.MOVIE
-					.getKey());
-			mediaFileInjectionObject.setItemId(mediaFile.getId());
+		if (injectionObject == null) {
+			injectionObject = new InjectionObject(platformId, category);
+			injectionObject.setItemType(InjectionItemTypeEnum.MOVIE.getKey());
+			injectionObject.setItemId(mediaFile.getId());
+			injectionObject.setItemParentId(mediaFile.getProgramId());
 		}
-		return mediaFileInjectionObject;
+		if (StringUtils.isNotEmpty(mediaFile.getPlayCode())) {
+			injectionObject.setPartnerItemCode(mediaFile.getPlayCode());
+		}
+		return injectionObject;
+	}
+
+	public InjectionObject findByPlatformIdAndItemTypeAndPartnerItemCode(
+			Long platformId, Integer itemType, String partnerItemCode) {
+		List<InjectionObject> injectionObjectList = injectionObjectRepository
+				.findByPlatformIdAndItemTypeAndPartnerItemCode(platformId,
+						itemType, partnerItemCode);
+		if (injectionObjectList != null && injectionObjectList.size() > 0) {
+			return injectionObjectList.get(0);
+		}
+		return null;
 	}
 
 	public static boolean isContainChinese(String str) {
@@ -565,16 +736,16 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		return map;
 	}
 
-	public String getTitleAdditionalSuffix(Series series, String category) {
-		return series.getTitle();
+	public String getNameAdditionalSuffix(Series series, String category) {
+		return series.getName();
 	}
 
-	public String getTitleAdditionalSuffix(Series series, Program program,
+	public String getNameAdditionalSuffix(Series series, Program program,
 			String category) {
 		if (series == null) {
-			return program.getTitle();
+			return program.getName();
 		}
-		return series.getTitle() + " " + program.getTitle();
+		return series.getName() + " " + program.getName();
 	}
 
 	/**
@@ -599,7 +770,9 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	 * @return
 	 */
 	public boolean isInjected(Integer injectionStatus) {
-		if (injectionStatus == InjectionStatusEnum.INJECTION_SUCCESS.getKey()) {
+		if (injectionStatus == InjectionStatusEnum.INJECTION_SUCCESS.getKey()
+				|| injectionStatus == InjectionStatusEnum.RECOVERY_FAIL
+						.getKey()) {
 			return true;
 		}
 		return false;
@@ -614,38 +787,37 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			return;
 		}
 		for (int i = 0; i < platformIds.length; i++) {
+			InjectionPlatform injectionPlatform = injectionPlatformRepository
+					.getOne(platformIds[i]);
+			if (injectionPlatform == null) {
+				continue;
+			}
 			Map<String, String> categoryMap = getCategoryMapByTemplateIds(templateIds[i]);
 			for (String category : categoryMap.keySet()) {
 				InjectionObject seriesInjectionObject = getAndNewInjectionObject(
 						series, platformIds[i], category);
-				inInjection(series, seriesInjectionObject, category,
-						categoryMap.get(category), prioritys[i]);
+				inInjection(injectionPlatform, series, seriesInjectionObject,
+						category, categoryMap.get(category), prioritys[i]);
 			}
 		}
-		updateInjectionStatus(series);
+		updateInjectionStatus(null, series, true);
 	}
 
-	private synchronized Long inInjection(Series series,
-			InjectionObject seriesInjectionObject, String category,
-			String templateId, Integer priority) {
+	private synchronized Long inInjection(InjectionPlatform injectionPlatform,
+			Series series, InjectionObject seriesInjectionObject,
+			String category, String templateId, Integer priority) {
 		Long taskId = null;
 		if (!isInjection(seriesInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(seriesInjectionObject);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			if (isInjected(seriesInjectionObject.getInjectionStatus())) {
 				sendTask.setAction(InjectionActionTypeEnum.UPDATE.getKey());
-				seriesInjectionObject
-						.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-								.getKey());
 			} else {
 				sendTask.setAction(InjectionActionTypeEnum.CREATE.getKey());
-				seriesInjectionObject
-						.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-								.getKey());
 			}
 			sendTask.setItemType(InjectionItemTypeEnum.SERIES.getKey());
 			sendTask.setItemId(series.getId());
-			String name = getTitleAdditionalSuffix(series, category)
+			String name = getNameAdditionalSuffix(series, category)
 					+ " "
 					+ InjectionActionTypeEnum
 							.getEnumByKey(sendTask.getAction()).getName();
@@ -653,8 +825,28 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			sendTask.setPriority(priority);
 			sendTask.setStatus(SendTaskStatusEnum.DEFAULT.getKey());
 			sendTaskRepository.save(sendTask);
-			injectionObjectRepository.save(seriesInjectionObject);
 			taskId = sendTask.getId();
+
+			seriesInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+							.getKey());
+			injectionObjectRepository.save(seriesInjectionObject);
+
+			// 生成间接平台分发对象
+			if (injectionPlatform.getIsCallback() == YesNoEnum.YES.getKey()
+					&& StringUtils.isNotEmpty(injectionPlatform
+							.getIndirectPlatformId())) {
+				for (String indirectPlatformId : injectionPlatform
+						.getIndirectPlatformId().split(",")) {
+					InjectionObject tempInjectionObject = getAndNewInjectionObject(
+							series, Long.valueOf(indirectPlatformId),
+							seriesInjectionObject.getCategory());
+					tempInjectionObject
+							.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+									.getKey());
+					injectionObjectRepository.save(tempInjectionObject);
+				}
+			}
 		}
 
 		// 节目后分发
@@ -664,9 +856,9 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			InjectionObject programInjectionObject = getAndNewInjectionObject(
 					program, seriesInjectionObject.getPlatformId(),
 					seriesInjectionObject.getCategory());
-			inInjection(series, seriesInjectionObject, program,
-					programInjectionObject, category, templateId, priority,
-					taskId);
+			inInjection(injectionPlatform, series, seriesInjectionObject,
+					program, programInjectionObject, category, templateId,
+					priority, taskId);
 		}
 		return taskId;
 	}
@@ -680,6 +872,11 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			return;
 		}
 		for (int i = 0; i < platformIds.length; i++) {
+			InjectionPlatform injectionPlatform = injectionPlatformRepository
+					.getOne(platformIds[i]);
+			if (injectionPlatform == null) {
+				continue;
+			}
 			Map<String, String> categoryMap = getCategoryMapByTemplateIds(templateIds[i]);
 			for (String category : categoryMap.keySet()) {
 				InjectionObject seriesInjectionObject = null;
@@ -698,28 +895,29 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 						&& !isInjected(seriesInjectionObject
 								.getInjectionStatus())) {
 					// 剧头没有分发，先分发剧头
-					preTaskId = inInjection(series, seriesInjectionObject,
-							category, categoryMap.get(category), prioritys[i]);
+					preTaskId = inInjection(injectionPlatform, series,
+							seriesInjectionObject, category,
+							categoryMap.get(category), prioritys[i]);
 				}
 
 				InjectionObject programInjectionObject = getAndNewInjectionObject(
 						program, platformIds[i], category);
-				inInjection(series, seriesInjectionObject, program,
-						programInjectionObject, category,
+				inInjection(injectionPlatform, series, seriesInjectionObject,
+						program, programInjectionObject, category,
 						categoryMap.get(category), prioritys[i], preTaskId);
 			}
 		}
-		updateInjectionStatus(program);
+		updateInjectionStatus(null, program, true);
 	}
 
-	private synchronized Long inInjection(Series series,
-			InjectionObject seriesInjectionObject, Program program,
-			InjectionObject programInjectionObject, String category,
-			String templateId, Integer priority, Long preTaskId) {
+	private synchronized Long inInjection(InjectionPlatform injectionPlatform,
+			Series series, InjectionObject seriesInjectionObject,
+			Program program, InjectionObject programInjectionObject,
+			String category, String templateId, Integer priority, Long preTaskId) {
 		if (program.getMediaStatus() != MediaStatusEnum.OK.getKey()
 				&& program.getMediaStatus() != MediaStatusEnum.MISS_IMAGE
 						.getKey()) {
-			throw new ServiceException("节目[" + program.getTitle()
+			throw new ServiceException("节目[" + program.getName()
 					+ "]媒体内容未准备好，不能分发!");
 		}
 		// 媒体内容一起分发
@@ -740,18 +938,12 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			if (isInjected(programInjectionObject.getInjectionStatus())) {
 				sendTask.setAction(InjectionActionTypeEnum.UPDATE.getKey());
-				programInjectionObject
-						.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-								.getKey());
 			} else {
 				sendTask.setAction(InjectionActionTypeEnum.CREATE.getKey());
-				programInjectionObject
-						.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-								.getKey());
 			}
 			sendTask.setItemType(InjectionItemTypeEnum.PROGRAM.getKey());
 			sendTask.setItemId(program.getId());
-			String name = getTitleAdditionalSuffix(series, program, category)
+			String name = getNameAdditionalSuffix(series, program, category)
 					+ " "
 					+ InjectionActionTypeEnum
 							.getEnumByKey(sendTask.getAction()).getName();
@@ -766,30 +958,53 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			// 记录媒体内容的Id
 			sendTask.setSubItemId(subItemId);
 			sendTaskRepository.save(sendTask);
-			injectionObjectRepository.save(programInjectionObject);
 			taskId = sendTask.getId();
+
+			programInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+							.getKey());
+			injectionObjectRepository.save(programInjectionObject);
+
+			// 生成间接平台分发对象
+			if (injectionPlatform.getIsCallback() == YesNoEnum.YES.getKey()
+					&& StringUtils.isNotEmpty(injectionPlatform
+							.getIndirectPlatformId())) {
+				for (String indirectPlatformId : injectionPlatform
+						.getIndirectPlatformId().split(",")) {
+					InjectionObject tempInjectionObject = getAndNewInjectionObject(
+							program, Long.valueOf(indirectPlatformId),
+							programInjectionObject.getCategory());
+					tempInjectionObject
+							.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+									.getKey());
+					injectionObjectRepository.save(tempInjectionObject);
+				}
+			}
+
 		}
 
 		for (MediaFile mediaFile : mediaFileList) {
 			InjectionObject mediaFileInjectionObject = getAndNewInjectionObject(
 					mediaFile, programInjectionObject.getPlatformId(),
 					programInjectionObject.getCategory());
-			inInjection(series, program, programInjectionObject, mediaFile,
+			inInjection(injectionPlatform, series, program,
+					programInjectionObject, mediaFile,
 					mediaFileInjectionObject, category, priority, taskId);
 		}
 		return taskId;
 	}
 
-	private synchronized void inInjection(Series series, Program program,
+	private synchronized void inInjection(InjectionPlatform injectionPlatform,
+			Series series, Program program,
 			InjectionObject programInjectionObject, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject, String category,
 			Integer priority, Long preTaskId) {
 		if (StringUtils.isEmpty(mediaFile.getFilePath())) {
-			throw new ServiceException("节目[" + program.getTitle()
+			throw new ServiceException("节目[" + program.getName()
 					+ "]媒体文件路径为空，不能分发!");
 		}
 		if (isContainChinese(mediaFile.getFilePath())) {
-			throw new ServiceException("节目[" + program.getTitle()
+			throw new ServiceException("节目[" + program.getName()
 					+ "]媒体文件路径包括中文，不能分发!");
 		}
 		if (!isInjection(mediaFileInjectionObject.getInjectionStatus())) {
@@ -797,18 +1012,12 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			if (isInjected(mediaFileInjectionObject.getInjectionStatus())) {
 				sendTask.setAction(InjectionActionTypeEnum.UPDATE.getKey());
-				mediaFileInjectionObject
-						.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-								.getKey());
 			} else {
 				sendTask.setAction(InjectionActionTypeEnum.CREATE.getKey());
-				mediaFileInjectionObject
-						.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-								.getKey());
 			}
 			sendTask.setItemType(InjectionItemTypeEnum.MOVIE.getKey());
 			sendTask.setItemId(mediaFile.getId());
-			String name = getTitleAdditionalSuffix(series, program, category)
+			String name = getNameAdditionalSuffix(series, program, category)
 					+ " "
 					+ InjectionActionTypeEnum
 							.getEnumByKey(sendTask.getAction()).getName();
@@ -821,7 +1030,26 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			}
 			// 媒体内容暂不需要生成任务,会同节目一起分发
 			// sendTaskRepository.save(sendTask);
+			mediaFileInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+							.getKey());
 			injectionObjectRepository.save(mediaFileInjectionObject);
+
+			// 生成间接平台分发对象
+			if (injectionPlatform.getIsCallback() == YesNoEnum.YES.getKey()
+					&& StringUtils.isNotEmpty(injectionPlatform
+							.getIndirectPlatformId())) {
+				for (String indirectPlatformId : injectionPlatform
+						.getIndirectPlatformId().split(",")) {
+					InjectionObject tempInjectionObject = getAndNewInjectionObject(
+							mediaFile, Long.valueOf(indirectPlatformId),
+							mediaFileInjectionObject.getCategory());
+					tempInjectionObject
+							.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+									.getKey());
+					injectionObjectRepository.save(tempInjectionObject);
+				}
+			}
 		}
 	}
 
@@ -834,20 +1062,25 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			return;
 		}
 		for (int i = 0; i < platformIds.length; i++) {
+			InjectionPlatform injectionPlatform = injectionPlatformRepository
+					.getOne(platformIds[i]);
+			if (injectionPlatform == null) {
+				continue;
+			}
 			Map<String, String> categoryMap = getCategoryMapByTemplateIds(templateIds[i]);
 			for (String category : categoryMap.keySet()) {
 				InjectionObject seriesInjectionObject = getAndNewInjectionObject(
 						series, platformIds[i], category);
-				outInjection(series, seriesInjectionObject, category,
-						categoryMap.get(category), prioritys[i]);
+				outInjection(injectionPlatform, series, seriesInjectionObject,
+						category, categoryMap.get(category), prioritys[i]);
 			}
 		}
-		updateInjectionStatus(series);
+		updateInjectionStatus(null, series, true);
 	}
 
-	private synchronized void outInjection(Series series,
-			InjectionObject seriesInjectionObject, String category,
-			String templateId, Integer priority) {
+	private synchronized void outInjection(InjectionPlatform injectionPlatform,
+			Series series, InjectionObject seriesInjectionObject,
+			String category, String templateId, Integer priority) {
 		// 节目先回收
 		List<Program> programList = programRepository.findBySeriesId(series
 				.getId());
@@ -855,24 +1088,18 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			InjectionObject programInjectionObject = getAndNewInjectionObject(
 					program, seriesInjectionObject.getPlatformId(),
 					seriesInjectionObject.getCategory());
-			outInjection(series, seriesInjectionObject, program,
-					programInjectionObject, category, templateId, priority);
+			outInjection(injectionPlatform, series, seriesInjectionObject,
+					program, programInjectionObject, category, templateId,
+					priority);
 		}
 
-		if (seriesInjectionObject.getInjectionStatus() == InjectionStatusEnum.INJECTION_SUCCESS
-				.getKey()
-				|| seriesInjectionObject.getInjectionStatus() == InjectionStatusEnum.RECOVERY_FAIL
-						.getKey()) {
-			seriesInjectionObject
-					.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
-							.getKey());
-
+		if (isInjected(seriesInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(seriesInjectionObject);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			sendTask.setAction(InjectionActionTypeEnum.DELETE.getKey());
 			sendTask.setItemType(InjectionItemTypeEnum.SERIES.getKey());
 			sendTask.setItemId(series.getId());
-			String name = getTitleAdditionalSuffix(series, category)
+			String name = getNameAdditionalSuffix(series, category)
 					+ " "
 					+ InjectionActionTypeEnum
 							.getEnumByKey(sendTask.getAction()).getName();
@@ -880,7 +1107,26 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			sendTask.setPriority(priority);
 			sendTask.setStatus(SendTaskStatusEnum.DEFAULT.getKey());
 			sendTaskRepository.save(sendTask);
+
+			seriesInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+							.getKey());
 			injectionObjectRepository.save(seriesInjectionObject);
+			// 生成间接平台分发对象
+			if (injectionPlatform.getIsCallback() == YesNoEnum.YES.getKey()
+					&& StringUtils.isNotEmpty(injectionPlatform
+							.getIndirectPlatformId())) {
+				for (String indirectPlatformId : injectionPlatform
+						.getIndirectPlatformId().split(",")) {
+					InjectionObject tempInjectionObject = getAndNewInjectionObject(
+							series, Long.valueOf(indirectPlatformId),
+							seriesInjectionObject.getCategory());
+					tempInjectionObject
+							.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+									.getKey());
+					injectionObjectRepository.save(tempInjectionObject);
+				}
+			}
 		}
 	}
 
@@ -893,6 +1139,11 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			return;
 		}
 		for (int i = 0; i < platformIds.length; i++) {
+			InjectionPlatform injectionPlatform = injectionPlatformRepository
+					.getOne(platformIds[i]);
+			if (injectionPlatform == null) {
+				continue;
+			}
 			Map<String, String> categoryMap = getCategoryMapByTemplateIds(templateIds[i]);
 			for (String category : categoryMap.keySet()) {
 				InjectionObject seriesInjectionObject = null;
@@ -904,18 +1155,18 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				InjectionObject programInjectionObject = getAndNewInjectionObject(
 						program, platformIds[i], category);
 
-				outInjection(series, seriesInjectionObject, program,
-						programInjectionObject, category,
+				outInjection(injectionPlatform, series, seriesInjectionObject,
+						program, programInjectionObject, category,
 						categoryMap.get(category), prioritys[i]);
 			}
 		}
-		updateInjectionStatus(program);
+		updateInjectionStatus(null, program, true);
 	}
 
-	private synchronized void outInjection(Series series,
-			InjectionObject seriesInjectionObject, Program program,
-			InjectionObject programInjectionObject, String category,
-			String templateId, Integer priority) {
+	private synchronized void outInjection(InjectionPlatform injectionPlatform,
+			Series series, InjectionObject seriesInjectionObject,
+			Program program, InjectionObject programInjectionObject,
+			String category, String templateId, Integer priority) {
 		// 媒体内容一起回收
 		List<Long> templateIdList = new ArrayList<Long>();
 		for (String tempId : templateId.split(",")) {
@@ -932,24 +1183,18 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			InjectionObject mediaFileInjectionObject = getAndNewInjectionObject(
 					mediaFile, programInjectionObject.getPlatformId(),
 					programInjectionObject.getCategory());
-			outInjection(series, program, programInjectionObject, mediaFile,
+			outInjection(injectionPlatform, series, program,
+					programInjectionObject, mediaFile,
 					mediaFileInjectionObject, category, priority);
 		}
 
-		if (programInjectionObject.getInjectionStatus() == InjectionStatusEnum.INJECTION_SUCCESS
-				.getKey()
-				|| programInjectionObject.getInjectionStatus() == InjectionStatusEnum.RECOVERY_FAIL
-						.getKey()) {
-			programInjectionObject
-					.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
-							.getKey());
-
+		if (isInjected(programInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(programInjectionObject);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			sendTask.setAction(InjectionActionTypeEnum.DELETE.getKey());
 			sendTask.setItemType(InjectionItemTypeEnum.PROGRAM.getKey());
 			sendTask.setItemId(program.getId());
-			String name = getTitleAdditionalSuffix(series, program, category)
+			String name = getNameAdditionalSuffix(series, program, category)
 					+ " "
 					+ InjectionActionTypeEnum
 							.getEnumByKey(sendTask.getAction()).getName();
@@ -960,27 +1205,41 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			// 记录媒体内容的Id
 			sendTask.setSubItemId(subItemId);
 			sendTaskRepository.save(sendTask);
+
+			programInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+							.getKey());
 			injectionObjectRepository.save(programInjectionObject);
+			// 生成间接平台分发对象
+			if (injectionPlatform.getIsCallback() == YesNoEnum.YES.getKey()
+					&& StringUtils.isNotEmpty(injectionPlatform
+							.getIndirectPlatformId())) {
+				for (String indirectPlatformId : injectionPlatform
+						.getIndirectPlatformId().split(",")) {
+					InjectionObject tempInjectionObject = getAndNewInjectionObject(
+							program, Long.valueOf(indirectPlatformId),
+							programInjectionObject.getCategory());
+					tempInjectionObject
+							.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+									.getKey());
+					injectionObjectRepository.save(tempInjectionObject);
+				}
+			}
 		}
 	}
 
-	private synchronized void outInjection(Series series, Program program,
+	private synchronized void outInjection(InjectionPlatform injectionPlatform,
+			Series series, Program program,
 			InjectionObject programInjectionObject, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject, String category,
 			Integer priority) {
-		if (mediaFileInjectionObject.getInjectionStatus() == InjectionStatusEnum.INJECTION_SUCCESS
-				.getKey()
-				|| mediaFileInjectionObject.getInjectionStatus() == InjectionStatusEnum.RECOVERY_FAIL
-						.getKey()) {
-			mediaFileInjectionObject
-					.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
-							.getKey());
+		if (isInjected(mediaFileInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(mediaFileInjectionObject);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			sendTask.setAction(InjectionActionTypeEnum.DELETE.getKey());
 			sendTask.setItemType(InjectionItemTypeEnum.MOVIE.getKey());
 			sendTask.setItemId(mediaFile.getId());
-			String name = getTitleAdditionalSuffix(series, program, category)
+			String name = getNameAdditionalSuffix(series, program, category)
 					+ " "
 					+ InjectionActionTypeEnum
 							.getEnumByKey(sendTask.getAction()).getName();
@@ -989,7 +1248,27 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			sendTask.setStatus(SendTaskStatusEnum.DEFAULT.getKey());
 			// 媒体内容暂不需要生成任务,会同节目一起分发
 			// sendTaskRepository.save(sendTask);
+
+			mediaFileInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+							.getKey());
 			injectionObjectRepository.save(mediaFileInjectionObject);
+
+			// 生成间接平台分发对象
+			if (injectionPlatform.getIsCallback() == YesNoEnum.YES.getKey()
+					&& StringUtils.isNotEmpty(injectionPlatform
+							.getIndirectPlatformId())) {
+				for (String indirectPlatformId : injectionPlatform
+						.getIndirectPlatformId().split(",")) {
+					InjectionObject tempInjectionObject = getAndNewInjectionObject(
+							mediaFile, Long.valueOf(indirectPlatformId),
+							mediaFileInjectionObject.getCategory());
+					tempInjectionObject
+							.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+									.getKey());
+					injectionObjectRepository.save(tempInjectionObject);
+				}
+			}
 		}
 	}
 

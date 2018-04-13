@@ -51,6 +51,7 @@ public class MediaFile extends AbstractEntity {
 
 	private Integer bitrate;// 码率，单位为K
 	private String resolution;// 分辨率
+	private String definition;// 清晰度
 	private String format;// 格式
 	private Integer duration;// 播放时长，单位为秒
 	private Integer subtitle = YesNoEnum.YES.getKey();// 是否有字幕:0=否、1=是
@@ -177,6 +178,14 @@ public class MediaFile extends AbstractEntity {
 
 	public void setResolution(String resolution) {
 		this.resolution = resolution;
+	}
+
+	public String getDefinition() {
+		return definition;
+	}
+
+	public void setDefinition(String definition) {
+		this.definition = definition;
 	}
 
 	public String getFormat() {

@@ -1,19 +1,18 @@
 package com.ai.injection.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.AdminGlobal;
-import com.ai.AppGlobal;
-import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.injection.bean.ADI;
 import com.ai.cms.injection.bean.CategoryBean;
 import com.ai.cms.injection.bean.MappingBean;
@@ -36,6 +35,7 @@ import com.ai.cms.media.repository.MediaFileRepository;
 import com.ai.cms.media.repository.ProgramRepository;
 import com.ai.cms.media.repository.SeriesRepository;
 import com.ai.cms.media.service.MediaService;
+import com.ai.common.enums.YesNoEnum;
 import com.ai.common.repository.AbstractRepository;
 import com.ai.common.service.AbstractService;
 
@@ -72,29 +72,18 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 	@Autowired
 	protected XMLGenerator xmlGenerator;
 
-	@Value("${spring.profiles.active:dev}")
-	protected String profiles;
-
-	@Value("${injection.suffix.lowercase:false}")
-	protected boolean suffixLowercase;
-
-	@Value("${injection.separate.char:}")
-	protected String separateChar;
-
-	@Value("${site.platformId:}")
-	protected String platformId;
-
 	@Override
 	public AbstractRepository<SendTask, Long> getRepository() {
 		return sendTaskRepository;
 	}
 
-	public boolean genCreateMediaFileTask(ADI adi, Program program,
+	public boolean genCreateMediaFileTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Program program,
 			InjectionObject programInjectionObject, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject) {
 		// 1.生成媒体内容操作对象
-		MovieBean mediaFileBean = genMovieBean(program, mediaFile,
-				mediaFileInjectionObject);
+		MovieBean mediaFileBean = genMovieBean(sendTask, platform, program,
+				mediaFile, mediaFileInjectionObject);
 		mediaFileBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
 		adi.getObjects().add(mediaFileBean);
 
@@ -105,7 +94,7 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 					.setInjectionStatus(InjectionStatusEnum.INJECTION_ING
 							.getKey());
 			injectionObjectRepository.save(mediaFileInjectionObject);
-			injectionService.updateInjectionStatus(mediaFile);
+			injectionService.updateInjectionStatus(platform, mediaFile);
 		}
 
 		// 2.生成媒体内容映射对象
@@ -117,12 +106,13 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 		return true;
 	}
 
-	public boolean genUpdateMediaFileTask(ADI adi, Program program,
+	public boolean genUpdateMediaFileTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Program program,
 			InjectionObject programInjectionObject, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject) {
 		// 1.生成媒体内容操作对象
-		MovieBean mediaFileBean = genMovieBean(program, mediaFile,
-				mediaFileInjectionObject);
+		MovieBean mediaFileBean = genMovieBean(sendTask, platform, program,
+				mediaFile, mediaFileInjectionObject);
 		mediaFileBean.setAction(InjectionActionTypeEnum.UPDATE.getValue());
 		adi.getObjects().add(mediaFileBean);
 
@@ -133,7 +123,7 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 					.setInjectionStatus(InjectionStatusEnum.INJECTION_ING
 							.getKey());
 			injectionObjectRepository.save(mediaFileInjectionObject);
-			injectionService.updateInjectionStatus(mediaFile);
+			injectionService.updateInjectionStatus(platform, mediaFile);
 		}
 
 		// 2.生成媒体内容映射对象
@@ -145,12 +135,13 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 		return true;
 	}
 
-	public boolean genDeleteMediaFileTask(ADI adi, Program program,
+	public boolean genDeleteMediaFileTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Program program,
 			InjectionObject programInjectionObject, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject) {
 		// 1.生成媒体内容操作对象
-		MovieBean mediaFileBean = genMovieBean(program, mediaFile,
-				mediaFileInjectionObject);
+		MovieBean mediaFileBean = genMovieBean(sendTask, platform, program,
+				mediaFile, mediaFileInjectionObject);
 		mediaFileBean.setAction(InjectionActionTypeEnum.DELETE.getValue());
 		adi.getObjects().add(mediaFileBean);
 
@@ -161,12 +152,13 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 					.setInjectionStatus(InjectionStatusEnum.RECOVERY_ING
 							.getKey());
 			injectionObjectRepository.save(mediaFileInjectionObject);
-			injectionService.updateInjectionStatus(mediaFile);
+			injectionService.updateInjectionStatus(platform, mediaFile);
 		}
 		return true;
 	}
 
-	public MovieBean genMovieBean(Program program, MediaFile mediaFile,
+	public MovieBean genMovieBean(SendTask sendTask,
+			InjectionPlatform platform, Program program, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject) {
 		MovieBean movieBean = new MovieBean();
 		movieBean.setID("" + mediaFile.getId());
@@ -175,14 +167,8 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 				.getPartnerItemCode());
 		movieBean.setType(String.valueOf(mediaFile.getType()));
 		if (StringUtils.isNotEmpty(mediaFile.getFilePath())) {
-			if (suffixLowercase) {
-				movieBean.setFileURL(AdminGlobal
-						.getVideoFtpPath(getOutputFilePath(mediaFile
-								.getFilePath())));
-			} else {
-				movieBean.setFileURL(AdminGlobal.getVideoFtpPath(mediaFile
-						.getFilePath()));
-			}
+			movieBean.setFileURL(AdminGlobal.getVideoFtpPath(mediaFile
+					.getFilePath()));
 			movieBean.setPlayURL(AdminGlobal.getVideoWebPath(mediaFile
 					.getFilePath()));
 		}
@@ -197,29 +183,37 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 				movieBean.setDuration(String.valueOf(program.getDuration()));
 			}
 		}
-		movieBean.setDefinitionFlag("HD");
+
 		movieBean.setMediaSpec(mediaFile.getMediaSpec());
-		if (mediaFile.getTemplateId() != null && mediaFile.getTemplateId() > 0) {
-			MediaTemplate mediaTemplate = AppGlobal.mediaTemplateMap
-					.get(mediaFile.getTemplateId());
-			if (mediaTemplate != null) {
-				// TS-CBR-H264-8000-1080P-25-MP2-128
-				String mediaSpec = mediaTemplate.getvFormat() + "-"
-						+ mediaTemplate.getvBitrateMode() + "-"
-						+ mediaTemplate.getvCodec() + "-"
-						+ mediaTemplate.getvBitrate() + "-"
-						+ mediaTemplate.getvResolution() + "-"
-						+ mediaTemplate.getvFramerate() + "-"
-						+ mediaTemplate.getaCodec() + "-"
-						+ mediaTemplate.getaBitrate();
-				movieBean.setMediaSpec(mediaSpec);
-				movieBean.setvBitrate(mediaTemplate.getvBitrateMode());
-				movieBean.setDefinitionFlag(mediaTemplate.getDefinition());
-			}
+		if (mediaFile.getBitrate() != null) {
+			movieBean.setBitrate("" + mediaFile.getBitrate());
+		}
+		if (StringUtils.isNotEmpty(mediaFile.getDefinition())) {
+			movieBean.setDefinition(mediaFile.getDefinition());
+		} else {
+			movieBean.setDefinition("HD");
 		}
 		// jsyd易视腾需要知道分发的平台Id(平台Id易视腾提供)
-		movieBean.setPlatformId(platformId);
-
+		String cdnPlatform = null;
+		if (platform.getIsCallback() == YesNoEnum.YES.getKey()
+				&& StringUtils.isNotEmpty(platform.getIndirectPlatformId())) {
+			List<Long> ids = new ArrayList<Long>();
+			for (String indirectPlatformId : platform.getIndirectPlatformId()
+					.split(",")) {
+				ids.add(Long.valueOf(indirectPlatformId));
+			}
+			if (ids.size() > 0) {
+				List<InjectionPlatform> injectionPlatformList = injectionPlatformRepository
+						.findAll(ids);
+				List<String> platformCodeList = injectionPlatformList.stream()
+						.map(s -> s.getPlatformCode())
+						.collect(Collectors.toList());
+				cdnPlatform = StringUtils.join(platformCodeList.toArray(), ",");
+			}
+		}
+		if (StringUtils.isNotEmpty(cdnPlatform)) {
+			movieBean.setCdnPlatform(cdnPlatform);
+		}
 		return movieBean;
 	}
 
@@ -433,12 +427,14 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 	 * @param source
 	 * @return
 	 */
-	public String getSeparateString(final String source) {
-		if (StringUtils.isEmpty(separateChar) || StringUtils.isEmpty(source)) {
+	public String getSeparateString(SendTask sendTask,
+			InjectionPlatform platform, final String source) {
+		if (StringUtils.isEmpty(platform.getSeparateChar())
+				|| StringUtils.isEmpty(source)) {
 			return source;
 		}
 		String a = getSeparateString(source, DEFAULT_SEPARATE_CHAR_ARR, ",");
-		String b = a.replaceAll(",", separateChar);
+		String b = a.replaceAll(",", platform.getSeparateChar());
 		return b;
 	}
 

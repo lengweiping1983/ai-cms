@@ -32,7 +32,7 @@ ALTER TABLE `cms_injection_platform` CHANGE COLUMN `interface_mode` `interface_m
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `is_wsdl` `is_wsdl` int DEFAULT 1;
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `status` `status` int DEFAULT 0;
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `is_callback` `is_callback` int DEFAULT 0;
-ALTER TABLE `cms_injection_platform` CHANGE COLUMN `direction` `direction` int DEFAULT 0;
+ALTER TABLE `cms_injection_platform` CHANGE COLUMN `direction` `direction` int DEFAULT 1;
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `template_custom` `template_custom` int DEFAULT 0;
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `play_code_custom` `play_code_custom` int DEFAULT 0;
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `code_prefix` `code_prefix` varchar(255) DEFAULT '00000000';
@@ -57,6 +57,7 @@ ALTER TABLE `cms_injection_receive_task` CHANGE COLUMN `response_error_descripti
 ALTER TABLE `cms_injection_receive_task` CHANGE COLUMN `response_xml_file_path` `response_xml_file_path` varchar(1024) DEFAULT NULL;
 ALTER TABLE `cms_injection_receive_task` CHANGE COLUMN `response_xml_file_content` `response_xml_file_content` longtext DEFAULT NULL;
 ALTER TABLE `cms_injection_receive_task` CHANGE COLUMN `request_xml_file_content` `request_xml_file_content` longtext DEFAULT NULL;
+ALTER TABLE `cms_injection_receive_task` CHANGE COLUMN `reply_error_description` `reply_error_description` varchar(1024) DEFAULT NULL;
 
 
 ALTER TABLE `cms_media_series` CHANGE COLUMN `source` `source` int DEFAULT 0;

@@ -26,7 +26,7 @@
             <Property Name="Language"><![CDATA[$!objectBean.Language]]></Property>
 			<Property Name="ReleaseYear"><![CDATA[$!objectBean.ReleaseYear]]></Property>
             <Property Name="Duration"><![CDATA[$!objectBean.Duration]]></Property>
-            <Property Name="Definition"><![CDATA[$!objectBean.DefinitionFlag]]></Property>
+            <Property Name="Definition"><![CDATA[$!objectBean.Definition]]></Property>
             <Property Name="Is3d">0</Property>
             <Property Name="Compere"><![CDATA[$!objectBean.Compere]]></Property>
             <Property Name="Guest"><![CDATA[$!objectBean.Guest]]></Property>
@@ -55,7 +55,7 @@
             <Property Name="ProgramType"><![CDATA[$!objectBean.Type]]></Property>
             <Property Name="ProgramType2"><![CDATA[]]></Property>
             <Property Name="EnName"></Property>
-            <Property Name="Definition"><![CDATA[$!objectBean.DefinitionFlag]]></Property>
+            <Property Name="Definition"><![CDATA[$!objectBean.Definition]]></Property>
             <Property Name="Is3d">0</Property>
             <Property Name="PictureURL1"><![CDATA[$!objectBean.image1]]></Property>
             <Property Name="Compere"><![CDATA[$!objectBean.Compere]]></Property>
@@ -66,21 +66,21 @@
 			<Property Name="ContentProvider"><![CDATA[$!objectBean.ContentProvider]]></Property>
 			#end
 		</Object>
-	#end#if($objectBean.ElementType == "Movie")
+	#end#if($objectBean.ElementType == "Movie")#if($!objectBean.Action != "DELETE" || $platform.needDeleteMediaFile == 1)
 <Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
 			#if($!objectBean.Action != "DELETE")
 			<Property Name="Code"><![CDATA[$!objectBean.Code]]></Property>
             <Property Name="FileURL"><![CDATA[$!objectBean.FileURL]]></Property>
             <Property Name="PlayURL"><![CDATA[$!objectBean.PlayURL]]></Property>
-            <Property Name="CdnPlatform"><![CDATA[$!objectBean.platformId]]></Property>
-            <Property Name="Definition"><![CDATA[$!objectBean.DefinitionFlag]]></Property>
+            <Property Name="CdnPlatform"><![CDATA[$!objectBean.CdnPlatform]]></Property>
+            <Property Name="Definition"><![CDATA[$!objectBean.Definition]]></Property>
             <Property Name="BitRateId">1</Property>
 			<Property Name="Dispatch">1</Property>
-			<Property Name="Md5"><![CDATA[$!objectBean.fileMd5]]></Property>
+			<Property Name="Md5"><![CDATA[$!objectBean.FileMd5]]></Property>
 			<Property Name="IsTranscode">0</Property>
 			#end
 		</Object>
-	#end#if($objectBean.ElementType == "Category")
+	#end#end#if($objectBean.ElementType == "Category")
 <Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action" ParentID="$!objectBean.ParentCode" ParentCode="$!objectBean.ParentCode">
 			#if($!objectBean.Action != "DELETE")
 			<Property Name="Description"><![CDATA[$!objectBean.Description]]></Property>

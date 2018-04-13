@@ -31,6 +31,7 @@ import com.ai.cms.media.entity.Series;
 import com.ai.common.enums.ContentTypeEnum;
 import com.ai.common.enums.OnlineStatusEnum;
 import com.ai.common.enums.ProgramTypeEnum;
+import com.ai.common.enums.YesNoEnum;
 import com.ai.common.exception.DataException;
 import com.ai.common.utils.BeanInfoUtil;
 
@@ -49,7 +50,7 @@ public class GenProgramService extends GenCommonService {
 	 * @return
 	 */
 	public boolean genTask(SendTask sendTask, InjectionPlatform platform) {
-		// 1.获取对象
+		// 1.获取对象,检查状态
 		Program program = programRepository.findOne(sendTask.getItemId());
 		if (program == null) {
 			throw new DataException("节目不存在！");
@@ -63,8 +64,7 @@ public class GenProgramService extends GenCommonService {
 				.getAction() == InjectionActionTypeEnum.UPDATE.getKey())
 				&& platform.getDirection() == InjectionDirectionEnum.SEND
 						.getKey()
-				&& platform.getType() == PlatformTypeEnum.APP_SYSTEM
-						.getKey()
+				&& platform.getType() == PlatformTypeEnum.APP_SYSTEM.getKey()
 				&& StringUtils.isNotEmpty(platform.getDependPlatformId())) {
 			List<InjectionObject> injectionObjectListAll = injectionService
 					.findInjectionObjectList(InjectionItemTypeEnum.PROGRAM,
@@ -115,7 +115,7 @@ public class GenProgramService extends GenCommonService {
 
 		// 3.生成节目任务
 		ADI adi = new ADI();
-		genProgramTask(sendTask, adi, program, programInjectionObject);
+		genProgramTask(sendTask, platform, adi, program, programInjectionObject);
 
 		// 4.生成xml
 		genXML(sendTask, platform, adi);
@@ -126,23 +126,27 @@ public class GenProgramService extends GenCommonService {
 		return true;
 	}
 
-	public void genProgramTask(SendTask sendTask, ADI adi, Program program,
-			InjectionObject programInjectionObject) {
+	public void genProgramTask(SendTask sendTask, InjectionPlatform platform,
+			ADI adi, Program program, InjectionObject programInjectionObject) {
 		if (sendTask.getAction() == InjectionActionTypeEnum.CREATE.getKey()) {// 发送增加命令
-			genCreateProgramTask(sendTask, adi, program, programInjectionObject);
+			genCreateProgramTask(sendTask, platform, adi, program,
+					programInjectionObject);
 		} else if (sendTask.getAction() == InjectionActionTypeEnum.UPDATE
 				.getKey()) {// 发送修改命令
-			genUpdateProgramTask(sendTask, adi, program, programInjectionObject);
+			genUpdateProgramTask(sendTask, platform, adi, program,
+					programInjectionObject);
 		} else if (sendTask.getAction() == InjectionActionTypeEnum.DELETE
 				.getKey()) {// 发送删除命令
-			genDeleteProgramTask(sendTask, adi, program, programInjectionObject);
+			genDeleteProgramTask(sendTask, platform, adi, program,
+					programInjectionObject);
 		}
 	}
 
-	private void genCreateProgramTask(SendTask sendTask, ADI adi,
-			Program program, InjectionObject programInjectionObject) {
+	private void genCreateProgramTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Program program,
+			InjectionObject programInjectionObject) {
 		// 1.生成节目操作对象
-		ProgramBean programBean = genProgramBean(program,
+		ProgramBean programBean = genProgramBean(sendTask, platform, program,
 				programInjectionObject);
 		programBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
 		adi.getObjects().add(programBean);
@@ -154,80 +158,83 @@ public class GenProgramService extends GenCommonService {
 					.setInjectionStatus(InjectionStatusEnum.INJECTION_ING
 							.getKey());
 			injectionObjectRepository.save(programInjectionObject);
-			injectionService.updateInjectionStatus(program);
+			injectionService.updateInjectionStatus(platform, program, false);
 		}
 
-		if ("jsydnews".equalsIgnoreCase(profiles)) {
-			// 如果推送的是单片（比如电影），那还是要把此program分装到某个series下
-			if (program.getType() == ProgramTypeEnum.MOVIE.getKey()) {// 单集类型
-				// 1. 根据节目虚拟剧头
-				Series virtualSeries = new Series();
-				BeanInfoUtil.bean2bean(program, virtualSeries, Program.METADATA
-						+ "," + Program.POSTER + "," + Series.METADATA_OTHER);
-				virtualSeries.setId(program.getId() + 9000000000l);
-				InjectionObject virtualSeriesInjectionObject = new InjectionObject(
-						null, null);
+		// 2.判断单片是否要包装成剧头
+		// 如果推送的是单片（比如电影），那还是要把此program分装到某个series下
+		if (program.getType() == ProgramTypeEnum.MOVIE.getKey()
+				&& platform.getNeedPackingProgram() == YesNoEnum.YES.getKey()) {// 单集类型
+			// a. 根据节目虚拟剧头
+			Series virtualSeries = new Series();
+			BeanInfoUtil.bean2bean(program, virtualSeries, Program.METADATA
+					+ "," + Program.POSTER + "," + Series.METADATA_OTHER);
+			virtualSeries.setId(program.getId() + 9000000000l);
+			InjectionObject virtualSeriesInjectionObject = new InjectionObject(
+					null, null);
 
-				// 2.生成剧头操作对象
-				SeriesBean seriesBean = genSeriesService.genSeriesBean(
-						virtualSeries, virtualSeriesInjectionObject);
-				seriesBean.setVolumnCount("" + 1);
-				seriesBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
-				adi.getObjects().add(0, seriesBean);
+			// b.生成剧头操作对象
+			SeriesBean seriesBean = genSeriesService.genSeriesBean(sendTask,
+					platform, virtualSeries, virtualSeriesInjectionObject);
+			seriesBean.setVolumnCount("" + 1);
+			seriesBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
+			adi.getObjects().add(0, seriesBean);
 
-				// 3. 生成剧头与节目映像
-				MappingBean mappingBean = genCreateSeriesMappingBean(
-						virtualSeries, virtualSeriesInjectionObject, program,
-						programInjectionObject);
-				adi.getMappings().add(mappingBean);
-			}
-		} else {
+			// c. 生成剧头与节目映像
+			MappingBean mappingBean = genCreateSeriesMappingBean(virtualSeries,
+					virtualSeriesInjectionObject, program,
+					programInjectionObject);
+			adi.getMappings().add(mappingBean);
+		}
+
+		// 3.生成海报操作对象
+		if (platform.getNeedImageObject() == YesNoEnum.YES.getKey()) {
 			if (StringUtils.isNotEmpty(program.getImage1())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(program,
 						programInjectionObject, program.getImage1(),
 						1000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(program,
 						programInjectionObject, 1000000000l, 1, 1);
 				adi.getMappings().add(mappingBean);
 			}
 			if (StringUtils.isNotEmpty(program.getImage2())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(program,
 						programInjectionObject, program.getImage2(),
 						2000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(program,
 						programInjectionObject, 2000000000l, 1, 2);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(program.getImage3())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(program,
 						programInjectionObject, program.getImage3(),
 						3000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(program,
 						programInjectionObject, 3000000000l, 1, 3);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(program.getImage4())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(program,
 						programInjectionObject, program.getImage4(),
 						4000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(program,
 						programInjectionObject, 4000000000l, 1, 4);
 				adi.getMappings().add(mappingBean);
@@ -235,7 +242,8 @@ public class GenProgramService extends GenCommonService {
 		}
 
 		// 4.获取所有的媒体内容
-		genMediaFileData(sendTask, adi, program, programInjectionObject);
+		genMediaFileData(sendTask, platform, adi, program,
+				programInjectionObject);
 
 		// 5.生成剧头节目映射
 		if (program.getType() == ProgramTypeEnum.TV.getKey()
@@ -253,7 +261,171 @@ public class GenProgramService extends GenCommonService {
 		}
 	}
 
-	private void genMediaFileData(SendTask sendTask, ADI adi, Program program,
+	private void genUpdateProgramTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Program program,
+			InjectionObject programInjectionObject) {
+		// 1.生成节目操作对象
+		ProgramBean programBean = genProgramBean(sendTask, platform, program,
+				programInjectionObject);
+		programBean.setAction(InjectionActionTypeEnum.UPDATE.getValue());
+		adi.getObjects().add(programBean);
+
+		if (programInjectionObject.getInjectionStatus() != InjectionStatusEnum.INJECTION_ING
+				.getKey()) {
+			// 设置对象分发状态为分发中
+			programInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.INJECTION_ING
+							.getKey());
+			injectionObjectRepository.save(programInjectionObject);
+			injectionService.updateInjectionStatus(platform, program, false);
+		}
+
+		// 2.判断单片是否要包装成剧头
+		// 如果推送的是单片（比如电影），那还是要把此program分装到某个series下
+		if (program.getType() == ProgramTypeEnum.MOVIE.getKey()
+				&& platform.getNeedPackingProgram() == YesNoEnum.YES.getKey()) {// 单集类型
+			// 1. 根据节目虚拟剧头
+			Series virtualSeries = new Series();
+			BeanInfoUtil.bean2bean(program, virtualSeries, Program.METADATA
+					+ "," + Program.POSTER + "," + Series.METADATA_OTHER);
+			virtualSeries.setId(program.getId() + 9000000000l);
+			InjectionObject virtualSeriesInjectionObject = new InjectionObject(
+					null, null);
+
+			// 2.生成剧头操作对象
+			SeriesBean seriesBean = genSeriesService.genSeriesBean(sendTask,
+					platform, virtualSeries, virtualSeriesInjectionObject);
+			seriesBean.setVolumnCount("" + 1);
+			seriesBean.setAction(InjectionActionTypeEnum.UPDATE.getValue());
+			adi.getObjects().add(0, seriesBean);
+
+			// 3. 生成剧头与节目映像
+			MappingBean mappingBean = genCreateSeriesMappingBean(virtualSeries,
+					virtualSeriesInjectionObject, program,
+					programInjectionObject);
+			adi.getMappings().add(mappingBean);
+		}
+
+		// 3.生成海报操作对象
+		if (platform.getNeedImageObject() == YesNoEnum.YES.getKey()) {
+			if (StringUtils.isNotEmpty(program.getImage1())) {
+				// a.生成海报操作对象
+				PictureBean pictureBean = genCreatePictureBean(program,
+						programInjectionObject, program.getImage1(),
+						1000000000l);
+				adi.getObjects().add(pictureBean);
+
+				// b.生成海报映射对象
+				MappingBean mappingBean = genCreatePictureMappingBean(program,
+						programInjectionObject, 1000000000l, 1, 1);
+				adi.getMappings().add(mappingBean);
+			}
+
+			if (StringUtils.isNotEmpty(program.getImage2())) {
+				// a.生成海报操作对象
+				PictureBean pictureBean = genCreatePictureBean(program,
+						programInjectionObject, program.getImage2(),
+						2000000000l);
+				adi.getObjects().add(pictureBean);
+
+				// b.生成海报映射对象
+				MappingBean mappingBean = genCreatePictureMappingBean(program,
+						programInjectionObject, 2000000000l, 1, 2);
+				adi.getMappings().add(mappingBean);
+			}
+
+			if (StringUtils.isNotEmpty(program.getImage3())) {
+				// a.生成海报操作对象
+				PictureBean pictureBean = genCreatePictureBean(program,
+						programInjectionObject, program.getImage3(),
+						3000000000l);
+				adi.getObjects().add(pictureBean);
+
+				// b.生成海报映射对象
+				MappingBean mappingBean = genCreatePictureMappingBean(program,
+						programInjectionObject, 3000000000l, 1, 3);
+				adi.getMappings().add(mappingBean);
+			}
+
+			if (StringUtils.isNotEmpty(program.getImage4())) {
+				// a.生成海报操作对象
+				PictureBean pictureBean = genCreatePictureBean(program,
+						programInjectionObject, program.getImage4(),
+						4000000000l);
+				adi.getObjects().add(pictureBean);
+
+				// b.生成海报映射对象
+				MappingBean mappingBean = genCreatePictureMappingBean(program,
+						programInjectionObject, 4000000000l, 1, 4);
+				adi.getMappings().add(mappingBean);
+			}
+		}
+
+		// 4.获取所有的媒体内容
+		genMediaFileData(sendTask, platform, adi, program,
+				programInjectionObject);
+
+		// 5.生成剧头节目映射
+		if (program.getType() == ProgramTypeEnum.TV.getKey()
+				&& program.getSeriesId() != null) {// 多集类型
+			Series series = seriesRepository.findOne(program.getSeriesId());
+			if (series != null) {
+				InjectionObject seriesInjectionObject = injectionService
+						.getAndNewInjectionObject(series,
+								sendTask.getPlatformId(),
+								sendTask.getCategory());
+				MappingBean mappingBean = genCreateSeriesMappingBean(series,
+						seriesInjectionObject, program, programInjectionObject);
+				adi.getMappings().add(mappingBean);
+			}
+		}
+	}
+
+	private void genDeleteProgramTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Program program,
+			InjectionObject programInjectionObject) {
+		// 1.生成节目操作对象
+		ProgramBean programBean = genProgramBean(sendTask, platform, program,
+				programInjectionObject);
+		programBean.setAction(InjectionActionTypeEnum.DELETE.getValue());
+		adi.getObjects().add(programBean);
+
+		if (programInjectionObject.getInjectionStatus() != InjectionStatusEnum.RECOVERY_ING
+				.getKey()) {
+			// 设置对象分发状态为回收中
+			programInjectionObject
+					.setInjectionStatus(InjectionStatusEnum.RECOVERY_ING
+							.getKey());
+			injectionObjectRepository.save(programInjectionObject);
+			injectionService.updateInjectionStatus(platform, program, false);
+		}
+
+		// 2.判断单片是否要包装成剧头
+		// 如果推送的是单片（比如电影），那还是要把此program分装到某个series下
+		if (program.getType() == ProgramTypeEnum.MOVIE.getKey()
+				&& platform.getNeedPackingProgram() == YesNoEnum.YES.getKey()) {// 单集类型
+			// 1. 根据节目虚拟剧头
+			Series virtualSeries = new Series();
+			BeanInfoUtil.bean2bean(program, virtualSeries, Program.METADATA
+					+ "," + Program.POSTER + "," + Series.METADATA_OTHER);
+			virtualSeries.setId(program.getId() + 9000000000l);
+			InjectionObject virtualSeriesInjectionObject = new InjectionObject(
+					null, null);
+
+			// 2.生成剧头操作对象
+			SeriesBean seriesBean = genSeriesService.genSeriesBean(sendTask,
+					platform, virtualSeries, virtualSeriesInjectionObject);
+			seriesBean.setAction(InjectionActionTypeEnum.DELETE.getValue());
+			adi.getObjects().add(seriesBean);
+		}
+
+		// 3.获取所有的媒体内容
+		genMediaFileData(sendTask, platform, adi, program,
+				programInjectionObject);
+	}
+
+	private void genMediaFileData(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Program program,
 			InjectionObject programInjectionObject) {
 		if (StringUtils.isEmpty(sendTask.getSubItemId())) {
 			return;
@@ -267,17 +439,17 @@ public class GenProgramService extends GenCommonService {
 								programInjectionObject.getCategory());
 				if (sendTask.getAction() == InjectionActionTypeEnum.CREATE
 						.getKey()) {
-					genCreateMediaFileTask(adi, program,
+					genCreateMediaFileTask(sendTask, platform, adi, program,
 							programInjectionObject, mediaFile,
 							mediaFileInjectionObject);
 				} else if (sendTask.getAction() == InjectionActionTypeEnum.UPDATE
 						.getKey()) {
-					genUpdateMediaFileTask(adi, program,
+					genUpdateMediaFileTask(sendTask, platform, adi, program,
 							programInjectionObject, mediaFile,
 							mediaFileInjectionObject);
 				} else if (sendTask.getAction() == InjectionActionTypeEnum.DELETE
 						.getKey()) {
-					genDeleteMediaFileTask(adi, program,
+					genDeleteMediaFileTask(sendTask, platform, adi, program,
 							programInjectionObject, mediaFile,
 							mediaFileInjectionObject);
 				}
@@ -285,163 +457,8 @@ public class GenProgramService extends GenCommonService {
 		}
 	}
 
-	private void genUpdateProgramTask(SendTask sendTask, ADI adi,
-			Program program, InjectionObject programInjectionObject) {
-		// 1.生成节目操作对象
-		ProgramBean programBean = genProgramBean(program,
-				programInjectionObject);
-		programBean.setAction(InjectionActionTypeEnum.UPDATE.getValue());
-		adi.getObjects().add(programBean);
-
-		if (programInjectionObject.getInjectionStatus() != InjectionStatusEnum.INJECTION_ING
-				.getKey()) {
-			// 设置对象分发状态为分发中
-			programInjectionObject
-					.setInjectionStatus(InjectionStatusEnum.INJECTION_ING
-							.getKey());
-			injectionObjectRepository.save(programInjectionObject);
-			injectionService.updateInjectionStatus(program);
-		}
-
-		if ("jsydnews".equalsIgnoreCase(profiles)) {
-			// 如果推送的是单片（比如电影），那还是要把此program分装到某个series下
-			if (program.getType() == ProgramTypeEnum.MOVIE.getKey()) {// 单集类型
-				// 1. 根据节目虚拟剧头
-				Series virtualSeries = new Series();
-				BeanInfoUtil.bean2bean(program, virtualSeries, Program.METADATA
-						+ "," + Program.POSTER + "," + Series.METADATA_OTHER);
-				virtualSeries.setId(program.getId() + 9000000000l);
-				InjectionObject virtualSeriesInjectionObject = new InjectionObject(
-						null, null);
-
-				// 2.生成剧头操作对象
-				SeriesBean seriesBean = genSeriesService.genSeriesBean(
-						virtualSeries, virtualSeriesInjectionObject);
-				seriesBean.setVolumnCount("" + 1);
-				seriesBean.setAction(InjectionActionTypeEnum.UPDATE.getValue());
-				adi.getObjects().add(0, seriesBean);
-
-				// 3. 生成剧头与节目映像
-				MappingBean mappingBean = genCreateSeriesMappingBean(
-						virtualSeries, virtualSeriesInjectionObject, program,
-						programInjectionObject);
-				adi.getMappings().add(mappingBean);
-			}
-		} else {
-			if (StringUtils.isNotEmpty(program.getImage1())) {
-				// 2.生成海报操作对象
-				PictureBean pictureBean = genCreatePictureBean(program,
-						programInjectionObject, program.getImage1(),
-						1000000000l);
-				adi.getObjects().add(pictureBean);
-
-				// 3.生成海报映射对象
-				MappingBean mappingBean = genCreatePictureMappingBean(program,
-						programInjectionObject, 1000000000l, 1, 1);
-				adi.getMappings().add(mappingBean);
-			}
-
-			if (StringUtils.isNotEmpty(program.getImage2())) {
-				// 2.生成海报操作对象
-				PictureBean pictureBean = genCreatePictureBean(program,
-						programInjectionObject, program.getImage2(),
-						2000000000l);
-				adi.getObjects().add(pictureBean);
-
-				// 3.生成海报映射对象
-				MappingBean mappingBean = genCreatePictureMappingBean(program,
-						programInjectionObject, 2000000000l, 1, 2);
-				adi.getMappings().add(mappingBean);
-			}
-
-			if (StringUtils.isNotEmpty(program.getImage3())) {
-				// 2.生成海报操作对象
-				PictureBean pictureBean = genCreatePictureBean(program,
-						programInjectionObject, program.getImage3(),
-						3000000000l);
-				adi.getObjects().add(pictureBean);
-
-				// 3.生成海报映射对象
-				MappingBean mappingBean = genCreatePictureMappingBean(program,
-						programInjectionObject, 3000000000l, 1, 3);
-				adi.getMappings().add(mappingBean);
-			}
-
-			if (StringUtils.isNotEmpty(program.getImage4())) {
-				// 2.生成海报操作对象
-				PictureBean pictureBean = genCreatePictureBean(program,
-						programInjectionObject, program.getImage4(),
-						4000000000l);
-				adi.getObjects().add(pictureBean);
-
-				// 3.生成海报映射对象
-				MappingBean mappingBean = genCreatePictureMappingBean(program,
-						programInjectionObject, 4000000000l, 1, 4);
-				adi.getMappings().add(mappingBean);
-			}
-		}
-
-		// 4.获取所有的媒体内容
-		genMediaFileData(sendTask, adi, program, programInjectionObject);
-
-		// 5.生成剧头节目映射
-		if (program.getType() == ProgramTypeEnum.TV.getKey()
-				&& program.getSeriesId() != null) {// 多集类型
-			Series series = seriesRepository.findOne(program.getSeriesId());
-			if (series != null) {
-				InjectionObject seriesInjectionObject = injectionService
-						.getAndNewInjectionObject(series,
-								sendTask.getPlatformId(),
-								sendTask.getCategory());
-				MappingBean mappingBean = genCreateSeriesMappingBean(series,
-						seriesInjectionObject, program, programInjectionObject);
-				adi.getMappings().add(mappingBean);
-			}
-		}
-	}
-
-	private void genDeleteProgramTask(SendTask sendTask, ADI adi,
-			Program program, InjectionObject programInjectionObject) {
-		// 1.生成节目操作对象
-		ProgramBean programBean = genProgramBean(program,
-				programInjectionObject);
-		programBean.setAction(InjectionActionTypeEnum.DELETE.getValue());
-		adi.getObjects().add(programBean);
-		if (programInjectionObject.getInjectionStatus() != InjectionStatusEnum.RECOVERY_ING
-				.getKey()) {
-			// 设置对象分发状态为回收中
-			programInjectionObject
-					.setInjectionStatus(InjectionStatusEnum.RECOVERY_ING
-							.getKey());
-			injectionObjectRepository.save(programInjectionObject);
-			injectionService.updateInjectionStatus(program);
-		}
-
-		if ("jsydnews".equalsIgnoreCase(profiles)) {
-			// 如果推送的是单片（比如电影），那还是要把此program分装到某个series下
-			if (program.getType() == ProgramTypeEnum.MOVIE.getKey()) {// 单集类型
-				// 1. 根据节目虚拟剧头
-				Series virtualSeries = new Series();
-				BeanInfoUtil.bean2bean(program, virtualSeries, Program.METADATA
-						+ "," + Program.POSTER + "," + Series.METADATA_OTHER);
-				virtualSeries.setId(program.getId() + 9000000000l);
-				InjectionObject virtualSeriesInjectionObject = new InjectionObject(
-						null, null);
-
-				// 2.生成剧头操作对象
-				SeriesBean seriesBean = genSeriesService.genSeriesBean(
-						virtualSeries, virtualSeriesInjectionObject);
-				seriesBean.setAction(InjectionActionTypeEnum.DELETE.getValue());
-				adi.getObjects().add(seriesBean);
-			}
-			// 删除时默认只有节目集或者只有节目，不支持删除媒体，若存在节目集和节目，视为都删除。
-		} else {
-			// 2.获取所有的媒体内容
-			genMediaFileData(sendTask, adi, program, programInjectionObject);
-		}
-	}
-
-	private ProgramBean genProgramBean(Program program,
+	private ProgramBean genProgramBean(SendTask sendTask,
+			InjectionPlatform platform, Program program,
 			InjectionObject programInjectionObject) {
 		ProgramBean programBean = new ProgramBean();
 
@@ -465,10 +482,12 @@ public class GenProgramService extends GenCommonService {
 		}
 
 		if (StringUtils.isNotEmpty(program.getDirector())) {
-			programBean.setDirector(getSeparateString(program.getDirector()));
+			programBean.setDirector(getSeparateString(sendTask, platform,
+					program.getDirector()));
 		}
 		if (StringUtils.isNotEmpty(program.getActor())) {
-			programBean.setActorDisplay(getSeparateString(program.getActor()));
+			programBean.setActorDisplay(getSeparateString(sendTask, platform,
+					program.getActor()));
 		}
 		if (StringUtils.isNotEmpty(program.getYear())) {
 			programBean.setReleaseYear(program.getYear());
@@ -528,7 +547,8 @@ public class GenProgramService extends GenCommonService {
 					program.getContentType()).getValue());
 		}
 		if (StringUtils.isNotEmpty(program.getTag())) {
-			programBean.setTags(getSeparateString(program.getTag()));
+			programBean.setTags(getSeparateString(sendTask, platform,
+					program.getTag()));
 		}
 		if (StringUtils.isNotEmpty(program.getViewpoint())) {
 			programBean.setViewpoint(program.getViewpoint());
@@ -549,20 +569,24 @@ public class GenProgramService extends GenCommonService {
 		}
 
 		if (StringUtils.isNotEmpty(program.getKpeople())) {
-			programBean.setKpeople(getSeparateString(program.getKpeople()));
+			programBean.setKpeople(getSeparateString(sendTask, platform,
+					program.getKpeople()));
 		}
 		if (StringUtils.isNotEmpty(program.getScriptWriter())) {
-			programBean.setScriptWriter(getSeparateString(program
-					.getScriptWriter()));
+			programBean.setScriptWriter(getSeparateString(sendTask, platform,
+					program.getScriptWriter()));
 		}
 		if (StringUtils.isNotEmpty(program.getCompere())) {
-			programBean.setCompere(getSeparateString(program.getCompere()));
+			programBean.setCompere(getSeparateString(sendTask, platform,
+					program.getCompere()));
 		}
 		if (StringUtils.isNotEmpty(program.getGuest())) {
-			programBean.setGuest(getSeparateString(program.getGuest()));
+			programBean.setGuest(getSeparateString(sendTask, platform,
+					program.getGuest()));
 		}
 		if (StringUtils.isNotEmpty(program.getReporter())) {
-			programBean.setReporter(getSeparateString(program.getReporter()));
+			programBean.setReporter(getSeparateString(sendTask, platform,
+					program.getReporter()));
 		}
 		if (StringUtils.isNotEmpty(program.getIncharge())) {
 			programBean.setOPIncharge(program.getIncharge());
@@ -593,18 +617,16 @@ public class GenProgramService extends GenCommonService {
 			}
 		}
 
-		if ("jsydnews".equalsIgnoreCase(profiles)) {
-			if (program.getOrgAirDate() != null) {
-				try {
-					String date = DateFormatUtils.format(
-							program.getOrgAirDate(), "yyyy-MM-dd HH:mm:ss");
-					programBean.setOrgAirDate(date);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
+		if (program.getOrgAirDate() != null) {
+			try {
+				String date = DateFormatUtils.format(program.getOrgAirDate(),
+						"yyyy-MM-dd HH:mm:ss");
+				programBean.setOrgAirDate(date);
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 			}
-			programBean.setDefinitionFlag("HD");
 		}
+		programBean.setDefinition("HD");
 		return programBean;
 	}
 

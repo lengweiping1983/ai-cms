@@ -202,7 +202,7 @@
 									<div class="col-md-9">
 										<div class="checkbox-list">
 											<c:forEach var="item" items="${injectionPlatformList}">
-												<c:if test="${item.direction eq 0 && item.type eq 1}">
+												<c:if test="${item.direction eq 1 && item.type eq 1}">
 													<c:set var="dependPlatformSelected" value="" />
 													<c:forEach var="dependPlatformId"
 														items="${injectionPlatform.dependPlatformId}">

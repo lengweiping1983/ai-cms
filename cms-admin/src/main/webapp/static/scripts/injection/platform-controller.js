@@ -15,6 +15,7 @@ $(function () {
                 	$("input:checkbox[name='templateId']").uniform();
                 	$("input:checkbox[name='dependPlatformId']").uniform();
                 	$("input:checkbox[name='injectionPlatformId']").uniform();
+                	$("input:checkbox[name='indirectPlatformId']").uniform();
                 	
                     $("#editForm").validationEngine({
                         ajaxFormValidationMethod: 'post',
@@ -38,6 +39,24 @@ $(function () {
         		needInjection_div_1.hide();
         	} else if(type == 0) {
         		needInjection_div_1.show();
+        	}
+        },
+        
+        changeIsCallback: function (type) {
+        	var isCallback_div_1 = $("#isCallback_div_1");
+        	if (type == 1) {
+        		isCallback_div_1.show();
+        	} else if(type == 0) {
+        		isCallback_div_1.hide();
+        	}
+        },
+        
+        changeTemplateCustom: function (type) {
+        	var templateCustom_div_1 = $("#templateCustom_div_1");
+        	if (type == 1) {
+        		templateCustom_div_1.show();
+        	} else if(type == 0) {
+        		templateCustom_div_1.hide();
         	}
         },
         
@@ -66,6 +85,7 @@ $(function () {
             json.templateId = $.InjectionPlatformController.getCheckboxValue('templateId');
             json.dependPlatformId = $.InjectionPlatformController.getCheckboxValue('dependPlatformId');
             json.injectionPlatformId = $.InjectionPlatformController.getCheckboxValue('injectionPlatformId');
+            json.indirectPlatformId = $.InjectionPlatformController.getCheckboxValue('indirectPlatformId');
 
             $.common.ajaxAction({
                 url: path,

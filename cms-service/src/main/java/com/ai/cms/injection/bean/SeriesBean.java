@@ -57,7 +57,7 @@ public class SeriesBean extends ObjectBean {
 	private String rating;// 评分，10分制，有一个小数
 	private String image1;// 横海报
 	private String image2;// 竖海报
-	private String DefinitionFlag;
+	private String Definition;
 	private String OnlineTime;
 
 	public SeriesBean() {
@@ -456,12 +456,12 @@ public class SeriesBean extends ObjectBean {
 		this.image2 = image2;
 	}
 
-	public String getDefinitionFlag() {
-		return DefinitionFlag;
+	public String getDefinition() {
+		return Definition;
 	}
 
-	public void setDefinitionFlag(String definitionFlag) {
-		DefinitionFlag = definitionFlag;
+	public void setDefinition(String definitionFlag) {
+		Definition = definitionFlag;
 	}
 
 	public String getOnlineTime() {

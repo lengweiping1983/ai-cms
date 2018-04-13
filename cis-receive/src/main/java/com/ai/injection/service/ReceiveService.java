@@ -311,6 +311,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (StringUtils.isNotEmpty(seriesBean.getType())) {
 			series.setContentType(ContentTypeEnum.getKeyByValue(seriesBean
 					.getType()));
+		} else {
+			series.setContentType(ContentTypeEnum.TV.getKey());
 		}
 		if (StringUtils.isNotEmpty(seriesBean.getVolumnCount())) {
 			series.setEpisodeTotal(NumberUtils.toInt(seriesBean
@@ -471,16 +473,14 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 
 		if (StringUtils.isNotEmpty(programBean.getType())) {
-			program.setContentType(ContentTypeEnum.getKeyByValue(programBean
-					.getType()));
-		}
-		if (StringUtils.isNotEmpty(programBean.getType())) {
 			if ("VOD".equalsIgnoreCase(programBean.getType())) {
 				program.setContentType(ContentTypeEnum.MOVIE.getKey());
 			} else {
 				program.setContentType(ContentTypeEnum
 						.getKeyByValue(programBean.getType()));
 			}
+		} else {
+			program.setContentType(ContentTypeEnum.MOVIE.getKey());
 		}
 		if (StringUtils.isNotEmpty(programBean.getSeriesFlag())) {
 			int type = NumberUtils.toInt(programBean.getSeriesFlag(), 0);// 0:普通VOD
@@ -689,6 +689,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			mediaService.saveProgram(program);
 			return;
 		}
+		program.setType(ProgramTypeEnum.TV.getKey());
 		program.setSeries(series);
 		program.setSeriesId(series.getId());
 		if (StringUtils.isNotEmpty(mappingBean.getSequence())) {

@@ -15,8 +15,7 @@ public class MovieBean extends ObjectBean {
 	private String MediaSpec;
 	private String Result;
 	private String ErrorDescription;
-	
-	
+
 	private String OCSURL;
 	private String Duration;
 	private String FileSize;
@@ -30,10 +29,10 @@ public class MovieBean extends ObjectBean {
 
 	private String Name;
 
-	private String DefinitionFlag;
-	private String vBitrate;
-	private String fileMd5;
-	private String platformId;
+	private String Definition;
+	private String Bitrate;
+	private String FileMd5;
+	private String CdnPlatform;
 
 	public MovieBean() {
 		ElementType = InjectionItemTypeEnum.MOVIE.getValue();
@@ -215,36 +214,36 @@ public class MovieBean extends ObjectBean {
 		Name = name;
 	}
 
-	public String getDefinitionFlag() {
-		return DefinitionFlag;
+	public String getDefinition() {
+		return Definition;
 	}
 
-	public void setDefinitionFlag(String definitionFlag) {
-		DefinitionFlag = definitionFlag;
+	public void setDefinition(String definitionFlag) {
+		Definition = definitionFlag;
 	}
 
-	public String getvBitrate() {
-		return vBitrate;
+	public String getBitrate() {
+		return Bitrate;
 	}
 
-	public void setvBitrate(String vBitrate) {
-		this.vBitrate = vBitrate;
+	public void setBitrate(String bitrate) {
+		Bitrate = bitrate;
 	}
 
 	public String getFileMd5() {
-		return fileMd5;
+		return FileMd5;
 	}
 
 	public void setFileMd5(String fileMd5) {
-		this.fileMd5 = fileMd5;
+		FileMd5 = fileMd5;
 	}
 
-	public String getPlatformId() {
-		return platformId;
+	public String getCdnPlatform() {
+		return CdnPlatform;
 	}
 
-	public void setPlatformId(String platformId) {
-		this.platformId = platformId;
+	public void setCdnPlatform(String cdnPlatform) {
+		CdnPlatform = cdnPlatform;
 	}
 
 }

@@ -27,6 +27,7 @@ import com.ai.cms.media.entity.Series;
 import com.ai.common.enums.ContentTypeEnum;
 import com.ai.common.enums.OnlineStatusEnum;
 import com.ai.common.enums.SeriesTypeEnum;
+import com.ai.common.enums.YesNoEnum;
 import com.ai.common.exception.DataException;
 
 @Service
@@ -41,7 +42,7 @@ public class GenSeriesService extends GenCommonService {
 	 * @return
 	 */
 	public boolean genTask(SendTask sendTask, InjectionPlatform platform) {
-		// 1.获取对象
+		// 1.获取对象,检查状态
 		Series series = seriesRepository.findOne(sendTask.getItemId());
 		if (series == null) {
 			throw new DataException("剧头不存在！");
@@ -55,8 +56,7 @@ public class GenSeriesService extends GenCommonService {
 				.getAction() == InjectionActionTypeEnum.UPDATE.getKey())
 				&& platform.getDirection() == InjectionDirectionEnum.SEND
 						.getKey()
-				&& platform.getType() == PlatformTypeEnum.APP_SYSTEM
-						.getKey()
+				&& platform.getType() == PlatformTypeEnum.APP_SYSTEM.getKey()
 				&& StringUtils.isNotEmpty(platform.getDependPlatformId())) {
 			List<InjectionObject> injectionObjectListAll = injectionService
 					.findInjectionObjectList(InjectionItemTypeEnum.SERIES,
@@ -85,7 +85,7 @@ public class GenSeriesService extends GenCommonService {
 
 		// 3.生成剧头任务
 		ADI adi = new ADI();
-		genSeriesTask(sendTask, adi, series, seriesInjectionObject);
+		genSeriesTask(sendTask, platform, adi, series, seriesInjectionObject);
 
 		// 4.生成xml
 		genXML(sendTask, platform, adi);
@@ -96,23 +96,28 @@ public class GenSeriesService extends GenCommonService {
 		return true;
 	}
 
-	public void genSeriesTask(SendTask sendTask, ADI adi, Series series,
-			InjectionObject seriesInjectionObject) {
+	public void genSeriesTask(SendTask sendTask, InjectionPlatform platform,
+			ADI adi, Series series, InjectionObject seriesInjectionObject) {
 		if (sendTask.getAction() == InjectionActionTypeEnum.CREATE.getKey()) {// 发送增加命令
-			genCreateSeriesTask(sendTask, adi, series, seriesInjectionObject);
+			genCreateSeriesTask(sendTask, platform, adi, series,
+					seriesInjectionObject);
 		} else if (sendTask.getAction() == InjectionActionTypeEnum.UPDATE
 				.getKey()) {// 发送修改命令
-			genUpdateSeriesTask(sendTask, adi, series, seriesInjectionObject);
+			genUpdateSeriesTask(sendTask, platform, adi, series,
+					seriesInjectionObject);
 		} else if (sendTask.getAction() == InjectionActionTypeEnum.DELETE
 				.getKey()) {// 发送删除命令
-			genDeleteSeriesTask(sendTask, adi, series, seriesInjectionObject);
+			genDeleteSeriesTask(sendTask, platform, adi, series,
+					seriesInjectionObject);
 		}
 	}
 
-	private void genCreateSeriesTask(SendTask sendTask, ADI adi, Series series,
+	private void genCreateSeriesTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Series series,
 			InjectionObject seriesInjectionObject) {
 		// 1.生成剧头操作对象
-		SeriesBean seriesBean = genSeriesBean(series, seriesInjectionObject);
+		SeriesBean seriesBean = genSeriesBean(sendTask, platform, series,
+				seriesInjectionObject);
 		seriesBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
 		adi.getObjects().add(seriesBean);
 
@@ -123,53 +128,54 @@ public class GenSeriesService extends GenCommonService {
 					.setInjectionStatus(InjectionStatusEnum.INJECTION_ING
 							.getKey());
 			injectionObjectRepository.save(seriesInjectionObject);
-			injectionService.updateInjectionStatus(series);
+			injectionService.updateInjectionStatus(platform, series, false);
 		}
 
-		if (!"jsydnews".equalsIgnoreCase(profiles)) {
+		// 2.生成海报操作对象
+		if (platform.getNeedImageObject() == YesNoEnum.YES.getKey()) {
 			if (StringUtils.isNotEmpty(series.getImage1())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage1(), 1000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 1000000000l, 1, 1);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(series.getImage2())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage2(), 2000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 2000000000l, 1, 2);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(series.getImage3())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage3(), 3000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 3000000000l, 1, 3);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(series.getImage4())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage4(), 4000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 4000000000l, 1, 4);
 				adi.getMappings().add(mappingBean);
@@ -177,10 +183,12 @@ public class GenSeriesService extends GenCommonService {
 		}
 	}
 
-	private void genUpdateSeriesTask(SendTask sendTask, ADI adi, Series series,
+	private void genUpdateSeriesTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Series series,
 			InjectionObject seriesInjectionObject) {
 		// 1.生成剧头操作对象
-		SeriesBean seriesBean = genSeriesBean(series, seriesInjectionObject);
+		SeriesBean seriesBean = genSeriesBean(sendTask, platform, series,
+				seriesInjectionObject);
 		seriesBean.setAction(InjectionActionTypeEnum.UPDATE.getValue());
 		adi.getObjects().add(seriesBean);
 
@@ -191,53 +199,54 @@ public class GenSeriesService extends GenCommonService {
 					.setInjectionStatus(InjectionStatusEnum.INJECTION_ING
 							.getKey());
 			injectionObjectRepository.save(seriesInjectionObject);
-			injectionService.updateInjectionStatus(series);
+			injectionService.updateInjectionStatus(platform, series, false);
 		}
 
-		if (!"jsydnews".equalsIgnoreCase(profiles)) {
+		// 2.生成海报操作对象
+		if (platform.getNeedImageObject() == YesNoEnum.YES.getKey()) {
 			if (StringUtils.isNotEmpty(series.getImage1())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage1(), 1000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 1000000000l, 1, 1);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(series.getImage2())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage2(), 2000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 2000000000l, 1, 2);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(series.getImage3())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage3(), 3000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 3000000000l, 1, 3);
 				adi.getMappings().add(mappingBean);
 			}
 
 			if (StringUtils.isNotEmpty(series.getImage4())) {
-				// 2.生成海报操作对象
+				// a.生成海报操作对象
 				PictureBean pictureBean = genCreatePictureBean(series,
 						seriesInjectionObject, series.getImage4(), 4000000000l);
 				adi.getObjects().add(pictureBean);
 
-				// 3.生成海报映射对象
+				// b.生成海报映射对象
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 4000000000l, 1, 4);
 				adi.getMappings().add(mappingBean);
@@ -245,10 +254,12 @@ public class GenSeriesService extends GenCommonService {
 		}
 	}
 
-	private void genDeleteSeriesTask(SendTask sendTask, ADI adi, Series series,
+	private void genDeleteSeriesTask(SendTask sendTask,
+			InjectionPlatform platform, ADI adi, Series series,
 			InjectionObject seriesInjectionObject) {
 		// 1.生成剧头操作对象
-		SeriesBean seriesBean = genSeriesBean(series, seriesInjectionObject);
+		SeriesBean seriesBean = genSeriesBean(sendTask, platform, series,
+				seriesInjectionObject);
 		seriesBean.setAction(InjectionActionTypeEnum.DELETE.getValue());
 		adi.getObjects().add(seriesBean);
 
@@ -259,11 +270,12 @@ public class GenSeriesService extends GenCommonService {
 					.setInjectionStatus(InjectionStatusEnum.RECOVERY_ING
 							.getKey());
 			injectionObjectRepository.save(seriesInjectionObject);
-			injectionService.updateInjectionStatus(series);
+			injectionService.updateInjectionStatus(platform, series, false);
 		}
 	}
 
-	public SeriesBean genSeriesBean(Series series,
+	public SeriesBean genSeriesBean(SendTask sendTask,
+			InjectionPlatform platform, Series series,
 			InjectionObject seriesInjectionObject) {
 		SeriesBean seriesBean = new SeriesBean();
 
@@ -287,10 +299,12 @@ public class GenSeriesService extends GenCommonService {
 		}
 
 		if (StringUtils.isNotEmpty(series.getDirector())) {
-			seriesBean.setDirector(getSeparateString(series.getDirector()));
+			seriesBean.setDirector(getSeparateString(sendTask, platform,
+					series.getDirector()));
 		}
 		if (StringUtils.isNotEmpty(series.getActor())) {
-			seriesBean.setActorDisplay(getSeparateString(series.getActor()));
+			seriesBean.setActorDisplay(getSeparateString(sendTask, platform,
+					series.getActor()));
 		}
 		if (StringUtils.isNotEmpty(series.getYear())) {
 			seriesBean.setReleaseYear(series.getYear());
@@ -348,7 +362,8 @@ public class GenSeriesService extends GenCommonService {
 					series.getContentType()).getValue());
 		}
 		if (StringUtils.isNotEmpty(series.getTag())) {
-			seriesBean.setTags(getSeparateString(series.getTag()));
+			seriesBean.setTags(getSeparateString(sendTask, platform,
+					series.getTag()));
 		}
 
 		if (StringUtils.isNotEmpty(series.getViewpoint())) {
@@ -371,20 +386,24 @@ public class GenSeriesService extends GenCommonService {
 		}
 
 		if (StringUtils.isNotEmpty(series.getKpeople())) {
-			seriesBean.setKpeople(getSeparateString(series.getKpeople()));
+			seriesBean.setKpeople(getSeparateString(sendTask, platform,
+					series.getKpeople()));
 		}
 		if (StringUtils.isNotEmpty(series.getScriptWriter())) {
-			seriesBean.setScriptWriter(getSeparateString(series
-					.getScriptWriter()));
+			seriesBean.setScriptWriter(getSeparateString(sendTask, platform,
+					series.getScriptWriter()));
 		}
 		if (StringUtils.isNotEmpty(series.getCompere())) {
-			seriesBean.setCompere(getSeparateString(series.getCompere()));
+			seriesBean.setCompere(getSeparateString(sendTask, platform,
+					series.getCompere()));
 		}
 		if (StringUtils.isNotEmpty(series.getGuest())) {
-			seriesBean.setGuest(getSeparateString(series.getGuest()));
+			seriesBean.setGuest(getSeparateString(sendTask, platform,
+					series.getGuest()));
 		}
 		if (StringUtils.isNotEmpty(series.getReporter())) {
-			seriesBean.setReporter(getSeparateString(series.getReporter()));
+			seriesBean.setReporter(getSeparateString(sendTask, platform,
+					series.getReporter()));
 		}
 		if (StringUtils.isNotEmpty(series.getIncharge())) {
 			seriesBean.setOPIncharge(series.getIncharge());
@@ -415,18 +434,16 @@ public class GenSeriesService extends GenCommonService {
 			}
 		}
 
-		if ("jsydnews".equalsIgnoreCase(profiles)) {
-			if (series.getOrgAirDate() != null) {
-				try {
-					String date = DateFormatUtils.format(
-							series.getOrgAirDate(), "yyyy-MM-dd HH:mm:ss");
-					seriesBean.setOrgAirDate(date);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
+		if (series.getOrgAirDate() != null) {
+			try {
+				String date = DateFormatUtils.format(series.getOrgAirDate(),
+						"yyyy-MM-dd HH:mm:ss");
+				seriesBean.setOrgAirDate(date);
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 			}
-			seriesBean.setDefinitionFlag("HD");
 		}
+		seriesBean.setDefinition("HD");
 
 		return seriesBean;
 	}

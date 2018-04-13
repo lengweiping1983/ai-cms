@@ -551,6 +551,7 @@ public class MediaService extends AbstractService<Series, Long> {
 			mediaFile.setTemplateId(mediaTemplate.getId());
 			mediaFile.setBitrate(mediaTemplate.getvBitrate());
 			mediaFile.setResolution(mediaTemplate.getvResolution());
+			mediaFile.setDefinition(mediaTemplate.getDefinition());
 			mediaFile.setFormat(mediaTemplate.getvFormat());
 			// TS-CBR-H264-8000-1080P-25-MP2-128
 			String mediaSpec = mediaTemplate.getvFormat() + "-"

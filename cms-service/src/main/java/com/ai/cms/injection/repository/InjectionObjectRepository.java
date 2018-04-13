@@ -18,7 +18,14 @@ public interface InjectionObjectRepository extends
 	InjectionObject findOneByPlatformIdAndCategoryAndItemTypeAndItemId(
 			Long platformId, String category, Integer itemType, Long itemId);
 
+	List<InjectionObject> findByPlatformIdAndItemTypeAndPartnerItemCode(
+			Long platformId, Integer itemType, String partnerItemCode);
+
 	List<InjectionObject> findByItemTypeAndItemId(Integer itemType, Long itemId);
+
+	List<InjectionObject> findByPlatformIdAndCategoryAndItemTypeAndItemParentId(
+			Long platformId, String category, Integer itemType,
+			Long itemParentId);
 
 	List<InjectionObject> findByItemTypeAndItemIdIn(Integer itemType,
 			List<Long> itemIdList);

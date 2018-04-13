@@ -12,6 +12,7 @@ import com.ai.cms.injection.enums.InjectionStatusEnum;
 import com.ai.cms.injection.enums.PlayCodeStatusEnum;
 import com.ai.common.entity.AbstractEntity;
 import com.ai.common.enums.AuditStatusEnum;
+import com.ai.common.enums.ContentTypeEnum;
 import com.ai.common.enums.MediaStatusEnum;
 import com.ai.common.enums.OnlineStatusEnum;
 import com.ai.common.enums.SourceEnum;
@@ -41,7 +42,7 @@ public abstract class BaseMedia extends AbstractEntity {
 
 	@NotNull
 	@Column(name = "content_type")
-	private Integer contentType;// 内容类型
+	private Integer contentType = ContentTypeEnum.MOVIE.getKey();// 内容类型
 
 	private String director;// 导演，使用','分割
 	private String actor;// 演员，使用','分割

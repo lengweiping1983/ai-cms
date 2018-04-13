@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -23,9 +24,6 @@ import com.ai.common.enums.YesNoEnum;
 @Component
 public class XMLGenerator {
 
-	@Value("${spring.profiles.active:dev}")
-	private String profiles;
-
 	public String genXML(SendTask sendTask, InjectionPlatform platform, ADI adi)
 			throws IOException {
 		Properties p = new Properties();
@@ -41,6 +39,7 @@ public class XMLGenerator {
 		}
 		adi.setStaffID(sendTask.getCorrelateId());
 
+		context.put("platform", platform);
 		context.put("adi", adi);
 
 		String dirPath = "/send/" + platform.getCspId()
@@ -51,8 +50,11 @@ public class XMLGenerator {
 		String filePath = dirPath + "/" + fileName;
 
 		String templateName = "template/template.vm";
-		if (platform.getTemplateCustom() == YesNoEnum.YES.getKey()) {
-			templateName = "template/template_" + profiles + ".vm";
+		if (platform.getTemplateCustom() == YesNoEnum.YES.getKey()
+				&& StringUtils.isNotEmpty(platform.getTemplateFilename())) {
+			String templateFilename = StringUtils.trimToEmpty(platform
+					.getTemplateFilename());
+			templateName = "template/template_" + templateFilename + ".vm";
 		}
 
 		Template template = Velocity.getTemplate(templateName, "UTF-8");

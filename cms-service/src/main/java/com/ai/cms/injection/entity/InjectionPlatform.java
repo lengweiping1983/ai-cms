@@ -58,17 +58,20 @@ public class InjectionPlatform extends AbstractEntity {
 	private Integer needInjection = YesNoEnum.NO.getKey();// 是否要自动分发
 
 	@Column(name = "injection_platform_id")
-	private String injectionPlatformId; // 自动分发平台
+	private String injectionPlatformId; // 自动分发平台Id
 
-	@NotNull
+	@Column(name = "indirect_platform_id")
+	private String indirectPlatformId; // 间接平台Id
+
+	@Column(name = "platform_code")
+	private String platformCode; // 对方平台代码
+
 	@Column(name = "csp_id")
 	private String cspId; // 互相约定的上层标识
 
-	@NotNull
 	@Column(name = "lsp_id")
 	private String lspId; // 互相约定的下层标识
 
-	@NotNull
 	@Column(name = "service_url")
 	private String serviceUrl; // 接口地址
 
@@ -93,7 +96,7 @@ public class InjectionPlatform extends AbstractEntity {
 
 	@NotNull
 	@Column(name = "is_callback")
-	private Integer isCallback = YesNoEnum.NO.getKey();// 是否需要回写
+	private Integer isCallback = YesNoEnum.NO.getKey();// 是否要回写
 
 	@NotNull
 	@Column(name = "status")
@@ -101,17 +104,35 @@ public class InjectionPlatform extends AbstractEntity {
 
 	@NotNull
 	@Column(name = "template_custom")
-	private Integer templateCustom = YesNoEnum.NO.getKey();// 模板自定义
+	private Integer templateCustom = YesNoEnum.NO.getKey();// 自定义模板
+
+	@Column(name = "template_filename")
+	private String templateFilename; // 模板文件名
 
 	@NotNull
 	@Column(name = "play_code_custom")
-	private Integer playCodeCustom = YesNoEnum.NO.getKey();// 播放代码自定义
+	private Integer playCodeCustom = YesNoEnum.NO.getKey();// 自定义播放代码
 
 	@Column(name = "code_prefix")
 	private String codePrefix = "00000000"; // 代码前缀
 
 	@Column(name = "correlate_prefix")
-	private String correlatePrefix = ""; // 工单前缀
+	private String correlatePrefix; // 工单前缀
+
+	@NotNull
+	@Column(name = "need_image_object")
+	private Integer needImageObject = YesNoEnum.YES.getKey();// 是否要海报对象
+
+	@NotNull
+	@Column(name = "need_packing_program")
+	private Integer needPackingProgram = YesNoEnum.NO.getKey();// 是否要单片包装成剧头
+
+	@NotNull
+	@Column(name = "need_delete_media_file")
+	private Integer needDeleteMediaFile = YesNoEnum.YES.getKey();// 是否要删除媒体内容
+
+	@Column(name = "separate_char")
+	private String separateChar = ",";// 分隔字符
 
 	public String getSiteCode() {
 		return siteCode;
@@ -191,6 +212,22 @@ public class InjectionPlatform extends AbstractEntity {
 
 	public void setInjectionPlatformId(String injectionPlatformId) {
 		this.injectionPlatformId = injectionPlatformId;
+	}
+
+	public String getIndirectPlatformId() {
+		return indirectPlatformId;
+	}
+
+	public void setIndirectPlatformId(String indirectPlatformId) {
+		this.indirectPlatformId = indirectPlatformId;
+	}
+
+	public String getPlatformCode() {
+		return platformCode;
+	}
+
+	public void setPlatformCode(String platformCode) {
+		this.platformCode = platformCode;
 	}
 
 	public String getCspId() {
@@ -289,6 +326,14 @@ public class InjectionPlatform extends AbstractEntity {
 		this.templateCustom = templateCustom;
 	}
 
+	public String getTemplateFilename() {
+		return templateFilename;
+	}
+
+	public void setTemplateFilename(String templateFilename) {
+		this.templateFilename = templateFilename;
+	}
+
 	public Integer getPlayCodeCustom() {
 		return playCodeCustom;
 	}
@@ -313,4 +358,35 @@ public class InjectionPlatform extends AbstractEntity {
 		this.correlatePrefix = correlatePrefix;
 	}
 
+	public Integer getNeedImageObject() {
+		return needImageObject;
+	}
+
+	public void setNeedImageObject(Integer needImageObject) {
+		this.needImageObject = needImageObject;
+	}
+
+	public Integer getNeedPackingProgram() {
+		return needPackingProgram;
+	}
+
+	public void setNeedPackingProgram(Integer needPackingProgram) {
+		this.needPackingProgram = needPackingProgram;
+	}
+
+	public Integer getNeedDeleteMediaFile() {
+		return needDeleteMediaFile;
+	}
+
+	public void setNeedDeleteMediaFile(Integer needDeleteMediaFile) {
+		this.needDeleteMediaFile = needDeleteMediaFile;
+	}
+
+	public String getSeparateChar() {
+		return separateChar;
+	}
+
+	public void setSeparateChar(String separateChar) {
+		this.separateChar = separateChar;
+	}
 }

@@ -107,7 +107,7 @@ public class SeriesController extends AbstractImageController {
 		model.addAttribute("mediaTemplateList",
 				configService.findAllMediaTemplate());
 		List<InjectionPlatform> injectionPlatformList = injectionService
-				.findAllSendInjectionPlatform();
+				.findAllInjectionPlatform();
 		model.addAttribute("injectionPlatformList", injectionPlatformList);
 		model.addAttribute("injectionPlatformMap", injectionService
 				.findAllInjectionPlatformMap(injectionPlatformList));

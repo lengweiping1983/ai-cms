@@ -50,7 +50,6 @@ public class ProgramBean extends ObjectBean {
 	private String Reserve4;
 	private String Reserve5;
 	private String RMediaCode;
-	private String DefinitionFlag;
 	private String StorageType;
 
 	private String episodeIndex;// 第几集
@@ -58,6 +57,7 @@ public class ProgramBean extends ObjectBean {
 	private String rating;// 评分，10分制，有一个小数
 	private String image1;// 横海报
 	private String image2;// 竖海报
+	private String Definition;
 	private String OnlineTime;
 
 	public ProgramBean() {
@@ -240,12 +240,12 @@ public class ProgramBean extends ObjectBean {
 		SeriesFlag = seriesFlag;
 	}
 
-	public String getDefinitionFlag() {
-		return DefinitionFlag;
+	public String getDefinition() {
+		return Definition;
 	}
 
-	public void setDefinitionFlag(String definitionFlag) {
-		DefinitionFlag = definitionFlag;
+	public void setDefinition(String definitionFlag) {
+		Definition = definitionFlag;
 	}
 
 	public String getStorageType() {

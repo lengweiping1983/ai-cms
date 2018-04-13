@@ -52,6 +52,8 @@ public class InjectionPlatformController extends AbstractController {
 
 		model.addAttribute("injectionPlatformList", injectionPlatformRepository
 				.findAllByDirection(InjectionDirectionEnum.SEND.getKey()));
+		model.addAttribute("indirectPlatformList", injectionPlatformRepository
+				.findAllByDirection(InjectionDirectionEnum.INDIRECT.getKey()));
 	}
 
 	@RequestMapping(value = { "" })
@@ -80,8 +82,10 @@ public class InjectionPlatformController extends AbstractController {
 		switch (directionEnum) {
 		case RECEIVE:
 			return "injection/platform/editReceive";
+		case INDIRECT:
+			return "injection/platform/editIndirect";
 		default:
-			return "injection/platform/edit";
+			return "injection/platform/editSend";
 		}
 	}
 
@@ -104,8 +108,10 @@ public class InjectionPlatformController extends AbstractController {
 		switch (directionEnum) {
 		case RECEIVE:
 			return "injection/platform/editReceive";
+		case INDIRECT:
+			return "injection/platform/editIndirect";
 		default:
-			return "injection/platform/edit";
+			return "injection/platform/editSend";
 		}
 	}
 
@@ -122,10 +128,12 @@ public class InjectionPlatformController extends AbstractController {
 					.bean2bean(
 							injectionPlatform,
 							injectionPlatformInfo,
-							"siteCode,name,type,dependPlatformId,provider,interfaceMode,needDownloadVideo,needAudit,needInjection,injectionPlatformId"
+							"siteCode,name,type,dependPlatformId,provider,interfaceMode,needDownloadVideo,needAudit"
+									+ ",needInjection,injectionPlatformId,indirectPlatformId,platformCode"
 									+ ",cspId,lspId,serviceUrl,liveServiceUrl,isWSDL,namespace"
 									+ ",templateId,description,direction,isCallback,status"
-									+ ",templateCustom,playCodeCustom,codePrefix,correlatePrefix");
+									+ ",templateCustom,templateFilename,playCodeCustom,codePrefix,correlatePrefix"
+									+ ",needImageObject,needPackingProgram,needDeleteMediaFile,separateChar");
 			injectionPlatformRepository.save(injectionPlatformInfo);
 		}
 		return new BaseResult();

@@ -121,7 +121,7 @@
 									<div class="col-md-9">
 										<div class="checkbox-list">
 											<c:forEach var="item" items="${injectionPlatformList}">
-												<c:if test="${item.direction eq 0 && item.type eq 1}">
+												<c:if test="${item.direction eq 1 && item.type eq 1}">
 													<c:set var="dependPlatformSelected" value="" />
 													<c:forEach var="dependPlatformId"
 														items="${injectionPlatform.dependPlatformId}">
@@ -160,17 +160,45 @@
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">是否需要回写(<span
+									<label class="control-label col-md-3">是否要回写(<span
 										class="required">*</span>):
 									</label>
 
 									<div class="col-md-9">
-										<select name="isCallback" class="form-control">
+										<select name="isCallback" class="form-control"
+											onchange="$.InjectionPlatformController.changeIsCallback(this.value);">
 											<c:forEach var="item" items="${yesNoEnum}">
 												<option value="${item.key}"
 													<c:if test="${! empty injectionPlatform.isCallback && item.key eq injectionPlatform.isCallback}"> selected="selected" </c:if>>${item.value}</option>
 											</c:forEach>
 										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group" id="isCallback_div_1"
+									<c:if test="${injectionPlatform.isCallback != 1}"> style="display: none" </c:if>>
+									<label class="control-label col-md-3">间接平台(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<div class="checkbox-list">
+											<c:forEach var="item" items="${indirectPlatformList}">
+												<c:set var="indirectPlatformSelected" value="" />
+												<c:forEach var="indirectPlatformId"
+													items="${injectionPlatform.indirectPlatformId}">
+													<c:if test="${item.id eq indirectPlatformId}">
+														<c:set var="indirectPlatformSelected" value="1" />
+													</c:if>
+												</c:forEach>
+												<label><input name="indirectPlatformId"
+													<c:if test="${indirectPlatformSelected eq 1}"> checked </c:if>
+													class="validate[required]" type="checkbox"
+													value="${item.id}"><span
+													class="badge badge-success">${item.name}</span> </label>
+											</c:forEach>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -268,12 +296,13 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">模板自定义(<span
+									<label class="control-label col-md-3">自定义模板(<span
 										class="required">*</span>):
 									</label>
 
 									<div class="col-md-9">
-										<select name="templateCustom" class="form-control">
+										<select name="templateCustom" class="form-control"
+											onchange="$.InjectionPlatformController.changeTemplateCustom(this.value);">
 											<c:forEach var="item" items="${yesNoEnum}">
 												<option value="${item.key}"
 													<c:if test="${! empty injectionPlatform.templateCustom && item.key eq injectionPlatform.templateCustom}"> selected="selected" </c:if>>${item.value}</option>
@@ -283,14 +312,29 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-6" id="templateCustom_div_1"
+								<c:if test="${injectionPlatform.templateCustom != 1}"> style="display: none" </c:if>>
 								<div class="form-group">
-									<label class="control-label col-md-3">播放代码自定义(<span
+									<label class="control-label col-md-3">模板文件名(<span
 										class="required">*</span>):
 									</label>
 
 									<div class="col-md-9">
-										<select name=playCodeCustom class="form-control">
+										<input type="text" name="templateFilename"
+											value="${injectionPlatform.templateFilename}"
+											class="form-control validate[required]"
+											placeholder="请输入模板文件名">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">自定义播放代码(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<select name="playCodeCustom" class="form-control">
 											<c:forEach var="item" items="${yesNoEnum}">
 												<option value="${item.key}"
 													<c:if test="${! empty injectionPlatform.playCodeCustom && item.key eq injectionPlatform.playCodeCustom}"> selected="selected" </c:if>>${item.value}</option>
@@ -333,7 +377,73 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">默认分发码率: </label>
+									<label class="control-label col-md-3">是否要单片包装成剧头(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<select name="needPackingProgram" class="form-control">
+											<c:forEach var="item" items="${yesNoEnum}">
+												<option value="${item.key}"
+													<c:if test="${! empty injectionPlatform.needPackingProgram && item.key eq injectionPlatform.needPackingProgram}"> selected="selected" </c:if>>${item.value}</option>
+											</c:forEach>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">是否要海报对象(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<select name="needImageObject" class="form-control">
+											<c:forEach var="item" items="${yesNoEnum}">
+												<option value="${item.key}"
+													<c:if test="${! empty injectionPlatform.needImageObject && item.key eq injectionPlatform.needImageObject}"> selected="selected" </c:if>>${item.value}</option>
+											</c:forEach>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">是否要删除媒体内容(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<select name="needDeleteMediaFile" class="form-control">
+											<c:forEach var="item" items="${yesNoEnum}">
+												<option value="${item.key}"
+													<c:if test="${! empty injectionPlatform.needDeleteMediaFile && item.key eq injectionPlatform.needDeleteMediaFile}"> selected="selected" </c:if>>${item.value}</option>
+											</c:forEach>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">分隔字符(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<input type="text" name="separateChar"
+											value="${injectionPlatform.separateChar}"
+											class="form-control validate[required]" placeholder="请输入分隔字符">
+										<p class="help-block">如演员字段，多个演示使用“,”分隔字符.</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">默认支持码率: </label>
 
 									<div class="col-md-9">
 										<div class="checkbox-list">

@@ -69,7 +69,7 @@
 			<Property Name="Tags"><![CDATA[$!objectBean.Tags]]></Property>
 			#end
 		</Object>
-	#end#if($objectBean.ElementType == "Movie")
+	#end#if($objectBean.ElementType == "Movie")#if($!objectBean.Action != "DELETE" || $platform.needDeleteMediaFile == 1)
 <Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action">
 			#if($!objectBean.Action != "DELETE")
 			<Property Name="Name"><![CDATA[$!objectBean.Name]]></Property>
@@ -80,7 +80,7 @@
 			<Property Name="ScreenFormat">0</Property>
 			#end
 		</Object>
-	#end#if($objectBean.ElementType == "Category")
+	#end#end#if($objectBean.ElementType == "Category")
 <Object ElementType="$!objectBean.ElementType" ID="$!objectBean.Code" Code="$!objectBean.Code" Action="$!objectBean.Action" ParentID="$!objectBean.ParentCode" ParentCode="$!objectBean.ParentCode">
 			#if($!objectBean.Action != "DELETE")
 			<Property Name="Description"><![CDATA[$!objectBean.Description]]></Property>

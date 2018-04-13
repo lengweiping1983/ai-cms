@@ -362,8 +362,8 @@ public class XMLParser {
 							.equalsIgnoreCase("SeriesFlag")) {
 						programBean.setSeriesFlag(property.getText());
 					} else if (property.attributeValue("Name")
-							.equalsIgnoreCase("DefinitionFlag")) {
-						programBean.setDefinitionFlag(property.getText());
+							.equalsIgnoreCase("Definition")) {
+						programBean.setDefinition(property.getText());
 					} else if (property.attributeValue("Name")
 							.equalsIgnoreCase("StorageType")) {
 						programBean.setStorageType(property.getText());

@@ -117,7 +117,7 @@ public class ProgramController extends AbstractImageController {
 				configService.findAllMediaTemplate());
 
 		List<InjectionPlatform> injectionPlatformList = injectionService
-				.findAllSendInjectionPlatform();
+				.findAllInjectionPlatform();
 		model.addAttribute("injectionPlatformList", injectionPlatformList);
 		model.addAttribute("injectionPlatformMap", injectionService
 				.findAllInjectionPlatformMap(injectionPlatformList));
@@ -278,7 +278,7 @@ public class ProgramController extends AbstractImageController {
 						+ "," + Program.POSTER + "");
 			}
 		}
-		
+
 		if (!notAutoCreate) {
 			if (programInfo == null) {
 				programInfo = program;

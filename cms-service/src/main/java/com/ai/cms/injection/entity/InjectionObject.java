@@ -37,6 +37,9 @@ public class InjectionObject extends AbstractEntity {
 	@Column(name = "item_id")
 	private Long itemId;// 元素id
 
+	@Column(name = "item_parent_id")
+	private Long itemParentId;// 元素父id
+
 	@NotNull
 	@Column(name = "injection_status")
 	private Integer injectionStatus = InjectionStatusEnum.DEFAULT.getKey();// 分发状态
@@ -93,6 +96,14 @@ public class InjectionObject extends AbstractEntity {
 
 	public void setItemId(Long itemId) {
 		this.itemId = itemId;
+	}
+
+	public Long getItemParentId() {
+		return itemParentId;
+	}
+
+	public void setItemParentId(Long itemParentId) {
+		this.itemParentId = itemParentId;
 	}
 
 	public Integer getInjectionStatus() {

@@ -3,7 +3,7 @@ package com.ai.cms.injection.enums;
 import org.apache.commons.lang3.StringUtils;
 
 public enum InjectionDirectionEnum {
-	SEND(0, "发送"), RECEIVE(1, "接收");
+	SEND(1, "发送"), RECEIVE(2, "接收"), INDIRECT(3, "间接");
 
 	int key;
 	String value;
