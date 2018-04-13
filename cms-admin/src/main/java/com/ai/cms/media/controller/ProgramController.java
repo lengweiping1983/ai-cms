@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ai.AdminConstants;
 import com.ai.AdminGlobal;
-import com.ai.CloudStorage;
 import com.ai.cms.config.entity.Cp;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.service.ConfigService;
@@ -990,8 +989,8 @@ public class ProgramController extends AbstractImageController {
 							log.setDuration("" + mediaFile.getDuration());
 						}
 						if (StringUtils.isNotEmpty(mediaFile.getFilePath())) {
-							log.setFilePath(CloudStorage
-									.getMediaFilePath(mediaFile.getFilePath()));
+							log.setFilePath(AdminGlobal
+									.getVideoWebPath(mediaFile.getFilePath()));
 						}
 						if (StringUtils.isNotEmpty(mediaFile.getFileMd5())) {
 							log.setFileMd5(mediaFile.getFileMd5());

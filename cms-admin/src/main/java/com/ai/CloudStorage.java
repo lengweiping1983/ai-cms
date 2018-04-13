@@ -1,6 +1,5 @@
 package com.ai;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,19 +22,6 @@ public class CloudStorage {
 	@Value("${cloud.video.download.url:}")
 	public void setVideoDownloadUrl(String videoDownloadUrl) {
 		CloudStorage.videoDownloadUrl = videoDownloadUrl;
-	}
-
-	public static String getMediaFilePath(String path) {
-		if (StringUtils.isEmpty(path)) {
-			return "";
-		}
-		if (path.indexOf("http") == 0) {
-			return path;
-		}
-		if (path.indexOf("ftp") == 0) {
-			return path;
-		}
-		return AdminGlobal.joinPath(getVideoDownloadUrl(), path);
 	}
 
 	public static String getClientId() {

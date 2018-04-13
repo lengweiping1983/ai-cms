@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.ai.CloudStorage;
+import com.ai.AdminGlobal;
 import com.ai.common.controller.AbstractImageController;
 
 @Controller
@@ -33,7 +33,7 @@ public class PlayController extends AbstractImageController {
 		logger.info("preview path {" + sourcePath + "}");
 
 		try {
-			String playUrl = CloudStorage.getMediaFilePath(sourcePath);
+			String playUrl = AdminGlobal.getVideoWebPath(sourcePath);
 			model.addAttribute("playUrl", playUrl);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
