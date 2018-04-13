@@ -94,4 +94,3 @@ ALTER TABLE `cms_media_file` CHANGE COLUMN `play_code_status` `play_code_status`
 ALTER TABLE `cms_media_file` CHANGE COLUMN `injection_status` `injection_status` varchar(255) DEFAULT '0';
 
 CREATE UNIQUE INDEX cms_media_program_series_episode on cms_media_program(`series_id`,`episode_index`);
-CREATE UNIQUE INDEX cms_media_file_program_type_template on cms_media_file(`program_id`,`type`,`template_id`);

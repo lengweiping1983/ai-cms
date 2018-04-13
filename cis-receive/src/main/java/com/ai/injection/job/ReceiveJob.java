@@ -204,7 +204,7 @@ public class ReceiveJob {
 			logger.error(e.getMessage(), e);
 
 			receiveTask.setReplyResult(-1);
-			receiveTask.setReplyErrorDescription(e.getMessage());
+			receiveTask.setReplyErrorDescription("ERROR");
 
 			receiveTask.setStatus(ReceiveTaskStatusEnum.FAIL.getKey());
 		}

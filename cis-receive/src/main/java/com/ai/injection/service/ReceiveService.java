@@ -367,7 +367,11 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			series.setAuditStatus(AuditStatusEnum.AUDIT_FIRST_PASS.getKey());
 			series.setStorageTime(new Date());
 		}
-		mediaService.saveSeries(series);
+		try {
+			mediaService.saveSeries(series);
+		} catch (Exception e) {
+			throw new DataException("Series[" + seriesBean.getCode() + "]数据错误！");
+		}
 	}
 
 	private void saveProgram(ProgramBean programBean, ReceiveTask receiveTask,
@@ -543,7 +547,12 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			program.setAuditStatus(AuditStatusEnum.AUDIT_FIRST_PASS.getKey());
 			program.setStorageTime(new Date());
 		}
-		mediaService.saveProgram(program);
+		try {
+			mediaService.saveProgram(program);
+		} catch (Exception e) {
+			throw new DataException("Program[" + programBean.getCode()
+					+ "]数据错误！");
+		}
 	}
 
 	private void saveMediaFile(MovieBean movieBean, ReceiveTask receiveTask,
@@ -699,7 +708,12 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			throw new DataException("Mapping[" + mappingBean.getElementCode()
 					+ "]不正确！");
 		}
-		mediaService.saveProgramAndMediaStatus(program, true);
+		try {
+			mediaService.saveProgramAndMediaStatus(program, true);
+		} catch (Exception e) {
+			throw new DataException("Program[" + mappingBean.getElementCode()
+					+ "]数据错误！");
+		}
 	}
 
 	private void saveProgramMediaFileMapping(MappingBean mappingBean,
