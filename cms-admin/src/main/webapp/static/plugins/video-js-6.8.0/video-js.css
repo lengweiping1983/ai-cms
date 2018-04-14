@@ -421,6 +421,9 @@ body.vjs-full-window {
 .vjs-has-started.vjs-paused.vjs-show-big-play-button-on-pause .vjs-big-play-button {
   display: block; }
 
+.vjs-paused .vjs-big-play-button {
+    display: block;
+}
 .video-js button {
   background: none;
   border: none;

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/views/includes/taglib.jsp"%>
 
-<c:set var="staticFileVersion" value="1" />
+<c:set var="staticFileVersion" value="4" />
 <c:choose>
 	<c:when
 		test="${fn:contains(profiles, 'dev') || fn:contains(profiles, 'demo')}">
@@ -12,7 +12,7 @@
 </c:choose>
 
 <link
-	href="${ctx}/static/plugins/video-js-6.8.0/video-js.min.css?time=${staticFileVersion}"
+	href="${ctx}/static/plugins/video-js-6.8.0/video-js.css?time=${staticFileVersion}"
 	rel="stylesheet">
 <link
 	href="${ctx}/static/plugins/videojs-playlist-ui-3.4.0/videojs-playlist-ui.css?time=${staticFileVersion}"
@@ -64,8 +64,8 @@
 </style>
 
 <div class="player-container">
-	<video id="video" class="video-js" autoplay="autoplay" height="480"
-		width="600" controls>
+	<video id="video" class="video-js vjs-big-play-centered" controls
+		autoplay height="480" width="600">
 	</video>
 	<div class="vjs-playlist"></div>
 </div>
