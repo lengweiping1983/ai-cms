@@ -271,31 +271,6 @@
 
 <tags:contentModal />
 
-<div class="modal fade" id="content_list_modal_container" tabindex="-1"
-	role="basic" aria-hidden="true">
-	<div class="modal-dialog modal-full" id="content_list_dialog_container">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true"></button>
-				<h4 class="modal-title" id="content_list_modal_container_title">选择</h4>
-			</div>
-			<div class="modal-body" id="content_list_container"></div>
-			<div class="modal-footer">
-				<button class="btn btn-outline green"
-					onclick="$.FileManageController.toBatch('selectFile');"
-					id="content_list_modal_container_ok">
-					<i class="fa fa-save"></i>确定
-				</button>
-				<button class="btn grey-salsa btn-outline" data-dismiss="modal"
-					aria-hidden="true">
-					<i class="fa fa-close"></i>关闭
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 <script>
 	$.TranscodeRequestController.init('${formId}');
 	$.TranscodeRequestController.keypress({containerId: '${containerId}', formId: '${formId}'});

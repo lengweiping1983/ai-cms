@@ -254,8 +254,8 @@ $(function () {
         
         toSelectLeagueMatch: function () {
         	$.common.ajaxActionText(contextPath + "/league/leagueMatch/selectLeagueMatch", function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择赛事");
         		$("#content_list_modal_container").modal({});
         		
@@ -288,8 +288,8 @@ $(function () {
         toSelectItem: function (selectMode) {
         	var _selectMode = selectMode || 1;
         	$.common.ajaxActionText(contextPath + "/league/leagueMatch/selectItem?selectMode=" + _selectMode, function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择赛事");
         		$("#content_list_modal_container").modal({});
         		

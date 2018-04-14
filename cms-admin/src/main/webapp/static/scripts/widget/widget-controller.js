@@ -118,8 +118,8 @@ $(function () {
         toSelectWidget: function () {
         	var appCode = $("#appCode").val();
         	$.common.ajaxActionText(contextPath + "/widget/widget/selectWidget?appCode="+appCode, function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择推荐位");
         		$("#content_list_modal_container").modal({});
         		
@@ -146,8 +146,8 @@ $(function () {
         toSelectItem: function (selectMode) {
         	var _selectMode = selectMode || 1;
         	$.common.ajaxActionText(contextPath + "/widget/widget/selectItem?selectMode=" + _selectMode, function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择推荐位");
         		$("#content_list_modal_container").modal({});
         		

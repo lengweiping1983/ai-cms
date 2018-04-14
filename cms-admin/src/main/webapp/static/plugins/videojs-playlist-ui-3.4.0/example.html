@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>play</title>
+<link href="../../plugins/video-js-6.8.0/video-js.min.css" rel="stylesheet">
+<link href="../../plugins/videojs-playlist-ui-3.4.0/videojs-playlist-ui.css"
+	rel="stylesheet">
+
+<script src="../../plugins/video-js-6.8.0/ie8/videojs-ie8.min.js"></script>
+<script src="../../plugins/video-js-6.8.0/video.min.js"></script>
+<script src="../../plugins/video-js-6.8.0/videojs-contrib-hls.min.js"></script>
+<script src="../../plugins/videojs-playlist-4.2.0/videojs-playlist.min.js"></script>
+<script src="../../plugins/videojs-playlist-ui-3.4.0/videojs-playlist-ui.js"></script>
+<style>
+.player-container {
+	background: #1a1a1a;
+	overflow: auto;
+	width: 900px;
+	margin: 0 0 20px;
+}
+
+.video-js {
+	float: left;
+}
+
+.vjs-playlist, .my-custom-class, #my-custom-element {
+	float: left;
+	width: 300px;
+}
+
+.vjs-playlist.vjs-playlist-horizontal {
+	float: none;
+	height: 120px;
+	width: 600px;
+}
+
+.vjs-playlist.vjs-playlist-vertical {
+	float: none;
+	height: 600px;
+	width: 300px;
+}
+</style>
+</head>
+<body>
+	<div class="player-container">
+		<video id="video" class="video-js" autoplay="autoplay" height="300"
+			width="600" controls>
+		</video>
+		<div class="vjs-playlist"></div>
+	</div>
+
+	<script>
+		var player = videojs('video');
+
+		player.playlist([ {
+			name : 'Disney\'s Oceans 1',
+			description : '',
+			duration : 45,
+			sources : [ {
+				src : 'http://vjs.zencdn.net/v/oceans.mp4?1',
+				type : 'video/mp4'
+			}, ],
+			thumbnail : [ {
+				srcset : '../../plugins/videojs-playlist-ui-3.4.0/oceans.jpg',
+				type : 'image/jpeg',
+				media : '(min-width: 400px;)'
+			}, {
+				src : '../../plugins/videojs-playlist-ui-3.4.0/oceans-low.jpg'
+			} ]
+		}, {
+			name : 'Disney\'s Oceans 2',
+			description : '',
+			duration : 45,
+			sources : [ {
+				src : 'http://vjs.zencdn.net/v/oceans.mp4?2',
+				type : 'video/mp4'
+			}, ],
+			thumbnail : [ {
+				srcset : '../../plugins/videojs-playlist-ui-3.4.0/oceans.jpg',
+				type : 'image/jpeg',
+				media : '(min-width: 400px;)'
+			}, {
+				src : '../../plugins/videojs-playlist-ui-3.4.0/oceans-low.jpg'
+			} ]
+		}, ]);
+		// player.playlistUi({horizontal: true});
+		player.playlistUi();
+		// player.playlist.autoadvance(5);
+		player.playlist.repeat(true);
+		player.on('ended', function(e) {
+			if (player.playlist.lastIndex() == 0) {
+				player.currentTime(0);
+				player.play();
+			} else {
+				player.playlist.next();
+			}
+		});
+	</script>
+</body>
+</html>

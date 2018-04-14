@@ -80,10 +80,10 @@ $(function () {
         	$.FileManageController.toSelectItem(contextPath + '/media/file/selectFile?selectMode=simple&selectParam=simple');
         },
         
-        toPreviewNewWindow: function () {
+        toPreview: function () {
         	var filePath = $("#simplefilePath").val();
         	if (filePath) {
-        		$.PlayController.toPreviewNewWindow(filePath);
+        		$.PlayController.toPreview(filePath);
         	}
         },
         

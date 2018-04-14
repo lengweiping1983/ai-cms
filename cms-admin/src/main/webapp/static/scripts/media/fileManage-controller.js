@@ -151,7 +151,7 @@ $(function() {
 		
 		selectFileJump: function (path) {
             $("#selectFile_path").val(path);
-            $.Page.queryByForm({containerId: 'content_list_container', formId: 'selectFile'});
+            $.Page.queryByForm({containerId: 'content_list_modal_container_body', formId: 'selectFile'});
         },
 
         getFilePaths: function (prefix) {
@@ -331,8 +331,8 @@ $(function() {
 
         toSelectItem: function (path) {
             $.common.ajaxActionText(path, function (data) {
-                $("#content_list_container").html(data);
-                $('#content_list_dialog_container')
+                $("#content_list_modal_container_body").html(data);
+                $('#content_list_modal_container_dialog')
                     .removeClass("modal-sm").addClass(
                     "modal-lg");
                 $('#content_list_modal_container_title').html(

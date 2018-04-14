@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/views/includes/taglib.jsp"%>
 
-<c:set var="containerId" value="content_list_container" />
+<c:set var="containerId" value="content_list_modal_container_body" />
 <c:set var="formId" value="selectProgram" />
 <div class="table-container">
 	<div class="table-actions-wrapper-condition">

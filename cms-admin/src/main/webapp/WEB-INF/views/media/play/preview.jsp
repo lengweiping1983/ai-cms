@@ -1,61 +1,113 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/views/includes/taglib.jsp"%>
 
-<div class="modal fade bs-modal-lg" tabindex="-1" role="basic"
-	aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true"></button>
-				<h4 class="modal-title">预览</h4>
-			</div>
-			<div class="modal-body" id="modal-body">
-				<c:if test="${!empty status}">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label col-md-2">状态:</label>
+<c:set var="staticFileVersion" value="1" />
+<c:choose>
+	<c:when
+		test="${fn:contains(profiles, 'dev') || fn:contains(profiles, 'demo')}">
+		<c:set var="staticFileVersion" value="<%=System.currentTimeMillis()%>" />
+	</c:when>
+	<c:otherwise>
+	</c:otherwise>
+</c:choose>
 
-								<div class="col-md-10">
-									<p class="form-control-static">${status}
-								</div>
-							</div>
-						</div>
-					</div>
-				</c:if>
-				<div class="row">
-					<div class="col-md-12">
-						<div class="form-group">
-							<label class="control-label col-md-2">播放地址:</label>
+<link
+	href="${ctx}/static/plugins/video-js-6.8.0/video-js.min.css?time=${staticFileVersion}"
+	rel="stylesheet">
+<link
+	href="${ctx}/static/plugins/videojs-playlist-ui-3.4.0/videojs-playlist-ui.css?time=${staticFileVersion}"
+	rel="stylesheet">
 
-							<div class="col-md-10">
-								<p style="word-break: break-all;" class="form-control-static">${playUrl}</p>
-							</div>
-						</div>
-					</div>
-				</div>
+<script
+	src="${ctx}/static/plugins/video-js-6.8.0/ie8/videojs-ie8.min.js?time=${staticFileVersion}"></script>
+<script
+	src="${ctx}/static/plugins/video-js-6.8.0/video.min.js?time=${staticFileVersion}"></script>
+<script
+	src="${ctx}/static/plugins/video-js-6.8.0/videojs-contrib-hls.min.js?time=${staticFileVersion}"></script>
+<script
+	src="${ctx}/static/plugins/videojs-playlist-4.2.0/videojs-playlist.min.js?time=${staticFileVersion}"></script>
+<script
+	src="${ctx}/static/plugins/videojs-playlist-ui-3.4.0/videojs-playlist-ui.js?time=${staticFileVersion}"></script>
+<style>
+.player-container {
+	background: #1a1a1a;
+	overflow: auto;
+	width: 868px;
+	margin: 0 0 20px;
+}
 
-				<object classid="clsid:9BE31822-FDAD-461B-AD51-BE1D1C159921"
-					codebase="http://download.videolan.org/pub/videolan/vlc/last/win32/axvlc.cab"
-					id="vlc" name="vlc" width="868" height="604" events="True">
-					<param name="Src" value="${playUrl}" />
-					<param name="ShowDisplay" value="True" />
-					<param name="AutoLoop" value="False" />
-					<param name="AutoPlay" value="True" />
-					<embed id="vlcEmb" name="vlcEmb" type="application/x-vlc-plugin"
-						version="VideoLAN.VLCPlugin.2" autoplay="yes" loop="no"
-						width="868" height="604" target="${playUrl}">
-					</embed>
-				</object>
-			</div>
+.video-js {
+	float: left;
+}
 
-			<div class="modal-footer">
-				<button class="btn grey-salsa btn-outline" data-dismiss="modal"
-					aria-hidden="true">
-					<i class="fa fa-close"></i>关闭
-				</button>
-			</div>
-		</div>
-	</div>
+.vjs-playlist, .my-custom-class, #my-custom-element {
+	float: left;
+	width: 268px;
+}
+
+.vjs-playlist.vjs-playlist-vertical {
+	float: none;
+	height: 480px;
+	width: 268px;
+}
+
+.vjs-playlist.vjs-playlist-horizontal {
+	float: none;
+	height: 120px;
+	width: 600px;
+}
+
+.video-dimensions {
+	height: 480px;
+	width: 600px;
+}
+</style>
+
+<div class="player-container">
+	<video id="video" class="video-js" autoplay="autoplay" height="480"
+		width="600" controls>
+	</video>
+	<div class="vjs-playlist"></div>
 </div>
+
+<script>
+	var playData = [];
+</script>
+<c:forEach items="${playBeanList}" var="t" varStatus="status">
+	<script>
+		playData
+				.push({
+					name : "${t.name}",
+					description : "${t.description}",
+					duration : "${t.duration}",
+					bitrate : "${t.bitrate}",
+					sources : [ {
+						src : '${t.playUrl}',
+						type : '${t.type}'
+					} ],
+					thumbnail : [
+							{
+								srcset : '${ctx}/static/plugins/videojs-playlist-ui-3.4.0/oceans.jpg',
+								type : 'image/jpeg',
+								media : '(min-width: 400px;)'
+							},
+							{
+								src : '${ctx}/static/plugins/videojs-playlist-ui-3.4.0/oceans-low.jpg'
+							} ]
+				});
+	</script>
+</c:forEach>
+<script>
+	var player = videojs('video');
+	player.playlist(playData);
+	player.playlistUi();
+	player.playlist.repeat(true);
+	player.on('ended', function(e) {
+		if (player.playlist.lastIndex() == 0) {
+			player.currentTime(0);
+			player.play();
+		} else {
+			player.playlist.next();
+		}
+	});
+</script>

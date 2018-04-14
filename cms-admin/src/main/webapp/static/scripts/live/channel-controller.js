@@ -161,8 +161,8 @@ $(function () {
         
         toSelectChannel: function () {
         	$.common.ajaxActionText(contextPath + "/live/channel/selectChannel", function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择中央频道");
         		$("#content_list_modal_container").modal({});
         		
@@ -208,8 +208,8 @@ $(function () {
         
         toSelectItem: function () {
         	$.common.ajaxActionText(contextPath + "/live/channel/selectItem", function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择中央频道");
         		$("#content_list_modal_container").modal({});
         		

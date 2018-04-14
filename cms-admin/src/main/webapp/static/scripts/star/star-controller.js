@@ -164,8 +164,8 @@ $(function () {
         
         toSelectStar: function (type) {
         	$.common.ajaxActionText(contextPath + "/star/star/selectStar?type=" + type, function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择明星");
         		$("#content_list_modal_container").modal({});
         		
@@ -219,8 +219,8 @@ $(function () {
         toSelectItem: function (selectMode) {
         	var _selectMode = selectMode || 1;
         	$.common.ajaxActionText(contextPath + "/star/star/selectItem?selectMode=" + _selectMode, function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择明星");
         		$("#content_list_modal_container").modal({});
         		
@@ -233,8 +233,8 @@ $(function () {
         toSelectItemByType: function (selectMode, type) {
         	var _selectMode = selectMode || 1;
         	$.common.ajaxActionText(contextPath + "/star/star/selectItem?selectMode=" + _selectMode + "&search_type__EQ_I=" + type, function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择明星");
         		$("#content_list_modal_container").modal({});
         		

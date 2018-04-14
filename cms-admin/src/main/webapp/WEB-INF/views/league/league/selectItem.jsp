@@ -34,7 +34,7 @@
 						<div style="float: right">
 							<button class="btn btn-default btn-sm btn-outline green"
 								type="button"
-								onclick="$.Page.queryByForm({containerId: 'content_list_container', formId: 'selectItem'});">
+								onclick="$.Page.queryByForm({containerId: 'content_list_modal_container_body', formId: 'selectItem'});">
 								<i class="fa fa-search"></i> 查询
 							</button>
 						</div>
@@ -77,7 +77,7 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<tags:pageInfo containerId="content_list_container" formId="selectItem" />
+	<tags:pageInfo containerId="content_list_modal_container_body" formId="selectItem" />
 </div>
 
 
@@ -86,7 +86,7 @@
 		var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
 		if (keyCode == 13) {
 			$.Page.queryByForm({
-				containerId : 'content_list_container',
+				containerId : 'content_list_modal_container_body',
 				formId : 'selectItem'
 			});
 			return false;

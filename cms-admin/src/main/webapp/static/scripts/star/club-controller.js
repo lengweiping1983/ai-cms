@@ -149,8 +149,8 @@ $(function () {
         
         toSelectClub: function (type) {
         	$.common.ajaxActionText(contextPath + "/star/club/selectClub?type=" + type, function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择俱乐部");
         		$("#content_list_modal_container").modal({});
         		
@@ -200,8 +200,8 @@ $(function () {
         
         toSelectItem: function () {
         	$.common.ajaxActionText(contextPath + "/star/club/selectItem", function (data) {
-        		$("#content_list_container").html(data);
-        		$('#content_list_dialog_container').removeClass("modal-sm").addClass("modal-lg");
+        		$("#content_list_modal_container_body").html(data);
+        		$('#content_list_modal_container_dialog').removeClass("modal-sm").addClass("modal-lg");
         		$('#content_list_modal_container_title').html("选择俱乐部");
         		$("#content_list_modal_container").modal({});
         		

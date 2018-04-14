@@ -93,7 +93,7 @@ ftp:
   mode: passive
   # FTP根目录
   root:
-    path: /Users/luqin/work/workspace_java/ai_cms/cms-admin/src/main/webapp/
+    path: /Users/luqin/work/workspace_java/ai_cms/cms-admin/src/main/webapp/video/
   # 默认访问目录
   default:
     access.path: /
@@ -110,7 +110,7 @@ cloud:
  
 transcode:
   # 是否启动转码
-  enabled: true
+  enabled: false
   # 转码方式:local=本地,online=线上
   mode: local
   # 转码输出根目录

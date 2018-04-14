@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/views/includes/taglib.jsp"%>
 
-<c:set var="containerId" value="content_list_container" />
+<c:set var="containerId" value="content_list_modal_container_body" />
 <c:set var="formId" value="selectFile" />
 <div class="table-container">
 	<div class="table-actions-wrapper-condition">
@@ -98,4 +98,11 @@
 		containerId : '${containerId}',
 		formId : '${formId}'
 	});
+	if ('${param.selectMode}' == 'multi') {
+		if ($("#content_list_modal_container_ok")[0]) {
+			$('#content_list_modal_container_ok').attr("onclick",
+					"$.FileManageController.toBatch('selectFile');");
+			$('#content_list_modal_container_ok').show();
+		}
+	}
 </script>

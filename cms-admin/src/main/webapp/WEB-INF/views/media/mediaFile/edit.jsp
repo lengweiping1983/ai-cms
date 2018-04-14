@@ -178,7 +178,7 @@
 																<button class="btn btn-default btn-sm btn-outline green"
 																	id="filePath_div_1"
 																	<c:if test="${empty mediaFile.filePath}"> disabled </c:if>
-																	onclick="$.MediaFileController.toPreviewNewWindow(); return false;">
+																	onclick="$.MediaFileController.toPreview(); return false;">
 																	<i class="fa fa-eye"></i>预览
 																</button>
 															</p>

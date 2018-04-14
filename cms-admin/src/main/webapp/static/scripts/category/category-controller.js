@@ -276,7 +276,7 @@ $(function () {
         
         toSelectCategory: function () {
         	$.common.ajaxActionText(contextPath + "/category/category/selectCategory", function (data) {
-        		$("#content_list_container").html(data);
+        		$("#content_list_modal_container_body").html(data);
         		$('#content_list_modal_container_title').html("选择栏目");
         		$("#content_list_modal_container").modal({});
         		
@@ -316,7 +316,7 @@ $(function () {
         
         selectCategoryTree: function (filterCategoryId) {
         	try{
-        		$("#content_list_container").jstree("destroy");
+        		$("#content_list_modal_container_body").jstree("destroy");
         	} catch (e) {
         		
         	}
@@ -333,10 +333,10 @@ $(function () {
                 contextType: "application/json",
                 data: json,
                 success: function (data) {
-                	$('#content_list_dialog_container').removeClass("modal-lg").addClass("modal-sm");
+                	$('#content_list_modal_container_dialog').removeClass("modal-lg").addClass("modal-sm");
             		$('#content_list_modal_container_title').html("选择栏目");
             		$("#content_list_modal_container").modal({});
-                    $('#content_list_container').jstree({
+                    $('#content_list_modal_container_body').jstree({
                         'multiple': false,
                         'plugins': ["wholerow", "types"],
                         'core': {
@@ -369,7 +369,7 @@ $(function () {
                             $("#selectCategoryName").val('');
                         }
                         $("#content_list_modal_container").modal('hide');
-                        $("#content_list_container").jstree("destroy");
+                        $("#content_list_modal_container_body").jstree("destroy");
                     });
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -382,7 +382,7 @@ $(function () {
         selectCategoryItemTree: function (selectMode) {
         	var _selectMode = selectMode || 1;
         	try{
-        		$("#content_list_container").jstree("destroy");
+        		$("#content_list_modal_container_body").jstree("destroy");
         	} catch (e) {
         		
         	}
@@ -394,10 +394,10 @@ $(function () {
                 contextType: "application/json",
                 data: json,
                 success: function (data) {
-                	$('#content_list_dialog_container').removeClass("modal-lg").addClass("modal-sm");
+                	$('#content_list_modal_container_dialog').removeClass("modal-lg").addClass("modal-sm");
             		$('#content_list_modal_container_title').html("选择栏目");
             		$("#content_list_modal_container").modal({});
-                    $('#content_list_container').jstree({
+                    $('#content_list_modal_container_body').jstree({
                         'multiple': false,
                         'plugins': ["wholerow", "types"],
                         'core': {
@@ -444,7 +444,7 @@ $(function () {
                         	}
                         }
                         $("#content_list_modal_container").modal('hide');
-                        $("#content_list_container").jstree("destroy");
+                        $("#content_list_modal_container_body").jstree("destroy");
                     });
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
