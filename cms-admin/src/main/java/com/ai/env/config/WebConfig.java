@@ -69,6 +69,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/image/**")
 				.addResourceLocations("/image/");
 		registry.addResourceHandler("/xml/**").addResourceLocations("/xml/");
+		registry.addResourceHandler("/m3u8/**").addResourceLocations("/m3u8/");
 	}
 
 	@Override

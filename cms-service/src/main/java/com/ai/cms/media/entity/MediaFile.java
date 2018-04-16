@@ -63,6 +63,12 @@ public class MediaFile extends AbstractEntity {
 	@Column(name = "file_path")
 	private String filePath;// 文件路径
 
+	@Column(name = "play_url")
+	private String playUrl;// 播放地址
+
+	@Column(name = "m3u8_url")
+	private String m3u8Url;// M3U8播放地址
+
 	@Column(name = "source_file_size")
 	private Long sourceFileSize;// 原始文件大小
 	@Column(name = "source_file_md5")
@@ -234,6 +240,22 @@ public class MediaFile extends AbstractEntity {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public String getPlayUrl() {
+		return playUrl;
+	}
+
+	public void setPlayUrl(String playUrl) {
+		this.playUrl = playUrl;
+	}
+
+	public String getM3u8Url() {
+		return m3u8Url;
+	}
+
+	public void setM3u8Url(String m3u8Url) {
+		this.m3u8Url = m3u8Url;
 	}
 
 	public Long getSourceFileSize() {

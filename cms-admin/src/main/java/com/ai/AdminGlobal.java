@@ -571,4 +571,87 @@ public class AdminGlobal implements CommandLineRunner {
 		return rootPath + filePath;
 	}
 
+	public static String m3u8UploadPath;
+
+	public static String m3u8WebPath;
+
+	public static String m3u8FtpPath;
+
+	public static String getM3U8UploadPath() {
+		return m3u8UploadPath;
+	}
+
+	@Value("${m3u8.upload.path:}")
+	public void setM3U8UploadPath(String m3u8UploadPath) {
+		AdminGlobal.m3u8UploadPath = m3u8UploadPath;
+	}
+
+	public static String getM3U8WebPath() {
+		return m3u8WebPath;
+	}
+
+	@Value("${m3u8.web.path:}")
+	public void setM3U8WebPath(String m3u8WebPath) {
+		AdminGlobal.m3u8WebPath = m3u8WebPath;
+	}
+
+	public static String getM3U8FtpPath() {
+		return m3u8FtpPath;
+	}
+
+	@Value("${m3u8.ftp.path:}")
+	public void setM3U8FtpPath(String m3u8FtpPath) {
+		AdminGlobal.m3u8FtpPath = m3u8FtpPath;
+	}
+
+	public static String getM3U8UploadPath(String path) {
+		if (StringUtils.isEmpty(path)) {
+			return "";
+		}
+		if (path.indexOf("http") == 0) {
+			return path;
+		}
+		if (path.indexOf("ftp") == 0) {
+			return path;
+		}
+		return joinPath(getM3U8UploadPath(), path);
+	}
+
+	public static String getM3U8WebPath(String path) {
+		if (StringUtils.isEmpty(path)) {
+			return "";
+		}
+		if (path.indexOf("http") == 0) {
+			return path;
+		}
+		if (path.indexOf("ftp") == 0) {
+			return path;
+		}
+		return joinPath(getM3U8WebPath(), path);
+	}
+
+	public static String getM3U8FtpPath(String path) {
+		if (StringUtils.isEmpty(path)) {
+			return "";
+		}
+		if (path.indexOf("http") == 0) {
+			return path;
+		}
+		if (path.indexOf("ftp") == 0) {
+			return path;
+		}
+		return joinPath(getM3U8FtpPath(), path);
+	}
+
+	public static String webAccessUrl;
+
+	public static String getWebAccessUrl() {
+		return webAccessUrl;
+	}
+
+	@Value("${web.access.url:}")
+	public void setWebAccessUrl(String webAccessUrl) {
+		AdminGlobal.webAccessUrl = webAccessUrl;
+	}
+
 }

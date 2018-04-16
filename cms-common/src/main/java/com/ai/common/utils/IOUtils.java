@@ -17,7 +17,7 @@ public class IOUtils {
                 StringBuffer content = new StringBuffer();
                 String lineTxt = null;
                 while ((lineTxt = bufferedReader.readLine()) != null) {
-                    content.append(lineTxt);
+                    content.append(lineTxt).append("\n");
                 }
                 read.close();
                 return content.toString();

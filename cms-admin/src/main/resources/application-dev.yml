@@ -69,7 +69,18 @@ video:
     path: http://127.0.0.1:8080/video
   ftp:
     path: ftp://anonymous:epg123@127.0.0.1:21//Users/luqin/work/workspace_java/ai_cms/cms-admin/src/main/webapp/video
+
+m3u8:
+  upload:
+    path: /Users/luqin/work/workspace_java/ai_cms/cms-admin/src/main/webapp/m3u8
+  web:
+    path: http://127.0.0.1:8080/m3u8
+  ftp:
+    path: ftp://anonymous:epg123@127.0.0.1:21//Users/luqin/work/workspace_java/ai_cms/cms-admin/src/main/webapp/m3u8 
   
+web:
+  access.url: http://127.0.0.1:8080 #外网访问地址
+   
 site:
   # 站点代码
   code: 'TEST01'

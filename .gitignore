@@ -24,6 +24,7 @@ classes/
 */src/main/webapp/upload
 */src/main/webapp/image
 */src/main/webapp/video
+*/src/main/webapp/m3u8
 */src/main/webapp/xml
 */.gitignore
 */.springBeans

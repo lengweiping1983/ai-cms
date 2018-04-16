@@ -26,6 +26,7 @@ import com.ai.cms.media.repository.MediaFileRepository;
 import com.ai.cms.media.repository.ProgramRepository;
 import com.ai.cms.media.repository.SeriesRepository;
 import com.ai.common.controller.AbstractImageController;
+import com.ai.common.utils.IOUtils;
 
 @Controller
 @RequestMapping(value = { "/media/play" })
@@ -98,17 +99,22 @@ public class PlayController extends AbstractImageController {
 			HttpServletResponse response, @PathVariable(value = "id") Long id)
 			throws Exception {
 		MediaFile mediaFile = mediaFileRepository.findOne(id);
-		if (mediaFile == null) {
+		if (mediaFile != null) {
+			String m3u8Text;
+			if (StringUtils.isNotEmpty(mediaFile.getM3u8Url())) {
+				m3u8Text = IOUtils.readTxtFile(AdminGlobal
+						.getM3U8UploadPath(mediaFile.getM3u8Url()));
+			} else {
+				String filePath = mediaFile.getFilePath();
+				Long fileSize = mediaFile.getFileSize();
+				Integer duration = mediaFile.getDuration();
+				m3u8Text = genM3U8(filePath, fileSize, duration);
+			}
+			logger.info(m3u8Text);
+			response.getWriter().print(m3u8Text);
+		} else {
+
 		}
-
-		String filePath = mediaFile.getFilePath();
-		Long fileSize = mediaFile.getFileSize();
-		Integer duration = mediaFile.getDuration();
-
-		String m3u8Text = genM3U8(filePath, fileSize, duration);
-
-		System.out.println(m3u8Text);
-		response.getWriter().print(m3u8Text);
 		response.getWriter().flush();
 		response.getWriter().close();
 	}
@@ -193,7 +199,7 @@ public class PlayController extends AbstractImageController {
 		}
 		String suffix = StringUtils.substringAfterLast(playUrl, ".");
 		if ("ts".equalsIgnoreCase(suffix)) {
-			playUrl = "http://127.0.0.1:8080/media/play/mediaFile/"
+			playUrl = AdminGlobal.getWebAccessUrl() + "/media/play/mediaFile/"
 					+ mediaFile.getId() + ".m3u8";
 		}
 		playBean.setPlayUrl(playUrl);
