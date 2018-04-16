@@ -12,10 +12,13 @@
 <script src="../../plugins/video-js-6.8.0/ie8/videojs-ie8.min.js"></script>
 <script src="../../plugins/video-js-6.8.0/video.min.js"></script>
 <script src="../../plugins/video-js-6.8.0/videojs-contrib-hls.min.js"></script>
+<script src="../../plugins/video-js-6.8.0/Youtube.js"></script>
 <script
 	src="../../plugins/videojs-playlist-4.2.0/videojs-playlist.min.js"></script>
 <script
 	src="../../plugins/videojs-playlist-ui-3.4.0/videojs-playlist-ui.js"></script>
+
+
 <style>
 .player-container {
 	background: #1a1a1a;
@@ -48,8 +51,9 @@
 </head>
 <body>
 	<div class="player-container">
-		<video id="video" class="video-js" height="300" width="600" controls
-			autoplay>
+		<video id="video" class="video-js vjs-default-skin" controls autoplay
+			height="300" width="600"
+			data-setup='{ "techOrder": ["youtube", "html5"] }'>
 		</video>
 		<div class="vjs-playlist"></div>
 	</div>
@@ -58,12 +62,27 @@
 		var player = videojs('video');
 
 		player.playlist([ {
-			name : 'm3u8',
+			name : 'youtube',
 			description : '',
 			duration : 45,
 			sources : [ {
-				src : 'http://127.0.0.1:8080/video/out.m3u8',
-				type : 'application/x-mpegURL'
+				src : 'https://www.youtube.com/watch?v=xjS6SftYQaQ',
+				type : 'video/youtube'
+			}, ],
+			thumbnail : [ {
+				srcset : '../../plugins/videojs-playlist-ui-3.4.0/oceans.jpg',
+				type : 'image/jpeg',
+				media : '(min-width: 400px;)'
+			}, {
+				src : '../../plugins/videojs-playlist-ui-3.4.0/oceans-low.jpg'
+			} ]
+		}, {
+			name : 'Disney\'s Oceans 1',
+			description : '',
+			duration : 45,
+			sources : [ {
+				src : 'http://vjs.zencdn.net/v/oceans.mp4?1',
+				type : 'video/mp4'
 			}, ],
 			thumbnail : [ {
 				srcset : '../../plugins/videojs-playlist-ui-3.4.0/oceans.jpg',
@@ -88,9 +107,9 @@
 				src : '../../plugins/videojs-playlist-ui-3.4.0/oceans-low.jpg'
 			} ]
 		}, ]);
-		// player.playlistUi({horizontal: true});
+		// 		player.playlistUi({horizontal: true});
+		// 		player.playlist.autoadvance(5);
 		player.playlistUi();
-		// player.playlist.autoadvance(5);
 		player.playlist.repeat(true);
 		player.on('ended', function(e) {
 			if (player.playlist.lastIndex() == 0) {

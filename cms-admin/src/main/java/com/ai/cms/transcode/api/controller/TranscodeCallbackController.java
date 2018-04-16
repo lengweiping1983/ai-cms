@@ -25,7 +25,7 @@ import com.ai.common.exception.ServiceException;
 @Controller
 @RequestMapping(value = { "/api/transcode" })
 public class TranscodeCallbackController extends AbstractController {
-	private static final Log log = LogFactory
+	private static final Log logger = LogFactory
 			.getLog(TranscodeCallbackController.class);
 
 	@Autowired
@@ -40,7 +40,7 @@ public class TranscodeCallbackController extends AbstractController {
 				json.append(line);
 			}
 		} catch (Exception e) {
-			log.error("readJSONString error:", e);
+			logger.error("readJSONString error:", e);
 		}
 		return json.toString();
 	}
@@ -48,7 +48,7 @@ public class TranscodeCallbackController extends AbstractController {
 	@RequestMapping(value = "/offlineUpload")
 	public String offlineUpload(HttpServletRequest request, ModelMap model,
 			HttpServletResponse response) throws Exception {
-		log.info(request.getServletPath() + " request:" + "["
+		logger.info(request.getServletPath() + " request:" + "["
 				+ getIpAddr(request) + "]{" + getAllParam(request) + "}");
 
 		response.setCharacterEncoding("UTF-8");
@@ -71,12 +71,12 @@ public class TranscodeCallbackController extends AbstractController {
 	@RequestMapping(value = "/offlineUploadCallback")
 	public String offlineUploadCallback(HttpServletRequest request,
 			ModelMap model, HttpServletResponse response) throws Exception {
-		log.info(request.getServletPath() + " request:" + "["
+		logger.info(request.getServletPath() + " request:" + "["
 				+ getIpAddr(request) + "]{" + getAllParam(request) + "}");
 		response.setCharacterEncoding("UTF-8");
 
 		String json = readJSONString(request);
-		log.info("offlineUpload Task Finished:" + json);
+		logger.info("offlineUpload Task Finished:" + json);
 		if (StringUtils.isEmpty(json)) {
 			response.getWriter().print("json is null");
 			response.getWriter().flush();
@@ -94,7 +94,7 @@ public class TranscodeCallbackController extends AbstractController {
 		// String resultCode = jsonObject.getString("resultCode");
 		// String description = jsonObject.getString("description");
 
-		log.info("url:" + url + " path:" + path + " status:" + status);
+		logger.info("url:" + url + " path:" + path + " status:" + status);
 		if (StringUtils.isNotEmpty(path)) {
 			response.getWriter().print("success");
 			response.getWriter().flush();
@@ -113,7 +113,7 @@ public class TranscodeCallbackController extends AbstractController {
 	@RequestMapping(value = "/encode")
 	public String encode(HttpServletRequest request, ModelMap model,
 			HttpServletResponse response) throws Exception {
-		log.info(request.getServletPath() + " request:" + "["
+		logger.info(request.getServletPath() + " request:" + "["
 				+ getIpAddr(request) + "]{" + getAllParam(request) + "}");
 
 		response.setCharacterEncoding("UTF-8");
@@ -138,13 +138,13 @@ public class TranscodeCallbackController extends AbstractController {
 	@RequestMapping(value = "/encodeCallback")
 	public String encodeCallback(HttpServletRequest request, ModelMap model,
 			HttpServletResponse response) throws Exception {
-		log.info(request.getServletPath() + " request:" + "["
+		logger.info(request.getServletPath() + " request:" + "["
 				+ getIpAddr(request) + "]{" + getAllParam(request) + "}");
 
 		response.setCharacterEncoding("UTF-8");
 
 		String json = readJSONString(request);
-		log.info("Encode Task Finished:" + json);
+		logger.info("Encode Task Finished:" + json);
 		if (StringUtils.isEmpty(json)) {
 			response.getWriter().print("json is null");
 			response.getWriter().flush();
@@ -178,13 +178,13 @@ public class TranscodeCallbackController extends AbstractController {
 	@RequestMapping(value = "/imageCallback")
 	public String imageCallback(HttpServletRequest request, ModelMap model,
 			HttpServletResponse response) throws Exception {
-		log.info(request.getServletPath() + " request:" + "["
+		logger.info(request.getServletPath() + " request:" + "["
 				+ getIpAddr(request) + "]{" + getAllParam(request) + "}");
 
 		response.setCharacterEncoding("UTF-8");
 
 		String json = readJSONString(request);
-		log.info("IdsBean Task Finished:" + json);
+		logger.info("IdsBean Task Finished:" + json);
 		if (StringUtils.isEmpty(json)) {
 			response.getWriter().print("json is null");
 			response.getWriter().flush();
@@ -228,14 +228,14 @@ public class TranscodeCallbackController extends AbstractController {
 		try {
 			MediaFileBean mediaFileBean = new MediaFileBean();
 
-			log.info(request.getServletPath() + " request:" + "["
+			logger.info(request.getServletPath() + " request:" + "["
 					+ getIpAddr(request) + "]{" + getAllParam(request) + "}");
 
 			String sourcePath = request.getParameter("filePath");
 			mediaFileBean.setFilePath(sourcePath);
 			ShaTaClient shaTaClient = new ShaTaClient();
 			JSONObject allJson = shaTaClient.listDirectory(sourcePath);
-			log.info("sourcePath = " + sourcePath + " json string:" + allJson);
+			logger.info("sourcePath = " + sourcePath + " json string:" + allJson);
 			if (allJson != null && allJson.has("paths")) {
 				boolean found = false;
 				JSONArray jsonArray = allJson.getJSONArray("paths");

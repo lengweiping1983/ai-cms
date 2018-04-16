@@ -6,7 +6,7 @@ public class PlayBean {
 	public static String PLAY_TYPE_MP4 = "video/mp4";
 	public static String PLAY_TYPE_WEBM = "video/webm";
 	public static String PLAY_TYPE_OGG = "video/ogg";
-	public static String PLAY_TYPE_TS = "video/mp4";
+	public static String PLAY_TYPE_TS = "application/x-mpegURL";
 	public static String PLAY_TYPE_M3U8 = "application/x-mpegURL";
 
 	private String name;

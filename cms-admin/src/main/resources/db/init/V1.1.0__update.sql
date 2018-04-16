@@ -18,6 +18,7 @@ ALTER TABLE `cms_injection_platform` CHANGE COLUMN `csp_id` `csp_id` varchar(255
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `lsp_id` `lsp_id` varchar(255) DEFAULT NULL;
 ALTER TABLE `cms_injection_platform` CHANGE COLUMN `service_url` `service_url` varchar(255) DEFAULT NULL;
 
+ALTER TABLE `cms_media_file` CHANGE COLUMN `template_id` `template_id` bigint DEFAULT -1;
 
 drop table cms_injection_send_event;
 drop table cms_media_import;
