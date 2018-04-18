@@ -11,8 +11,12 @@ import com.ai.common.repository.AbstractRepository;
 public interface MediaTemplateRepository extends
 		AbstractRepository<MediaTemplate, Long> {
 
+	MediaTemplate findOneByCode(String code);
+
 	List<MediaTemplate> findByIdIn(List<Long> idList);
 
 	List<MediaTemplate> findByCategory(String category);
+
+	List<MediaTemplate> findByMediaSpec(String mediaSpec);
 
 }

@@ -9,33 +9,33 @@
 			<div class="portlet box green">
 				<div class="portlet-title">
 					<div class="caption">
-						<i class="fa fa-globe"></i>渠道管理
+						<i class="fa fa-globe"></i>码率模板管理
 					</div>
 					<div class="actions">
 						<a href="javascript:;" class="btn btn-default btn-sm"
-							onclick="$.SiteController.toEdit('${ctx}/config/site/add')">
-							<i class="fa fa-plus"></i>增加渠道
+							onclick="$.MediaTemplateController.toEdit('${ctx}/config/mediaTemplate/add')">
+							<i class="fa fa-plus"></i>增加码率模板
 						</a>
 					</div>
 				</div>
 				<div class="portlet-body">
 					<div class="table-container">
 						<div class="table-actions-wrapper-condition">
-							<form action="${ctx}/config/site/">
+							<form action="${ctx}/config/mediaTemplate/">
 								<div class="row">
 									<div class="col-md-12">
 										<div class="col-md-4">
-											<label class="control-label">渠道代码: <input type="text"
-												class="form-control input-small input-inline"
+											<label class="control-label">码率模板代码: <input
+												type="text" class="form-control input-small input-inline"
 												name="search_code__LIKE_S"
 												value="${param.search_code__LIKE_S}">
 											</label>
 										</div>
 										<div class="col-md-4">
-											<label class="control-label">渠道名称: <input type="text"
-												name="search_name__LIKE_S"
+											<label class="control-label">码率模板名称: <input
+												type="text" name="search_title__LIKE_S"
 												class="form-control input-small input-inline"
-												value="${param.search_name__LIKE_S}">
+												value="${param.search_title__LIKE_S}">
 											</label>
 										</div>
 										<div class="col-md-4">
@@ -62,18 +62,18 @@
 						class="table dataTable table-striped table-bordered table-hover">
 						<thead>
 							<tr>
-								<th class="sorting" abbr="id">渠道ID</th>
-								<th class="sorting" abbr="code">渠道代码</th>
-								<th class="sorting" abbr="name">渠道名称</th>
+								<th class="sorting" abbr="id">码率模板ID</th>
+								<th class="sorting" abbr="code">码率模板代码</th>
+								<th class="sorting" abbr="title">码率模板名称</th>
 								<th class="sorting" abbr="status">状态</th>
 								<th>操作</th>
 							</tr>
 						</thead>
 						<tfoot>
 							<tr>
-								<th class="sorting" abbr="id">渠道ID</th>
-								<th class="sorting" abbr="code">渠道代码</th>
-								<th class="sorting" abbr="name">渠道名称</th>
+								<th class="sorting" abbr="id">码率模板ID</th>
+								<th class="sorting" abbr="code">码率模板代码</th>
+								<th class="sorting" abbr="title">码率模板名称</th>
 								<th class="sorting" abbr="status">状态</th>
 								<th>操作</th>
 							</tr>
@@ -83,7 +83,7 @@
 								<tr>
 									<td>${t.id}</td>
 									<td>${t.code}</td>
-									<td>${t.name}</td>
+									<td>${t.title}</td>
 									<td><c:forEach var="item" items="${statusEnum}">
 											<c:if test="${item.key eq t.status && item.key eq 0}">
 												<span class="badge badge-danger">${item.value}</span>
@@ -94,12 +94,12 @@
 										</c:forEach></td>
 									<td>
 										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.SiteController.toEdit('${ctx}/config/site/${t.id}/edit',${t.id});">
+											onclick="$.MediaTemplateController.toEdit('${ctx}/config/mediaTemplate/${t.id}/edit',${t.id});">
 											<i class="fa fa-edit"></i>修改
 										</button> <c:forEach var="item" items="${statusEnum}">
 											<c:if test="${item.key eq t.status && item.key eq 0}">
 												<!-- 													<button class="btn btn-default btn-sm btn-outline green" -->
-												<%-- 														onclick="$.SiteController.toDelete('${ctx}/config/site/${t.id}/delete','${t.name}');"> --%>
+												<%-- 														onclick="$.MediaTemplateController.toDelete('${ctx}/config/mediaTemplate/${t.id}/delete','${t.name}');"> --%>
 												<!-- 														<i class="fa fa-remove"></i>删除 -->
 												<!-- 													</button> -->
 											</c:if>
@@ -121,5 +121,5 @@
 <tags:contentModal />
 
 <script>
-	$.SiteController.keypress({containerId: '${containerId}', formId: '${formId}'});
+	$.MediaTemplateController.keypress({containerId: '${containerId}', formId: '${formId}'});
 </script>

@@ -250,10 +250,14 @@ public class FtpUtils {
 						remoteFilePath, "/");
 				logger.info("download ftp changeWorkingDirectory("
 						+ remoteDirPath + ").");
-				ftpClient.changeWorkingDirectory(remoteDirPath);
+				success = ftpClient.changeWorkingDirectory(remoteDirPath);
 				logger.info("download ftp file(" + remoteFileName
 						+ ") start...");
-				success = ftpClient.retrieveFile(remoteFileName, out);
+				if (success) {
+					success = ftpClient.retrieveFile(remoteFileName, out);
+				} else {
+					success = ftpClient.retrieveFile(remoteFilePath, out);
+				}
 			} else {
 				success = ftpClient.retrieveFile(remoteFilePath, out);
 			}

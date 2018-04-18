@@ -47,6 +47,8 @@ public class PlayController extends AbstractImageController {
 		StringBuffer sb = new StringBuffer();
 		sb.append("#EXTM3U").append("\n");
 		sb.append("#EXT-X-VERSION:4").append("\n");
+		sb.append("#EXT-X-PLAYLIST-TYPE:VOD").append("\n");
+		sb.append("#EXT-X-MEDIA-SEQUENCE:0").append("\n");
 		if (fileSize != null && duration != null) {
 			List<M3U8Bean> m3u8BeanList = new ArrayList<M3U8Bean>();
 
@@ -86,6 +88,7 @@ public class PlayController extends AbstractImageController {
 						.append(m3u8Bean.getByterangeStart()).append("\n");
 				sb.append(filePath).append("\n");
 			}
+			sb.append("#ZEN-TOTAL-DURATION:").append(duration).append("\n");
 		} else {
 			sb.append("#EXTINF:").append(0).append("\n");
 			sb.append(filePath).append("\n");
@@ -99,6 +102,11 @@ public class PlayController extends AbstractImageController {
 			HttpServletResponse response, @PathVariable(value = "id") Long id)
 			throws Exception {
 		MediaFile mediaFile = mediaFileRepository.findOne(id);
+		mediaFileM3U8(model, request, response, mediaFile);
+	}
+
+	public void mediaFileM3U8(Model model, HttpServletRequest request,
+			HttpServletResponse response, MediaFile mediaFile) throws Exception {
 		if (mediaFile != null) {
 			String m3u8Text;
 			if (StringUtils.isNotEmpty(mediaFile.getM3u8Url())) {
@@ -219,21 +227,35 @@ public class PlayController extends AbstractImageController {
 
 	@RequestMapping(value = { "preview" })
 	public String preview(Model model, HttpServletRequest request,
-			@RequestParam(value = "path", required = false) String path) {
-		getPlayUrl(model, request, path);
+			HttpServletResponse response,
+			@RequestParam(value = "path", required = false) String path)
+			throws Exception {
+		getPlayUrl(model, request, response, path);
 		return "media/play/preview";
 	}
 
 	@RequestMapping(value = { "previewNewWindow" })
 	public String previewNewWindow(Model model, HttpServletRequest request,
-			@RequestParam(value = "path", required = false) String path) {
-		getPlayUrl(model, request, path);
+			HttpServletResponse response,
+			@RequestParam(value = "path", required = false) String path)
+			throws Exception {
+		getPlayUrl(model, request, response, path);
 		return "media/play/previewNewWindow";
 	}
 
 	public void getPlayUrl(Model model, HttpServletRequest request,
-			@RequestParam(value = "path", required = false) String path) {
+			HttpServletResponse response,
+			@RequestParam(value = "path", required = false) String path)
+			throws Exception {
 		logger.info("preview path {" + path + "}");
+
+		List<MediaFile> mediaFileList = mediaFileRepository
+				.findByFilePath(path);
+		if (mediaFileList != null && mediaFileList.size() > 0) {
+			previewMediaFile(model, request, mediaFileList.get(0).getId());
+			return;
+		}
+
 		List<PlayBean> playBeanList = new ArrayList<PlayBean>();
 		model.addAttribute("playBeanList", playBeanList);
 

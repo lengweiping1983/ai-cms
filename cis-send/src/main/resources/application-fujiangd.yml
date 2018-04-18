@@ -62,4 +62,4 @@ injection:
   task.maxNum: 20
   task.maxRequestTimes: 3
   task.timeout: 2
-  ftp.changeWorkingDirectory: true
+  ftp.changeWorkingDirectory: false
