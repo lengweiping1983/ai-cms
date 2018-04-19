@@ -37,11 +37,18 @@
 							<div class="col-md-12">
 								<div class="tabbable-line boxless tabbable-reversed">
 									<ul class="nav nav-tabs">
-										<li class="active"><a href="#tab_0" data-toggle="tab">节目元数据</a></li>
-										<li><a href="#tab_1" data-toggle="tab">扩展数据</a></li>
-										<li><a href="#tab_2" data-toggle="tab">版权</a></li>
-										<li><a href="#tab_3" data-toggle="tab">海报</a></li>
-										<li><a href="#tab_4" data-toggle="tab">分发</a></li>
+										<li class="active"><a href="#tab_0"
+											onclick="$.ProgramController.changeTab(1)" data-toggle="tab">节目元数据</a></li>
+										<li><a href="#tab_1"
+											onclick="$.ProgramController.changeTab(1)" data-toggle="tab">扩展数据</a></li>
+										<li><a href="#tab_2"
+											onclick="$.ProgramController.changeTab(1)" data-toggle="tab">版权</a></li>
+										<li><a href="#tab_3"
+											onclick="$.ProgramController.changeTab(1)" data-toggle="tab">海报</a></li>
+										<c:if test="${!empty program.id}">
+											<li><a href="#tab_4"
+												onclick="$.ProgramController.changeTab(2)" data-toggle="tab">剧照</a></li>
+										</c:if>
 									</ul>
 									<div class="tab-content">
 										<div class="tab-pane active" id="tab_0">
@@ -676,6 +683,52 @@
 						</c:if>
 					</div>
 				</form>
+				<div id="fileuploadArea" style="display: none">
+					<form id="fileupload"
+						action="${contextPathPrefix}${program.id}/batchUploadStills"
+						method="POST" enctype="multipart/form-data">
+						<!-- The table listing the files available for upload/download -->
+						<table role="presentation" class="table table-striped clearfix">
+							<tbody class="files">
+							</tbody>
+						</table>
+						<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+						<div class="row fileupload-buttonbar">
+							<div class="col-lg-7">
+								<!-- The fileinput-button span is used to style the file input field as button -->
+								<span class="btn green fileinput-button"> <i
+									class="fa fa-plus"></i> <span> 批量增加... </span> <input
+									type="file" name="files[]" multiple
+									accept=".JPEG,.JPG,.PNG,.GIF">
+								</span>
+								<button type="submit" class="btn blue start">
+									<i class="fa fa-upload"></i> <span> 批量上传 </span>
+								</button>
+								<button type="reset" class="btn red cancel">
+									<i class="fa fa-ban"></i> <span> 批量取消 </span>
+								</button>
+								<button type="button" class="btn red delete">
+									<i class="fa fa-trash"></i> <span> 批量删除 </span>
+								</button>
+								<input type="checkbox" class="toggle"> 全选
+								<!-- The global file processing state -->
+								<span class="fileupload-process"> </span>
+							</div>
+							<!-- The global progress information -->
+							<div class="col-lg-5 fileupload-progress fade">
+								<!-- The global progress bar -->
+								<div class="progress progress-striped active" role="progressbar"
+									aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar progress-bar-success"
+										style="width: 0%;"></div>
+								</div>
+								<!-- The extended global progress information -->
+								<div class="progress-extended">&nbsp;</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<tags:uploadDownload />
 			</div>
 			<div class="modal-footer">
 				<c:if test="${!readOnly}">

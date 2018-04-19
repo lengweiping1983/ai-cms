@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="/WEB-INF/views/includes/taglib.jsp"%>
 
-<c:set var="staticFileVersion" value="13" />
+<c:set var="staticFileVersion" value="25" />
 <c:choose>
 	<c:when test="${fn:contains(profiles, 'dev') || fn:contains(profiles, 'demo')}">
 		<c:set var="staticFileVersion" value="<%=System.currentTimeMillis()%>" />
@@ -9,6 +9,7 @@
 	<c:otherwise>
 	</c:otherwise>
 </c:choose>
+<%-- <c:set var="staticFileVersion" value="<%=System.currentTimeMillis()%>" /> --%>
 
 <link
 	href="${ctx}/assets/global/plugins/jstree/dist/themes/default/style.min.css"
@@ -30,9 +31,29 @@
 <script src="${ctx}/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
 <script src="${ctx}/assets/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js" type="text/javascript"></script>
 
+<link href="${ctx}/assets/global/plugins/fancybox/source/jquery.fancybox.css" rel="stylesheet" type="text/css" />
+<link href="${ctx}/assets/global/plugins/jquery-file-upload/blueimp-gallery/blueimp-gallery.min.css" rel="stylesheet" type="text/css" />
+<link href="${ctx}/assets/global/plugins/jquery-file-upload/css/jquery.fileupload.css" rel="stylesheet" type="text/css" />
+<link href="${ctx}/assets/global/plugins/jquery-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet" type="text/css" />
+
+<script src="${ctx}/assets/global/plugins/fancybox/source/jquery.fancybox.pack.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/vendor/jquery.ui.widget.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/vendor/tmpl.min.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/vendor/load-image.min.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/vendor/canvas-to-blob.min.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/blueimp-gallery/jquery.blueimp-gallery.min.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.fileupload.js?time=${staticFileVersion}" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-process.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-image.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-audio.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-video.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-validate.js" type="text/javascript"></script>
+<script src="${ctx}/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-ui.js?time=${staticFileVersion}" type="text/javascript"></script>
+        
 <link href="${ctx}/static//plugins/bootstrap-multiselect-0.9.13/dist/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />                
 <script src="${ctx}/static/plugins/bootstrap-multiselect-0.9.13/dist/js/bootstrap-multiselect.js" type="text/javascript"></script>
-
+        
 <!-- <link rel="stylesheet" type="text/css" -->
 <%-- 	href="${ctx}/static/plugins/annotator/bootstrap-yeti.min.css"> --%>
 <link rel="stylesheet" type="text/css"

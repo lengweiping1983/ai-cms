@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ai.AdminConstants;
 import com.ai.AdminGlobal;
@@ -43,13 +44,17 @@ import com.ai.cms.media.bean.BatchInjectionBean;
 import com.ai.cms.media.bean.BatchMetadataBean;
 import com.ai.cms.media.bean.BatchStatusBean;
 import com.ai.cms.media.bean.BatchTypeBean;
+import com.ai.cms.media.bean.BatchUploadResult;
 import com.ai.cms.media.bean.ImageBean;
 import com.ai.cms.media.bean.MediaFileExportLog;
 import com.ai.cms.media.bean.ProgramExportLog;
+import com.ai.cms.media.bean.UploadImageBean;
 import com.ai.cms.media.entity.MediaFile;
+import com.ai.cms.media.entity.MediaImage;
 import com.ai.cms.media.entity.Program;
 import com.ai.cms.media.entity.Series;
 import com.ai.cms.media.repository.MediaFileRepository;
+import com.ai.cms.media.repository.MediaImageRepository;
 import com.ai.cms.media.repository.ProgramRepository;
 import com.ai.cms.media.repository.SeriesRepository;
 import com.ai.cms.media.service.MediaService;
@@ -86,6 +91,9 @@ public class ProgramController extends AbstractImageController {
 
 	@Autowired
 	protected MediaFileRepository mediaFileRepository;
+
+	@Autowired
+	protected MediaImageRepository mediaImageRepository;
 
 	@Autowired
 	protected MediaService mediaService;
@@ -1171,6 +1179,93 @@ public class ProgramController extends AbstractImageController {
 				ProgramExportLog.DEFAULT).setDataList(logs)
 				.write(response, fileName).dispose();
 		return true;
+	}
+
+	@RequestMapping(value = { "{id}/batchUploadStills" }, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BatchUploadResult batchUploadStills(Model model,
+			@PathVariable("id") Long id) {
+		BatchUploadResult result = new BatchUploadResult();
+		int type = 2;
+		List<MediaImage> mediaImageList = mediaImageRepository
+				.findByProgramIdAndType(id, type);
+		for (MediaImage mediaImage : mediaImageList) {
+			UploadImageBean uploadImageBean = new UploadImageBean();
+			uploadImageBean.setUrl(AdminGlobal.getImageWebPath(mediaImage
+					.getFilePath()));
+			uploadImageBean.setThumbnailUrl(AdminGlobal
+					.getImageWebPath(mediaImage.getFilePath()));
+			uploadImageBean.setName(mediaImage.getSourceFileName());
+			uploadImageBean.setSize(mediaImage.getFileSize());
+			uploadImageBean.setError(null);
+			uploadImageBean.setDeleteType("DELETE");
+			uploadImageBean.setDeleteUrl(AdminGlobal.getWebAccessUrl()
+					+ "/media/program/" + id + "/deleteImage/"
+					+ mediaImage.getId());
+			result.getFiles().add(uploadImageBean);
+		}
+		return result;
+	}
+
+	@OperationLogAnnotation(module = "媒资管理", subModule = "节目管理", action = "批量上传", message = "批量上传剧照")
+	@RequiresPermissions("media:program:edit")
+	@RequestMapping(value = { "{id}/batchUploadStills" }, method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BatchUploadResult batchUploadStills(Model model,
+			@PathVariable("id") Long id,
+			@RequestParam(value = "files[]") MultipartFile[] files) {
+		BatchUploadResult result = new BatchUploadResult();
+		int type = 2;
+		int beginSortIndex = 1;
+		Integer maxSortIndex = mediaImageRepository
+				.findMaxSortIndexByProgramIdAndType(id, type);
+		if (maxSortIndex != null) {
+			beginSortIndex = maxSortIndex.intValue();
+		}
+		int index = 0;
+		for (MultipartFile file : files) {
+			index++;
+			String filePath = upload(AdminConstants.MODULE_RESOURCE_CONTENT,
+					AdminConstants.RESOURCE_TYPE_IMAGE, file);
+			String fileName = file.getOriginalFilename();
+			MediaImage mediaImage = new MediaImage();
+			mediaImage.setProgramId(id);
+			mediaImage.setType(type);
+			mediaImage.setSortIndex(beginSortIndex + index);
+			mediaImage.setFileSize(file.getSize());
+			mediaImage.setFilePath(filePath);
+			mediaImage.setSourceFileName(fileName);
+			mediaImageRepository.save(mediaImage);
+
+			UploadImageBean uploadImageBean = new UploadImageBean();
+			uploadImageBean.setUrl(AdminGlobal.getImageWebPath(mediaImage
+					.getFilePath()));
+			uploadImageBean.setThumbnailUrl(AdminGlobal
+					.getImageWebPath(mediaImage.getFilePath()));
+			uploadImageBean.setName(mediaImage.getSourceFileName());
+			uploadImageBean.setSize(mediaImage.getFileSize());
+			uploadImageBean.setError(null);
+			uploadImageBean.setDeleteType("DELETE");
+			uploadImageBean.setDeleteUrl(AdminGlobal.getWebAccessUrl()
+					+ "/media/program/" + id + "/deleteImage/"
+					+ mediaImage.getId());
+			result.getFiles().add(uploadImageBean);
+		}
+		return result;
+	}
+
+	@OperationLogAnnotation(module = "媒资管理", subModule = "节目管理", action = "删除", message = "删除剧照")
+	@RequiresPermissions("media:program:edit")
+	@RequestMapping(value = { "{id}/deleteImage/{imageId}" }, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BatchUploadResult deleteImage(Model model,
+			@PathVariable("id") Long id, @PathVariable("imageId") Long imageId) {
+		BatchUploadResult result = new BatchUploadResult();
+		MediaImage mediaImage = mediaImageRepository.findOne(imageId);
+		if (mediaImage != null) {
+			mediaImageRepository.delete(mediaImage);
+		}
+		return result;
 	}
 
 }

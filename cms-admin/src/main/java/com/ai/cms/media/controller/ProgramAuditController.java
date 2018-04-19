@@ -18,13 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ai.cms.media.bean.BatchAuditBean;
 import com.ai.cms.media.bean.BatchBean;
 import com.ai.cms.media.bean.BatchMetadataBean;
 import com.ai.cms.media.bean.BatchStatusBean;
 import com.ai.cms.media.bean.BatchTypeBean;
+import com.ai.cms.media.bean.BatchUploadResult;
 import com.ai.cms.media.bean.ImageBean;
+import com.ai.cms.media.bean.UploadImageBean;
 import com.ai.cms.media.entity.Program;
 import com.ai.cms.media.entity.Series;
 import com.ai.common.bean.BaseResult;
@@ -336,5 +339,29 @@ public class ProgramAuditController extends ProgramController {
 		return new BaseResult().setMessage(message).addOperationObject(
 				mediaService
 						.transformProgramOperationObject(operationObjectList));
+	}
+
+	@OperationLogAnnotation(module = "媒资审核", subModule = "节目审核", action = "批量上传", message = "批量上传剧照")
+	@RequiresPermissions("media:programAudit:edit")
+	@RequestMapping(value = { "{id}/batchUploadStills" }, method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BatchUploadResult batchUploadStills(Model model,
+			@PathVariable("id") Long id,
+			@RequestParam(value = "files[]") MultipartFile[] files) {
+		BatchUploadResult result = super.batchUploadStills(model, id, files);
+		for (UploadImageBean file : result.getFiles()) {
+			file.setDeleteUrl(file.getDeleteUrl().replace("/media/program/",
+					"/media/programAudit/"));
+		}
+		return result;
+	}
+
+	@OperationLogAnnotation(module = "媒资审核", subModule = "节目审核", action = "删除", message = "删除剧照")
+	@RequiresPermissions("media:programAudit:edit")
+	@RequestMapping(value = { "{id}/deleteImage/{imageId}" }, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BatchUploadResult deleteImage(Model model,
+			@PathVariable("id") Long id, @PathVariable("imageId") Long imageId) {
+		return super.deleteImage(model, id, imageId);
 	}
 }
