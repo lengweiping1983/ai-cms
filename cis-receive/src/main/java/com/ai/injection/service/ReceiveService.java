@@ -1066,7 +1066,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
 			File file = new File(AdminGlobal.getImageUploadPath(mediaImage
 					.getFilePath()));
-			if (!file.exists()) {
+			if (file.exists()) {
 				mediaImage.setFileSize(file.length());
 			}
 			String fileName = StringUtils.substringAfterLast(
@@ -1131,7 +1131,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
 			File file = new File(AdminGlobal.getImageUploadPath(mediaImage
 					.getFilePath()));
-			if (!file.exists()) {
+			if (file.exists()) {
 				mediaImage.setFileSize(file.length());
 			}
 			String fileName = StringUtils.substringAfterLast(
