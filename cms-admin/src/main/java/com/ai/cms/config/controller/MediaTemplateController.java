@@ -80,11 +80,12 @@ public class MediaTemplateController extends AbstractController {
 	@ResponseBody
 	public BaseResult edit(@RequestBody MediaTemplate mediaTemplate,
 			@PathVariable("id") Long id) {
+		MediaTemplate mediaTemplateInfo = null;
 		if (id == null) {
-			mediaTemplateRepository.save(mediaTemplate);
+			mediaTemplateInfo = mediaTemplate;
 		} else {
-			MediaTemplate mediaTemplateInfo = mediaTemplateRepository
-					.findOne(mediaTemplate.getId());
+			mediaTemplateInfo = mediaTemplateRepository.findOne(mediaTemplate
+					.getId());
 			BeanInfoUtil
 					.bean2bean(
 							mediaTemplate,
@@ -93,8 +94,17 @@ public class MediaTemplateController extends AbstractController {
 									+ "vFormat,vBitrate,vMaxBitrate,vMinBitrate,"
 									+ "vFramerate,vGop,v2pass,vProfile,vProfileLevel,aCodec,aBitrate,"
 									+ "transcodeMode,externalCode,status");
-			mediaTemplateRepository.save(mediaTemplateInfo);
+
 		}
+		// TS-CBR-H264-8000-1080P-25-MP2-128
+		String mediaSpec = mediaTemplate.getvFormat() + "-"
+				+ mediaTemplate.getvBitrateMode() + "-"
+				+ mediaTemplate.getvCodec() + "-" + mediaTemplate.getvBitrate()
+				+ "-" + mediaTemplate.getvResolution() + "-"
+				+ mediaTemplate.getvFramerate() + "-"
+				+ mediaTemplate.getaCodec() + "-" + mediaTemplate.getaBitrate();
+		mediaTemplateInfo.setMediaSpec(mediaSpec);
+		mediaTemplateRepository.save(mediaTemplateInfo);
 		return new BaseResult();
 	}
 

@@ -26,9 +26,11 @@ import com.ai.cms.injection.enums.InjectionStatusEnum;
 import com.ai.cms.injection.enums.PlatformTypeEnum;
 import com.ai.cms.injection.enums.SendTaskStatusEnum;
 import com.ai.cms.media.entity.MediaFile;
+import com.ai.cms.media.entity.MediaImage;
 import com.ai.cms.media.entity.Program;
 import com.ai.cms.media.entity.Series;
 import com.ai.common.enums.ContentTypeEnum;
+import com.ai.common.enums.MediaImageTypeEnum;
 import com.ai.common.enums.OnlineStatusEnum;
 import com.ai.common.enums.ProgramTypeEnum;
 import com.ai.common.enums.YesNoEnum;
@@ -239,6 +241,23 @@ public class GenProgramService extends GenCommonService {
 						programInjectionObject, 4000000000l, 1, 4);
 				adi.getMappings().add(mappingBean);
 			}
+
+			// 生成剧照
+			List<MediaImage> mediaImageList = mediaImageRepository
+					.findByProgramIdAndType(program.getId(),
+							MediaImageTypeEnum.STILLS.getKey());
+			for (MediaImage mediaImage : mediaImageList) {
+				if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
+					// a.生成剧照操作对象
+					PictureBean pictureBean = genCreatePictureBean(mediaImage);
+					adi.getObjects().add(pictureBean);
+
+					// b.生成剧照映射对象
+					MappingBean mappingBean = genCreatePictureMappingBean(
+							program, programInjectionObject, mediaImage);
+					adi.getMappings().add(mappingBean);
+				}
+			}
 		}
 
 		// 4.获取所有的媒体内容
@@ -358,6 +377,23 @@ public class GenProgramService extends GenCommonService {
 				MappingBean mappingBean = genCreatePictureMappingBean(program,
 						programInjectionObject, 4000000000l, 1, 4);
 				adi.getMappings().add(mappingBean);
+			}
+
+			// 生成剧照
+			List<MediaImage> mediaImageList = mediaImageRepository
+					.findByProgramIdAndType(program.getId(),
+							MediaImageTypeEnum.STILLS.getKey());
+			for (MediaImage mediaImage : mediaImageList) {
+				if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
+					// a.生成剧照操作对象
+					PictureBean pictureBean = genCreatePictureBean(mediaImage);
+					adi.getObjects().add(pictureBean);
+
+					// b.生成剧照映射对象
+					MappingBean mappingBean = genCreatePictureMappingBean(
+							program, programInjectionObject, mediaImage);
+					adi.getMappings().add(mappingBean);
+				}
 			}
 		}
 

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.AdminGlobal;
 import com.ai.cms.config.entity.Cp;
+import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.service.ConfigService;
 import com.ai.cms.injection.bean.ADI;
 import com.ai.cms.injection.bean.MappingBean;
@@ -39,16 +40,19 @@ import com.ai.cms.injection.repository.DownloadTaskRepository;
 import com.ai.cms.injection.repository.InjectionPlatformRepository;
 import com.ai.cms.injection.repository.ReceiveTaskRepository;
 import com.ai.cms.media.entity.MediaFile;
+import com.ai.cms.media.entity.MediaImage;
 import com.ai.cms.media.entity.Program;
 import com.ai.cms.media.entity.Series;
 import com.ai.cms.media.service.MediaService;
 import com.ai.common.enums.AuditStatusEnum;
 import com.ai.common.enums.ContentTypeEnum;
 import com.ai.common.enums.MediaFileTypeEnum;
+import com.ai.common.enums.MediaImageTypeEnum;
 import com.ai.common.enums.MediaStatusEnum;
 import com.ai.common.enums.OnlineStatusEnum;
 import com.ai.common.enums.ProgramTypeEnum;
 import com.ai.common.enums.SourceEnum;
+import com.ai.common.enums.ValidStatusEnum;
 import com.ai.common.enums.YesNoEnum;
 import com.ai.common.exception.DataException;
 import com.ai.common.repository.AbstractRepository;
@@ -188,11 +192,28 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 						PictureBean pictureBean = (PictureBean) objectBean;
 						if ("Program".equalsIgnoreCase(mappingBean
 								.getParentType())) {
-							saveProgramPictureMapping(mappingBean, pictureBean,
+							saveProgramPosterMapping(mappingBean, pictureBean,
 									receiveTask, platform, currentCpId);
 						} else if ("Series".equalsIgnoreCase(mappingBean
 								.getParentType())) {
-							saveSeriesPictureMapping(mappingBean, pictureBean,
+							saveSeriesPosterMapping(mappingBean, pictureBean,
+									receiveTask, platform, currentCpId);
+						}
+					}
+				} else if (StringUtils.isNotEmpty(mappingBean.getType())) {
+					// Type当Mapping关系为Picture时，此字段为必填；当Mapping关系为片花时，此字段为必填；
+					// Sequence当Mapping关系涉及Picture时，此字段为必填，展示顺序由上有平台保证；
+					ObjectBean objectBean = objectMap.get(mappingBean
+							.getElementCode());
+					if (objectBean instanceof PictureBean) {
+						PictureBean pictureBean = (PictureBean) objectBean;
+						if ("Program".equalsIgnoreCase(mappingBean
+								.getParentType())) {
+							saveProgramImageMapping(mappingBean, pictureBean,
+									receiveTask, platform, currentCpId);
+						} else if ("Series".equalsIgnoreCase(mappingBean
+								.getParentType())) {
+							saveSeriesImageMapping(mappingBean, pictureBean,
 									receiveTask, platform, currentCpId);
 						}
 					}
@@ -621,6 +642,26 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 		if (StringUtils.isNotEmpty(movieBean.getMediaSpec())) {
 			mediaFile.setMediaSpec(movieBean.getMediaSpec());
+
+			List<MediaTemplate> mediaTemplateList = configService
+					.findAllMediaTemplate();
+			for (MediaTemplate mediaTemplate : mediaTemplateList) {
+				if (mediaTemplate.getStatus() == ValidStatusEnum.VALID.getKey()
+						&& StringUtils.trimToEmpty(movieBean.getMediaSpec())
+								.equalsIgnoreCase(mediaTemplate.getMediaSpec())) {
+					mediaFile.setTemplateId(mediaTemplate.getId());
+					break;
+				}
+			}
+			if (mediaFile.getTemplateId() <= 0) {
+				for (MediaTemplate mediaTemplate : mediaTemplateList) {
+					if (StringUtils.trimToEmpty(movieBean.getMediaSpec())
+							.equalsIgnoreCase(mediaTemplate.getMediaSpec())) {
+						mediaFile.setTemplateId(mediaTemplate.getId());
+						break;
+					}
+				}
+			}
 		}
 		mediaService.saveMediaFile(mediaFile);
 
@@ -771,7 +812,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				mediaFile.getFilePath(), mediaFile.getTemplateId());
 	}
 
-	private void saveSeriesPictureMapping(MappingBean mappingBean,
+	private void saveSeriesPosterMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
 			InjectionPlatform platform, String currentCpId) {
 		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
@@ -872,7 +913,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 	}
 
-	private void saveProgramPictureMapping(MappingBean mappingBean,
+	private void saveProgramPosterMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
 			InjectionPlatform platform, String currentCpId) {
 		Program program = mediaService.findProgramByCloudCode(platform
@@ -970,6 +1011,134 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				mediaService.saveProgram(program);
 			}
 		}
+	}
+
+	private void saveSeriesImageMapping(MappingBean mappingBean,
+			PictureBean pictureBean, ReceiveTask receiveTask,
+			InjectionPlatform platform, String currentCpId) {
+		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
+				+ "_" + mappingBean.getParentCode());
+		if (series == null) {
+			throw new DataException("Series[" + mappingBean.getParentCode()
+					+ "]不存在！");
+		}
+		// 检查该媒资是否属于该CP
+		if (series != null) {
+			String cpId = StringUtils.trimToEmpty(series.getCpId());
+			List<String> cpIds = Arrays.asList(cpId.split(","));
+			if (!cpIds.contains(currentCpId)) {
+				throw new DataException("Series[" + mappingBean.getParentCode()
+						+ "]不存在！");
+			}
+		}
+		MediaImage mediaImage = mediaService.findMediaImageByCloudCode(platform
+				.getCspId() + "_" + mappingBean.getElementCode());
+		if ("DELETE".equalsIgnoreCase(mappingBean.getAction())) {
+			mediaService.deleteMediaImage(mediaImage);
+			return;
+		}
+		if (mediaImage == null) {
+			mediaImage = new MediaImage();
+			mediaImage.setSource(SourceEnum.INJECTION.getKey());
+			mediaImage.setCloudId(platform.getCspId() + "_"
+					+ pictureBean.getID());
+			mediaImage.setCloudCode(platform.getCspId() + "_"
+					+ pictureBean.getCode());
+		}
+		mediaImage.setSeriesId(series.getId());
+		if (StringUtils.isNotEmpty(mappingBean.getType())) {
+			int type = NumberUtils.toInt(mappingBean.getType(),
+					MediaImageTypeEnum.STILLS.getKey());
+			mediaImage.setType(type);
+		} else {
+			throw new DataException("Mapping[" + mappingBean.getElementCode()
+					+ "]不正确！");
+		}
+		if (StringUtils.isNotEmpty(mappingBean.getSequence())) {
+			mediaImage.setSortIndex(NumberUtils.toInt(
+					mappingBean.getSequence(), 1));
+		} else {
+			throw new DataException("Mapping[" + mappingBean.getElementCode()
+					+ "]不正确！");
+		}
+		mediaImage.setFilePath(getFilePath(pictureBean.getFileURL(),
+				receiveTask, platform));
+		if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
+			File file = new File(AdminGlobal.getImageUploadPath(mediaImage
+					.getFilePath()));
+			if (!file.exists()) {
+				mediaImage.setFileSize(file.length());
+			}
+			String fileName = StringUtils.substringAfterLast(
+					mediaImage.getFilePath(), "/");
+			mediaImage.setSourceFileName(fileName);
+		}
+		mediaService.saveMediaImage(mediaImage);
+	}
+
+	private void saveProgramImageMapping(MappingBean mappingBean,
+			PictureBean pictureBean, ReceiveTask receiveTask,
+			InjectionPlatform platform, String currentCpId) {
+		Program program = mediaService.findProgramByCloudCode(platform
+				.getCspId() + "_" + mappingBean.getParentCode());
+		if (program == null) {
+			throw new DataException("Program[" + mappingBean.getParentCode()
+					+ "]不存在！");
+		}
+		// 检查该媒资是否属于该CP
+		if (program != null) {
+			String cpId = StringUtils.trimToEmpty(program.getCpId());
+			List<String> cpIds = Arrays.asList(cpId.split(","));
+			if (!cpIds.contains(currentCpId)) {
+				throw new DataException("Program["
+						+ mappingBean.getParentCode() + "]不存在！");
+			}
+		}
+
+		MediaImage mediaImage = mediaService.findMediaImageByCloudCode(platform
+				.getCspId() + "_" + mappingBean.getElementCode());
+		if ("DELETE".equalsIgnoreCase(mappingBean.getAction())) {
+			mediaService.deleteMediaImage(mediaImage);
+			return;
+		}
+		if (mediaImage == null) {
+			mediaImage = new MediaImage();
+			mediaImage.setSource(SourceEnum.INJECTION.getKey());
+			mediaImage.setCloudId(platform.getCspId() + "_"
+					+ pictureBean.getID());
+			mediaImage.setCloudCode(platform.getCspId() + "_"
+					+ pictureBean.getCode());
+		}
+		mediaImage.setProgramId(program.getId());
+
+		if (StringUtils.isNotEmpty(mappingBean.getType())) {
+			int type = NumberUtils.toInt(mappingBean.getType(),
+					MediaImageTypeEnum.STILLS.getKey());
+			mediaImage.setType(type);
+		} else {
+			throw new DataException("Mapping[" + mappingBean.getElementCode()
+					+ "]不正确！");
+		}
+		if (StringUtils.isNotEmpty(mappingBean.getSequence())) {
+			mediaImage.setSortIndex(NumberUtils.toInt(
+					mappingBean.getSequence(), 1));
+		} else {
+			throw new DataException("Mapping[" + mappingBean.getElementCode()
+					+ "]不正确！");
+		}
+		mediaImage.setFilePath(getFilePath(pictureBean.getFileURL(),
+				receiveTask, platform));
+		if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
+			File file = new File(AdminGlobal.getImageUploadPath(mediaImage
+					.getFilePath()));
+			if (!file.exists()) {
+				mediaImage.setFileSize(file.length());
+			}
+			String fileName = StringUtils.substringAfterLast(
+					mediaImage.getFilePath(), "/");
+			mediaImage.setSourceFileName(fileName);
+		}
+		mediaService.saveMediaImage(mediaImage);
 	}
 
 	/**

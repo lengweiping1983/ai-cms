@@ -13,9 +13,11 @@ import com.ai.AppGlobal;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.repository.MediaTemplateRepository;
 import com.ai.cms.media.entity.MediaFile;
+import com.ai.cms.media.entity.MediaImage;
 import com.ai.cms.media.entity.Program;
 import com.ai.cms.media.entity.Series;
 import com.ai.cms.media.repository.MediaFileRepository;
+import com.ai.cms.media.repository.MediaImageRepository;
 import com.ai.cms.media.repository.ProgramRepository;
 import com.ai.cms.media.repository.SeriesRepository;
 import com.ai.common.bean.OperationObject;
@@ -41,6 +43,9 @@ public class MediaService extends AbstractService<Series, Long> {
 
 	@Autowired
 	private MediaFileRepository mediaFileRepository;
+	
+	@Autowired
+	private MediaImageRepository mediaImageRepository;
 
 	@Override
 	public AbstractRepository<Series, Long> getRepository() {
@@ -82,6 +87,14 @@ public class MediaService extends AbstractService<Series, Long> {
 		}
 		return null;
 	}
+	
+	public MediaImage findMediaImageByCloudId(String cloudId) {
+		List<MediaImage> list = mediaImageRepository.findByCloudId(cloudId);
+		if (list != null && list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
+	}
 
 	public Series findSeriesByCloudCode(String cloudCode) {
 		List<Series> list = seriesRepository.findByCloudCode(cloudCode);
@@ -101,6 +114,14 @@ public class MediaService extends AbstractService<Series, Long> {
 
 	public MediaFile findMediaFileByCloudCode(String cloudCode) {
 		List<MediaFile> list = mediaFileRepository.findByCloudCode(cloudCode);
+		if (list != null && list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	public MediaImage findMediaImageByCloudCode(String cloudCode) {
+		List<MediaImage> list = mediaImageRepository.findByCloudCode(cloudCode);
 		if (list != null && list.size() > 0) {
 			return list.get(0);
 		}
@@ -165,6 +186,11 @@ public class MediaService extends AbstractService<Series, Long> {
 		setMediaFileSpec(mediaFile, mediaFile.getTemplateId());
 		mediaFileRepository.save(mediaFile);
 	}
+	
+	@Transactional(value = "slaveTransactionManager", readOnly = false)
+	public void saveMediaImage(MediaImage mediaImage) {
+		mediaImageRepository.save(mediaImage);
+	}
 
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void saveMediaFileAndMediaStatus(MediaFile mediaFile,
@@ -187,6 +213,7 @@ public class MediaService extends AbstractService<Series, Long> {
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void deleteSeries(Series series) {
 		if (series != null) {
+			mediaImageRepository.deleteBySeriesId(series.getId());
 			mediaFileRepository.deleteBySeriesId(series.getId());
 			programRepository.deleteBySeriesId(series.getId());
 			seriesRepository.delete(series);
@@ -196,6 +223,7 @@ public class MediaService extends AbstractService<Series, Long> {
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void deleteProgram(Program program) {
 		if (program != null) {
+			mediaImageRepository.deleteByProgramId(program.getId());
 			mediaFileRepository.deleteByProgramId(program.getId());
 			programRepository.delete(program);
 			// 更新剧头的媒资状态
@@ -206,10 +234,16 @@ public class MediaService extends AbstractService<Series, Long> {
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void deleteMediaFile(MediaFile mediaFile) {
 		if (mediaFile != null) {
-			Long programId = mediaFile.getProgramId();
 			mediaFileRepository.delete(mediaFile);
 			// 更新节目的媒资状态
-			updateProgramMediaStatus(programId, true);
+			updateProgramMediaStatus(mediaFile.getProgramId(), true);
+		}
+	}
+	
+	@Transactional(value = "slaveTransactionManager", readOnly = false)
+	public void deleteMediaImage(MediaImage mediaImage) {
+		if (mediaImage != null) {
+			mediaImageRepository.delete(mediaImage);
 		}
 	}
 

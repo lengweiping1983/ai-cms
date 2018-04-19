@@ -23,8 +23,10 @@ import com.ai.cms.injection.enums.InjectionItemTypeEnum;
 import com.ai.cms.injection.enums.InjectionStatusEnum;
 import com.ai.cms.injection.enums.PlatformTypeEnum;
 import com.ai.cms.injection.enums.SendTaskStatusEnum;
+import com.ai.cms.media.entity.MediaImage;
 import com.ai.cms.media.entity.Series;
 import com.ai.common.enums.ContentTypeEnum;
+import com.ai.common.enums.MediaImageTypeEnum;
 import com.ai.common.enums.OnlineStatusEnum;
 import com.ai.common.enums.SeriesTypeEnum;
 import com.ai.common.enums.YesNoEnum;
@@ -180,6 +182,23 @@ public class GenSeriesService extends GenCommonService {
 						seriesInjectionObject, 4000000000l, 1, 4);
 				adi.getMappings().add(mappingBean);
 			}
+
+			// 生成剧照
+			List<MediaImage> mediaImageList = mediaImageRepository
+					.findBySeriesIdAndType(series.getId(),
+							MediaImageTypeEnum.STILLS.getKey());
+			for (MediaImage mediaImage : mediaImageList) {
+				if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
+					// a.生成剧照操作对象
+					PictureBean pictureBean = genCreatePictureBean(mediaImage);
+					adi.getObjects().add(pictureBean);
+
+					// b.生成剧照映射对象
+					MappingBean mappingBean = genCreatePictureMappingBean(
+							series, seriesInjectionObject, mediaImage);
+					adi.getMappings().add(mappingBean);
+				}
+			}
 		}
 	}
 
@@ -250,6 +269,23 @@ public class GenSeriesService extends GenCommonService {
 				MappingBean mappingBean = genCreatePictureMappingBean(series,
 						seriesInjectionObject, 4000000000l, 1, 4);
 				adi.getMappings().add(mappingBean);
+			}
+
+			// 生成剧照
+			List<MediaImage> mediaImageList = mediaImageRepository
+					.findBySeriesIdAndType(series.getId(),
+							MediaImageTypeEnum.STILLS.getKey());
+			for (MediaImage mediaImage : mediaImageList) {
+				if (StringUtils.isNotEmpty(mediaImage.getFilePath())) {
+					// a.生成剧照操作对象
+					PictureBean pictureBean = genCreatePictureBean(mediaImage);
+					adi.getObjects().add(pictureBean);
+
+					// b.生成剧照映射对象
+					MappingBean mappingBean = genCreatePictureMappingBean(
+							series, seriesInjectionObject, mediaImage);
+					adi.getMappings().add(mappingBean);
+				}
 			}
 		}
 	}

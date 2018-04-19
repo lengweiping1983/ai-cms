@@ -37,5 +37,13 @@ public interface MediaImageRepository extends
 	@Modifying
 	@Query(" delete from MediaImage t where t.seriesId = :seriesId ")
 	void deleteBySeriesId(@Param("seriesId") Long seriesId);
+	
+	/******************************** 分发/同步相关 begin ********************************/
+
+	List<MediaImage> findByCloudId(String cloudId);
+
+	List<MediaImage> findByCloudCode(String cloudCode);
+
+	/******************************** 分发/同步相关 end ********************************/
 
 }

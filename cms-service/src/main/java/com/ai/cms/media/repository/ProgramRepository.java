@@ -203,12 +203,12 @@ public interface ProgramRepository extends AbstractRepository<Program, Long> {
 	Page<Program> findByDate(@Param("type_two") String type_two, @Param("type_three") String type_three,
 			@Param("type_four") String type_four, Pageable pageable);
 
-	/******************************** 同步相关 begin ******************************/
+	/******************************** 分发/同步相关 begin ******************************/
 
 	List<Program> findByCloudId(String cloudId);
 
 	List<Program> findByCloudCode(String cloudCode);
-	/******************************** 同步相关 end ********************************/
+	/******************************** 分发/同步相关 end ********************************/
 	
 	/**
 	 *  Add by jnchen   

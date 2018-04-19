@@ -60,6 +60,7 @@ import com.ai.common.bean.ResultCode;
 import com.ai.common.controller.AbstractImageController;
 import com.ai.common.enums.AuditStatusEnum;
 import com.ai.common.enums.ContentTypeEnum;
+import com.ai.common.enums.MediaImageTypeEnum;
 import com.ai.common.enums.MediaStatusEnum;
 import com.ai.common.enums.OnlineStatusEnum;
 import com.ai.common.enums.SeriesTypeEnum;
@@ -250,22 +251,22 @@ public class SeriesController extends AbstractImageController {
 			String image3 = "";
 			String image4 = "";
 			if (StringUtils.isNotEmpty(image1Data)) {
-				image1 = upload(AdminConstants.MODULE_RESOURCE_CONTENT,
+				image1 = upload(AdminConstants.MODULE_RESOURCE_MEDIA,
 						AdminConstants.RESOURCE_TYPE_POSTER, image1Data);
 				seriesInfo.setImage1(image1);
 			}
 			if (StringUtils.isNotEmpty(image2Data)) {
-				image2 = upload(AdminConstants.MODULE_RESOURCE_CONTENT,
+				image2 = upload(AdminConstants.MODULE_RESOURCE_MEDIA,
 						AdminConstants.RESOURCE_TYPE_POSTER, image2Data);
 				seriesInfo.setImage2(image2);
 			}
 			if (StringUtils.isNotEmpty(image3Data)) {
-				image3 = upload(AdminConstants.MODULE_RESOURCE_CONTENT,
+				image3 = upload(AdminConstants.MODULE_RESOURCE_MEDIA,
 						AdminConstants.RESOURCE_TYPE_POSTER, image3Data);
 				seriesInfo.setImage3(image3);
 			}
 			if (StringUtils.isNotEmpty(image4Data)) {
-				image4 = upload(AdminConstants.MODULE_RESOURCE_CONTENT,
+				image4 = upload(AdminConstants.MODULE_RESOURCE_MEDIA,
 						AdminConstants.RESOURCE_TYPE_POSTER, image4Data);
 				seriesInfo.setImage4(image4);
 			}
@@ -898,7 +899,7 @@ public class SeriesController extends AbstractImageController {
 	public BatchUploadResult batchUploadStills(Model model,
 			@PathVariable("id") Long id) {
 		BatchUploadResult result = new BatchUploadResult();
-		int type = 2;
+		int type = MediaImageTypeEnum.STILLS.getKey();
 		List<MediaImage> mediaImageList = mediaImageRepository
 				.findBySeriesIdAndType(id, type);
 		for (MediaImage mediaImage : mediaImageList) {
@@ -927,8 +928,8 @@ public class SeriesController extends AbstractImageController {
 			@PathVariable("id") Long id,
 			@RequestParam(value = "files[]") MultipartFile[] files) {
 		BatchUploadResult result = new BatchUploadResult();
-		int type = 2;
-		int beginSortIndex = 1;
+		int type = MediaImageTypeEnum.STILLS.getKey();
+		int beginSortIndex = 0;
 		Integer maxSortIndex = mediaImageRepository
 				.findMaxSortIndexBySeriesIdAndType(id, type);
 		if (maxSortIndex != null) {
@@ -937,7 +938,7 @@ public class SeriesController extends AbstractImageController {
 		int index = 0;
 		for (MultipartFile file : files) {
 			index++;
-			String filePath = upload(AdminConstants.MODULE_RESOURCE_CONTENT,
+			String filePath = upload(AdminConstants.MODULE_RESOURCE_MEDIA,
 					AdminConstants.RESOURCE_TYPE_IMAGE, file);
 			String fileName = file.getOriginalFilename();
 			MediaImage mediaImage = new MediaImage();

@@ -98,12 +98,12 @@ public interface SeriesRepository extends AbstractRepository<Series, Long> {
 	@Query(" select p from  Series p")
 	List<Series> fandalld();
 
-	/******************************** 同步相关 begin ******************************/
+	/******************************** 分发/同步相关 begin ******************************/
 
 	List<Series> findByCloudId(String cloudId);
 
 	List<Series> findByCloudCode(String cloudCode);
-	/******************************** 同步相关 end ********************************/
+	/******************************** 分发/同步相关 end ********************************/
 
 
 	@Cacheable

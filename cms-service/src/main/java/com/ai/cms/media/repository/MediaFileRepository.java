@@ -70,12 +70,12 @@ public interface MediaFileRepository extends
 	@Query(" delete from MediaFile t where t.programId in (select id from Program p where p.seriesId = :seriesId) or t.seriesId = :seriesId ")
 	void deleteBySeriesId(@Param("seriesId") Long seriesId);
 
-	/******************************** 同步相关 begin ********************************/
+	/******************************** 分发/同步相关 begin ********************************/
 
 	List<MediaFile> findByCloudId(String cloudId);
 
 	List<MediaFile> findByCloudCode(String cloudCode);
 
-	/******************************** 同步相关 end ********************************/
+	/******************************** 分发/同步相关 end ********************************/
 
 }

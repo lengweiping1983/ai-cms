@@ -9,7 +9,7 @@ public class AdminConstants {
 	public final static String RESOURCE_TYPE_POSTER = "poster";
 	public final static String RESOURCE_TYPE_IMAGE = "image";
 
-	public final static String MODULE_RESOURCE_CONTENT = "media";
+	public final static String MODULE_RESOURCE_MEDIA = "media";
 
 	public final static String MODULE_RESOURCE_LIVE = "live";
 

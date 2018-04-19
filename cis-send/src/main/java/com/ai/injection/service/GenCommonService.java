@@ -18,6 +18,7 @@ import com.ai.cms.injection.bean.CategoryBean;
 import com.ai.cms.injection.bean.MappingBean;
 import com.ai.cms.injection.bean.MovieBean;
 import com.ai.cms.injection.bean.ObjectBean;
+import com.ai.cms.injection.bean.PictureBean;
 import com.ai.cms.injection.bean.ScheduleBean;
 import com.ai.cms.injection.entity.InjectionObject;
 import com.ai.cms.injection.entity.InjectionPlatform;
@@ -30,8 +31,11 @@ import com.ai.cms.injection.repository.InjectionPlatformRepository;
 import com.ai.cms.injection.repository.SendTaskRepository;
 import com.ai.cms.injection.service.InjectionService;
 import com.ai.cms.media.entity.MediaFile;
+import com.ai.cms.media.entity.MediaImage;
 import com.ai.cms.media.entity.Program;
+import com.ai.cms.media.entity.Series;
 import com.ai.cms.media.repository.MediaFileRepository;
+import com.ai.cms.media.repository.MediaImageRepository;
 import com.ai.cms.media.repository.ProgramRepository;
 import com.ai.cms.media.repository.SeriesRepository;
 import com.ai.cms.media.service.MediaService;
@@ -68,6 +72,9 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 
 	@Autowired
 	protected MediaFileRepository mediaFileRepository;
+	
+	@Autowired
+	protected MediaImageRepository mediaImageRepository;
 
 	@Autowired
 	protected XMLGenerator xmlGenerator;
@@ -233,6 +240,67 @@ public class GenCommonService extends AbstractService<SendTask, Long> {
 		mappingBean.setParentCode("" + program.getId());
 		mappingBean.setParentPartnerItemCode(programInjectionObject
 				.getPartnerItemCode());
+
+		return mappingBean;
+	}
+	
+	public PictureBean genCreatePictureBean(MediaImage mediaImage) {
+		PictureBean pictureBean = new PictureBean();
+
+		pictureBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
+
+		String id = "" + mediaImage.getId();
+		pictureBean.setID(id);
+		pictureBean.setCode(id);
+
+		pictureBean.setFileURL(AdminGlobal.getImageFtpPath(mediaImage
+				.getFilePath()));
+
+		return pictureBean;
+	}
+
+	public MappingBean genCreatePictureMappingBean(Series series,
+			InjectionObject seriesInjectionObject, MediaImage mediaImage) {
+		MappingBean mappingBean = new MappingBean();
+
+		mappingBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
+
+		mappingBean.setElementType(InjectionItemTypeEnum.SERIES.getValue());
+		mappingBean.setElementID("" + series.getId());
+		mappingBean.setElementCode("" + series.getId());
+		mappingBean.setPartnerItemCode(seriesInjectionObject
+				.getPartnerItemCode());
+
+		String id = "" + mediaImage.getId();
+		mappingBean.setParentType(InjectionItemTypeEnum.PICTURE.getValue());
+		mappingBean.setParentID(id);
+		mappingBean.setParentCode(id);
+
+		mappingBean.setType("" + mediaImage.getType());
+		mappingBean.setSequence("" + mediaImage.getSortIndex());
+
+		return mappingBean;
+	}
+	
+	public MappingBean genCreatePictureMappingBean(Program program,
+			InjectionObject programInjectionObject, MediaImage mediaImage) {
+		MappingBean mappingBean = new MappingBean();
+
+		mappingBean.setAction(InjectionActionTypeEnum.CREATE.getValue());
+
+		mappingBean.setElementType(InjectionItemTypeEnum.PROGRAM.getValue());
+		mappingBean.setElementID("" + program.getId());
+		mappingBean.setElementCode("" + program.getId());
+		mappingBean.setPartnerItemCode(programInjectionObject
+				.getPartnerItemCode());
+
+		String id = "" + mediaImage.getId();
+		mappingBean.setParentType(InjectionItemTypeEnum.PICTURE.getValue());
+		mappingBean.setParentID(id);
+		mappingBean.setParentCode(id);
+
+		mappingBean.setType("" + mediaImage.getType());
+		mappingBean.setSequence("" + mediaImage.getSortIndex());
 
 		return mappingBean;
 	}
