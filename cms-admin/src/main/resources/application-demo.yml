@@ -101,10 +101,10 @@ ftp:
   # 媒资FTP服务地址
   address: ftp://cms:cms1234qwer@115.231.111.174:21
   # 转码方式:passive=被动模式,active=主动模式
-  mode: active
+  mode: passive
   # FTP根目录
   root:
-    path: /
+    path: /video/
   # 默认访问目录
   default:
     access.path: /
