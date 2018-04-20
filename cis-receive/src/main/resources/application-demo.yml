@@ -37,7 +37,7 @@ image:
   web:
     path: http://115.231.111.174/image
   ftp:
-    path: ftp://cms:cms123@115.231.111.174:21/image
+    path: ftp://cms:cms1234qwer@115.231.111.174:21/image
       
 xml:
   upload:
@@ -45,7 +45,7 @@ xml:
   web:
     path: http://115.231.111.174/xml
   ftp:
-    path: ftp://cms:cms123@115.231.111.174:21/xml
+    path: ftp://cms:cms1234qwer@115.231.111.174:21/xml
     
 video:
   upload:
@@ -53,7 +53,7 @@ video:
   web:
     path: http://115.231.111.174/video
   ftp:
-    path: ftp://cms:cms123@115.231.111.174:21/video
+    path: ftp://cms:cms1234qwer@115.231.111.174:21/video
 
   
 injection:

@@ -3,7 +3,7 @@
 ## 福建广电 fujiangd | 
 
 spring:
-  profiles.active: dev
+  profiles.active: demo
 ---
 
 server:
