@@ -1,9 +1,11 @@
 package com.ai.cms.media.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,7 @@ import com.ai.common.utils.IOUtils;
 @Controller
 @RequestMapping(value = { "/media/play" })
 public class PlayController extends AbstractImageController {
+	public static Map<String, String> filePathMap = new HashMap<String, String>();
 
 	@Autowired
 	protected SeriesRepository seriesRepository;
@@ -65,9 +68,9 @@ public class PlayController extends AbstractImageController {
 				m3u8Bean.setByterangeNum(byterangeNum);
 				m3u8BeanList.add(m3u8Bean);
 			}
-			if (duration % 10 != 0) {
+			if (duration % sqlitDuration != 0) {
 				M3U8Bean m3u8Bean = new M3U8Bean();
-				int lastSqlitDuration = duration % 10;
+				int lastSqlitDuration = duration % sqlitDuration;
 				long byterangeStart = secondFileSize * sqlitDuration
 						* sqlitTotal;
 				long byterangeNum = fileSize - byterangeStart;
@@ -89,6 +92,39 @@ public class PlayController extends AbstractImageController {
 				sb.append(filePath).append("\n");
 			}
 			sb.append("#ZEN-TOTAL-DURATION:").append(duration).append("\n");
+		} else if (fileSize != null) {
+			List<M3U8Bean> m3u8BeanList = new ArrayList<M3U8Bean>();
+
+			long sqlitSize = 30 * 1024 * 1024l;
+			long sqlitTotal = fileSize / sqlitSize;
+
+			for (int i = 0; i < sqlitTotal; i++) {
+				M3U8Bean m3u8Bean = new M3U8Bean();
+				long byterangeStart = sqlitSize * i;
+				long byterangeNum = sqlitSize;
+				m3u8Bean.setDuration(0);
+				m3u8Bean.setByterangeStart(byterangeStart);
+				m3u8Bean.setByterangeNum(byterangeNum);
+				m3u8BeanList.add(m3u8Bean);
+			}
+			if (fileSize % sqlitSize != 0) {
+				M3U8Bean m3u8Bean = new M3U8Bean();
+				long byterangeStart = sqlitSize * sqlitTotal;
+				long byterangeNum = fileSize - byterangeStart;
+
+				m3u8Bean.setDuration(0);
+				m3u8Bean.setByterangeStart(byterangeStart);
+				m3u8Bean.setByterangeNum(byterangeNum);
+				m3u8BeanList.add(m3u8Bean);
+			}
+			for (M3U8Bean m3u8Bean : m3u8BeanList) {
+				sb.append("#EXTINF:").append(m3u8Bean.getDuration())
+						.append("\n");
+				sb.append("#EXT-X-BYTERANGE:")
+						.append(m3u8Bean.getByterangeNum()).append("@")
+						.append(m3u8Bean.getByterangeStart()).append("\n");
+				sb.append(filePath).append("\n");
+			}
 		} else {
 			sb.append("#EXTINF:").append(0).append("\n");
 			sb.append(filePath).append("\n");
@@ -103,6 +139,24 @@ public class PlayController extends AbstractImageController {
 			throws Exception {
 		MediaFile mediaFile = mediaFileRepository.findOne(id);
 		mediaFileM3U8(model, request, response, mediaFile);
+	}
+
+	@RequestMapping(value = "/uuid/{uuid}.m3u8")
+	public void uuidM3U8(Model model, HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable(value = "uuid") String uuid) throws Exception {
+		String path = filePathMap.get(uuid);
+		if (StringUtils.isNotEmpty(path)) {
+			File file = new File(AdminGlobal.getVideoUploadPath(path));
+			if (file.exists()) {
+				String playUrl = AdminGlobal.getVideoWebPath(path);
+				String m3u8Text = genM3U8(playUrl, file.length(), null);
+				logger.info(m3u8Text);
+				response.getWriter().print(m3u8Text);
+			}
+		}
+		response.getWriter().flush();
+		response.getWriter().close();
 	}
 
 	public void mediaFileM3U8(Model model, HttpServletRequest request,
@@ -120,19 +174,9 @@ public class PlayController extends AbstractImageController {
 			}
 			logger.info(m3u8Text);
 			response.getWriter().print(m3u8Text);
-		} else {
-
 		}
 		response.getWriter().flush();
 		response.getWriter().close();
-	}
-
-	public static void main(String[] args) throws Exception {
-		String filePath = "http://115.231.111.189/video/xx.ts";
-		Long fileSize = 5413246056l;
-		Integer duration = 6720;
-		String m3u8Text = genM3U8(filePath, fileSize, duration);
-		System.out.println(m3u8Text);
 	}
 
 	@RequestMapping(value = { "previewMediaFile" })
@@ -255,21 +299,36 @@ public class PlayController extends AbstractImageController {
 			previewMediaFile(model, request, mediaFileList.get(0).getId());
 			return;
 		}
+		String playUrl = AdminGlobal.getVideoWebPath(path);
 
+		logger.info("playUrl=" + playUrl);
 		List<PlayBean> playBeanList = new ArrayList<PlayBean>();
 		model.addAttribute("playBeanList", playBeanList);
 
-		try {
-			String playUrl = AdminGlobal.getVideoWebPath(path);
-			PlayBean playBean = new PlayBean();
-			playBean.setPlayUrl(playUrl);
-			playBean.parserNameFromPlayUrl();
-			playBeanList.add(playBean);
+		PlayBean playBean = new PlayBean();
+		playBean.setPlayUrl(playUrl);
+		playBean.parserNameFromPlayUrl();
+		playBeanList.add(playBean);
 
-			model.addAttribute("playUrl", playUrl);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			model.addAttribute("status", "错误!");
+		String suffix = StringUtils.substringAfterLast(playUrl, ".");
+		File file = new File(AdminGlobal.getVideoUploadPath(path));
+		if ("ts".equalsIgnoreCase(suffix) && file.exists()) {
+			String uuid = UUID.randomUUID().toString();
+			filePathMap.put(uuid, path);
+			playUrl = AdminGlobal.getWebAccessUrl() + "/media/play/uuid/"
+					+ uuid + ".m3u8";
+			playBean.setPlayUrl(playUrl);
 		}
+		model.addAttribute("playUrl", playUrl);
+	}
+
+	public static void main(String[] args) throws Exception {
+		String filePath = "http://127.0.0.1:8080/video/xx.ts";
+		Long fileSize = 5413246056l;
+		Integer duration = 6720;
+		String m3u8Text = genM3U8(filePath, fileSize, duration);
+		System.out.println(m3u8Text);
+		String uuid = UUID.randomUUID().toString();
+		System.out.println(uuid);
 	}
 }
