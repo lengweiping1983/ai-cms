@@ -315,6 +315,23 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
+									<label class="control-label col-md-3">自定义播放代码(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<select name="playCodeCustom" class="form-control">
+											<c:forEach var="item" items="${yesNoEnum}">
+												<option value="${item.key}"
+													<c:if test="${! empty injectionPlatform.playCodeCustom && item.key eq injectionPlatform.playCodeCustom}"> selected="selected" </c:if>>${item.value}</option>
+											</c:forEach>
+										</select>
+										<p class="help-block">播放代码是否是全局代码.</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
 									<label class="control-label col-md-3">描述:</label>
 
 									<div class="col-md-9">

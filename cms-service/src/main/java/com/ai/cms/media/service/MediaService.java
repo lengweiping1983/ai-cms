@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.AppGlobal;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.repository.MediaTemplateRepository;
+import com.ai.cms.injection.enums.PlayCodeStatusEnum;
 import com.ai.cms.media.entity.MediaFile;
 import com.ai.cms.media.entity.MediaImage;
 import com.ai.cms.media.entity.Program;
@@ -197,7 +198,9 @@ public class MediaService extends AbstractService<Series, Long> {
 			String newFilePath, Long newTemplateId) {
 		setMediaFileSpec(mediaFile, mediaFile.getTemplateId());
 		mediaFileRepository.save(mediaFile);
-		if (StringUtils.isNotEmpty(newFilePath)) {
+		if (StringUtils.isNotEmpty(newFilePath)
+				|| mediaFile.getPlayCodeStatus() == PlayCodeStatusEnum.INPUT
+						.getKey()) {
 			updateMediaFileMediaStatus(mediaFile, MediaStatusEnum.OK.getKey(),
 					newFilePath, newTemplateId, true);
 		} else if (mediaFile.getMediaStatus() == MediaStatusEnum.OK.getKey()) {

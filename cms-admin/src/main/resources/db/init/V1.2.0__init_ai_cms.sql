@@ -11,7 +11,7 @@
  Target Server Version : 50622
  File Encoding         : utf-8
 
- Date: 03/28/2018 08:30:03 AM
+ Date: 04/20/2018 09:00:24 AM
 */
 
 SET NAMES utf8mb4;
@@ -70,6 +70,38 @@ CREATE TABLE `cms_cp` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+--  Table structure for `cms_injection_download_task`
+-- ----------------------------
+DROP TABLE IF EXISTS `cms_injection_download_task`;
+CREATE TABLE `cms_injection_download_task` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `file_md5` varchar(255) DEFAULT NULL,
+  `file_size` bigint(20) DEFAULT NULL,
+  `first_request_time` datetime DEFAULT NULL,
+  `input_file_path` varchar(255) DEFAULT NULL,
+  `last_request_time` datetime DEFAULT NULL,
+  `media_file_id` bigint(20) DEFAULT NULL,
+  `module` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `output_file_path` varchar(255) DEFAULT NULL,
+  `percent` int(11) DEFAULT NULL,
+  `pid` bigint(20) NOT NULL,
+  `priority` int(11) DEFAULT NULL,
+  `program_id` bigint(20) DEFAULT NULL,
+  `request_times` int(11) DEFAULT NULL,
+  `request_total_times` int(11) DEFAULT NULL,
+  `response_code` varchar(255) DEFAULT NULL,
+  `response_msg` varchar(255) DEFAULT NULL,
+  `response_time` datetime DEFAULT NULL,
+  `source_file_md5` varchar(255) DEFAULT NULL,
+  `source_file_size` bigint(20) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 --  Table structure for `cms_injection_object`
 -- ----------------------------
 DROP TABLE IF EXISTS `cms_injection_object`;
@@ -78,9 +110,10 @@ CREATE TABLE `cms_injection_object` (
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `category` varchar(255) NOT NULL,
-  `injection_status` int(11) DEFAULT '1',
+  `injection_status` int(11) DEFAULT '0',
   `injection_time` datetime DEFAULT NULL,
   `item_id` bigint(20) NOT NULL,
+  `item_parent_id` bigint(20) DEFAULT NULL,
   `item_type` int(11) NOT NULL,
   `partner_item_code` varchar(255) DEFAULT NULL,
   `partner_item_reserved1` varchar(255) DEFAULT NULL,
@@ -100,23 +133,36 @@ CREATE TABLE `cms_injection_platform` (
   `update_time` datetime DEFAULT NULL,
   `code_prefix` varchar(255) DEFAULT '00000000',
   `correlate_prefix` varchar(255) DEFAULT NULL,
-  `csp_id` varchar(255) NOT NULL,
+  `csp_id` varchar(255) DEFAULT NULL,
+  `depend_platform_id` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `direction` int(11) DEFAULT '0',
+  `direction` int(11) DEFAULT '1',
+  `indirect_platform_id` varchar(255) DEFAULT NULL,
+  `injection_platform_id` varchar(255) DEFAULT NULL,
   `interface_mode` int(11) DEFAULT '1',
   `is_callback` int(11) DEFAULT '0',
   `is_wsdl` int(11) DEFAULT '1',
   `live_service_url` varchar(255) DEFAULT NULL,
-  `lsp_id` varchar(255) NOT NULL,
+  `lsp_id` varchar(255) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
-  `namespace` varchar(255) DEFAULT NULL,
+  `namespace` varchar(255) DEFAULT 'iptv',
+  `need_audit` int(11) DEFAULT '1',
+  `need_delete_media_file` int(11) DEFAULT '1',
+  `need_download_video` int(11) DEFAULT '1',
+  `need_image_object` int(11) DEFAULT '1',
+  `need_injection` int(11) DEFAULT '0',
+  `need_packing_program` int(11) DEFAULT '0',
+  `platform_code` varchar(255) DEFAULT NULL,
   `play_code_custom` int(11) DEFAULT '0',
   `provider` int(11) DEFAULT '0',
-  `service_url` varchar(255) NOT NULL,
+  `separate_char` varchar(255) DEFAULT ',',
+  `service_url` varchar(255) DEFAULT NULL,
   `site_code` varchar(255) NOT NULL,
   `status` int(11) DEFAULT '0',
   `template_custom` int(11) DEFAULT '0',
+  `template_filename` varchar(255) DEFAULT NULL,
   `template_id` varchar(255) DEFAULT NULL,
+  `type` int(11) DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -131,13 +177,16 @@ CREATE TABLE `cms_injection_receive_task` (
   `cmd_file_url` varchar(1024) DEFAULT NULL,
   `cmd_result` int(11) DEFAULT NULL,
   `correlate_id` varchar(255) DEFAULT NULL,
-  `download_times` int(11) DEFAULT NULL,
+  `download_fail` bigint(20) NOT NULL,
+  `download_success` bigint(20) NOT NULL,
+  `download_times` int(11) DEFAULT '0',
+  `download_total` bigint(20) NOT NULL,
   `first_response_time` datetime DEFAULT NULL,
   `last_response_time` datetime DEFAULT NULL,
   `platform_id` bigint(20) NOT NULL,
-  `priority` int(11) NOT NULL,
+  `priority` int(11) DEFAULT '1',
   `receive_time` datetime NOT NULL,
-  `reply_error_description` varchar(255) DEFAULT NULL,
+  `reply_error_description` varchar(1024) DEFAULT NULL,
   `reply_result` int(11) DEFAULT NULL,
   `request_error_description` varchar(1024) DEFAULT NULL,
   `request_result` int(11) DEFAULT NULL,
@@ -145,46 +194,13 @@ CREATE TABLE `cms_injection_receive_task` (
   `request_xml_file_path` varchar(1024) DEFAULT NULL,
   `response_error_description` varchar(1024) DEFAULT NULL,
   `response_result` int(11) DEFAULT NULL,
-  `response_status` int(11) DEFAULT NULL,
-  `response_time` datetime DEFAULT NULL,
-  `response_times` int(11) DEFAULT NULL,
-  `response_total_times` int(11) DEFAULT NULL,
+  `response_status` int(11) DEFAULT '0',
+  `response_times` int(11) DEFAULT '0',
+  `response_total_times` int(11) DEFAULT '0',
   `response_xml_file_content` longtext,
   `response_xml_file_path` varchar(1024) DEFAULT NULL,
   `result_file_url` varchar(1024) DEFAULT NULL,
-  `status` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_ns3stci98wygl0bgoj4bsxvy6` (`platform_id`),
-  CONSTRAINT `FK_ns3stci98wygl0bgoj4bsxvy6` FOREIGN KEY (`platform_id`) REFERENCES `cms_injection_platform` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
---  Table structure for `cms_injection_send_event`
--- ----------------------------
-DROP TABLE IF EXISTS `cms_injection_send_event`;
-CREATE TABLE `cms_injection_send_event` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `action` int(11) NOT NULL,
-  `category` varchar(255) NOT NULL,
-  `correlate_id` varchar(255) DEFAULT NULL,
-  `fire_time` datetime NOT NULL,
-  `item_code` varchar(255) DEFAULT NULL,
-  `item_id` bigint(20) NOT NULL,
-  `item_name` varchar(255) DEFAULT NULL,
-  `item_type` int(11) NOT NULL,
-  `next_check_time` datetime DEFAULT NULL,
-  `parent_item_code` varchar(255) DEFAULT NULL,
-  `parent_item_id` bigint(20) DEFAULT NULL,
-  `parent_item_name` varchar(255) DEFAULT NULL,
-  `parent_item_type` int(11) DEFAULT NULL,
-  `parent_partner_item_code` varchar(255) DEFAULT NULL,
-  `partner_item_code` varchar(255) DEFAULT NULL,
-  `platform_id` bigint(20) NOT NULL,
-  `priority` int(11) NOT NULL,
-  `rel_id` bigint(20) DEFAULT NULL,
-  `sort_index` int(11) DEFAULT NULL,
-  `status` int(11) NOT NULL,
-  `type` int(11) NOT NULL,
+  `status` int(11) DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -206,15 +222,16 @@ CREATE TABLE `cms_injection_send_task` (
   `item_type` int(11) DEFAULT NULL,
   `last_request_time` datetime DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
+  `next_check_time` datetime DEFAULT NULL,
   `operation_object_ids` longtext,
   `platform_id` bigint(20) NOT NULL,
   `pre_task_id` bigint(20) DEFAULT NULL,
   `pre_task_status` int(11) DEFAULT NULL,
-  `priority` int(11) NOT NULL,
+  `priority` int(11) DEFAULT '1',
   `request_error_description` varchar(1024) DEFAULT NULL,
   `request_result` int(11) DEFAULT NULL,
-  `request_times` int(11) DEFAULT NULL,
-  `request_total_times` int(11) DEFAULT NULL,
+  `request_times` int(11) DEFAULT '0',
+  `request_total_times` int(11) DEFAULT '0',
   `request_xml_file_content` longtext,
   `request_xml_file_path` varchar(1024) DEFAULT NULL,
   `response_error_description` varchar(1024) DEFAULT NULL,
@@ -223,11 +240,10 @@ CREATE TABLE `cms_injection_send_task` (
   `response_xml_file_content` longtext,
   `response_xml_file_path` varchar(1024) DEFAULT NULL,
   `result_file_url` varchar(1024) DEFAULT NULL,
-  `status` int(11) NOT NULL,
+  `status` int(11) DEFAULT '1',
+  `sub_item_id` varchar(255) DEFAULT NULL,
   `type` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_lxyx7afa300wl3ay5ps346xwg` (`platform_id`),
-  CONSTRAINT `FK_lxyx7afa300wl3ay5ps346xwg` FOREIGN KEY (`platform_id`) REFERENCES `cms_injection_platform` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -553,6 +569,7 @@ CREATE TABLE `cms_media_file` (
   `bitrate` int(11) DEFAULT NULL,
   `cloud_code` varchar(255) DEFAULT NULL,
   `cloud_id` varchar(255) DEFAULT NULL,
+  `definition` varchar(255) DEFAULT NULL,
   `duration` int(11) DEFAULT NULL,
   `episode_index` int(11) DEFAULT '1',
   `file_md5` varchar(255) DEFAULT NULL,
@@ -560,6 +577,7 @@ CREATE TABLE `cms_media_file` (
   `file_size` bigint(20) DEFAULT NULL,
   `format` varchar(255) DEFAULT NULL,
   `injection_status` varchar(255) DEFAULT '0',
+  `m3u8_url` varchar(255) DEFAULT NULL,
   `media_spec` varchar(255) DEFAULT NULL,
   `media_status` int(11) DEFAULT '110',
   `offline_time` datetime DEFAULT NULL,
@@ -568,6 +586,7 @@ CREATE TABLE `cms_media_file` (
   `online_user` varchar(255) DEFAULT NULL,
   `play_code` varchar(255) DEFAULT NULL,
   `play_code_status` int(11) DEFAULT '0',
+  `play_url` varchar(255) DEFAULT NULL,
   `program_id` bigint(20) DEFAULT NULL,
   `reserved1` varchar(255) DEFAULT NULL,
   `reserved2` varchar(255) DEFAULT NULL,
@@ -577,12 +596,36 @@ CREATE TABLE `cms_media_file` (
   `resolution` varchar(255) DEFAULT NULL,
   `series_id` bigint(20) DEFAULT NULL,
   `source` int(11) DEFAULT '0',
+  `source_file_md5` varchar(255) DEFAULT NULL,
+  `source_file_path` varchar(255) DEFAULT NULL,
+  `source_file_size` bigint(20) DEFAULT NULL,
   `status` int(11) DEFAULT '0',
   `storage_no` varchar(255) DEFAULT NULL,
-  `template_id` bigint(20) DEFAULT NULL,
+  `subtitle` int(11) DEFAULT NULL,
+  `template_id` bigint(20) DEFAULT '-1',
   `type` int(11) DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `cms_media_file_program_type_template` (`program_id`,`type`,`template_id`)
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `cms_media_image`
+-- ----------------------------
+DROP TABLE IF EXISTS `cms_media_image`;
+CREATE TABLE `cms_media_image` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `cloud_code` varchar(255) DEFAULT NULL,
+  `cloud_id` varchar(255) DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
+  `file_size` bigint(20) DEFAULT NULL,
+  `program_id` bigint(20) DEFAULT NULL,
+  `series_id` bigint(20) DEFAULT NULL,
+  `sort_index` int(11) DEFAULT NULL,
+  `source` int(11) NOT NULL,
+  `source_file_name` varchar(255) DEFAULT NULL,
+  `type` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -599,9 +642,9 @@ CREATE TABLE `cms_media_import` (
   `failure` int(11) DEFAULT NULL,
   `file_name` varchar(255) DEFAULT NULL,
   `import_time` datetime DEFAULT NULL,
-  `mode` int(11) DEFAULT NULL,
   `site_code` varchar(255) DEFAULT NULL,
   `success` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -643,7 +686,9 @@ CREATE TABLE `cms_media_program` (
   `image2` varchar(255) DEFAULT NULL,
   `image2_code` varchar(255) DEFAULT NULL,
   `image3` varchar(255) DEFAULT NULL,
+  `image3_code` varchar(255) DEFAULT NULL,
   `image4` varchar(255) DEFAULT NULL,
+  `image4_code` varchar(255) DEFAULT NULL,
   `incharge` varchar(255) DEFAULT NULL,
   `info` varchar(255) DEFAULT NULL,
   `injection_status` varchar(255) DEFAULT '0',
@@ -662,6 +707,7 @@ CREATE TABLE `cms_media_program` (
   `online_user` varchar(255) DEFAULT NULL,
   `order_number` varchar(255) DEFAULT NULL,
   `org_air_date` datetime DEFAULT NULL,
+  `original_name` varchar(255) DEFAULT NULL,
   `play_code` varchar(255) DEFAULT NULL,
   `play_code_status` int(11) DEFAULT '0',
   `rating` float DEFAULT NULL,
@@ -736,7 +782,9 @@ CREATE TABLE `cms_media_series` (
   `image2` varchar(255) DEFAULT NULL,
   `image2_code` varchar(255) DEFAULT NULL,
   `image3` varchar(255) DEFAULT NULL,
+  `image3_code` varchar(255) DEFAULT NULL,
   `image4` varchar(255) DEFAULT NULL,
+  `image4_code` varchar(255) DEFAULT NULL,
   `incharge` varchar(255) DEFAULT NULL,
   `info` varchar(255) DEFAULT NULL,
   `injection_status` varchar(255) DEFAULT '0',
@@ -755,6 +803,7 @@ CREATE TABLE `cms_media_series` (
   `online_user` varchar(255) DEFAULT NULL,
   `order_number` varchar(255) DEFAULT NULL,
   `org_air_date` datetime DEFAULT NULL,
+  `original_name` varchar(255) DEFAULT NULL,
   `play_code` varchar(255) DEFAULT NULL,
   `play_code_status` int(11) DEFAULT '0',
   `rating` float DEFAULT NULL,
@@ -816,13 +865,10 @@ CREATE TABLE `cms_media_template` (
   `code` varchar(255) DEFAULT NULL,
   `definition` varchar(255) DEFAULT NULL,
   `external_code` varchar(255) DEFAULT NULL,
-  `prefix_desc` varchar(255) DEFAULT NULL,
+  `media_spec` varchar(255) DEFAULT NULL,
   `status` int(11) DEFAULT '0',
-  `suffix_desc` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `title_tag` varchar(255) DEFAULT NULL,
   `transcode_mode` int(11) DEFAULT '1',
-  `type` int(11) DEFAULT NULL,
   `v_2pass` int(11) DEFAULT NULL,
   `v_bitrate` int(11) DEFAULT NULL,
   `v_bitrate_mode` varchar(255) DEFAULT NULL,

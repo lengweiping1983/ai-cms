@@ -47,7 +47,7 @@ public class InjectionPlatform extends AbstractEntity {
 
 	@NotNull
 	@Column(name = "need_download_video")
-	private Integer needDownloadVideo = YesNoEnum.NO.getKey();// 是否要下载视频
+	private Integer needDownloadVideo = YesNoEnum.YES.getKey();// 是否要下载视频
 
 	@NotNull
 	@Column(name = "need_audit")

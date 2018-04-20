@@ -167,7 +167,7 @@
 									<td><c:if test="${! empty t.templateId}">
 											<c:forEach var="mediaTemplate" items="${mediaTemplateList}">
 												<c:if test="${mediaTemplate.id eq t.templateId}">
-													<span class="badge badge-success">${mediaTemplate.code}</span>
+													<span class="badge badge-success">${mediaTemplate.title}</span>
 												</c:if>
 											</c:forEach>
 										</c:if></td>

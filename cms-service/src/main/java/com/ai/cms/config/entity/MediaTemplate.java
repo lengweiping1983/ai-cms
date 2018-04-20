@@ -3,6 +3,7 @@ package com.ai.cms.config.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.ai.common.entity.AbstractEntity;
 import com.ai.common.enums.TranscodeModeEnum;
@@ -60,6 +61,7 @@ public class MediaTemplate extends AbstractEntity {
 	@Column(name = "a_bitrate")
 	private Integer aBitrate; // 音频码率:128
 
+	@NotNull
 	@Column(name = "transcode_mode")
 	private Integer transcodeMode = TranscodeModeEnum.LOCAL.getKey(); // 转码方式:1=本地转码,2=在线转码
 
@@ -69,16 +71,12 @@ public class MediaTemplate extends AbstractEntity {
 	@Column(name = "v_2pass")
 	private Integer v2pass = YesNoEnum.NO.getKey(); // 是否做2pass:0=否、1=是
 
+	@NotNull
+	@Column(name = "status")
 	private Integer status = ValidStatusEnum.VALID.getKey(); // 状态:0=失效,1=生效
 
 	@Column(name = "media_spec")
 	private String mediaSpec;
-
-	@Column(name = "prefix_desc")
-	private String prefixDesc;
-
-	@Column(name = "suffix_desc")
-	private String suffixDesc;
 
 	@Column(name = "category")
 	private String category = "default";// 分组
@@ -249,22 +247,6 @@ public class MediaTemplate extends AbstractEntity {
 
 	public void setMediaSpec(String mediaSpec) {
 		this.mediaSpec = mediaSpec;
-	}
-
-	public String getPrefixDesc() {
-		return prefixDesc;
-	}
-
-	public void setPrefixDesc(String prefixDesc) {
-		this.prefixDesc = prefixDesc;
-	}
-
-	public String getSuffixDesc() {
-		return suffixDesc;
-	}
-
-	public void setSuffixDesc(String suffixDesc) {
-		this.suffixDesc = suffixDesc;
 	}
 
 	public String getCategory() {

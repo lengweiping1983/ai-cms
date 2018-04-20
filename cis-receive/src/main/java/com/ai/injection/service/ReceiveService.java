@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -233,12 +232,6 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				+ "_" + seriesBean.getCode());
 		// 检查该媒资是否属于该CP
 		if (series != null) {
-			String cpId = StringUtils.trimToEmpty(series.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Series[" + seriesBean.getCode()
-						+ "]不存在！");
-			}
 		}
 		if ("DELETE".equalsIgnoreCase(seriesBean.getAction())) {
 			mediaService.deleteSeries(series);
@@ -388,6 +381,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			series.setAuditStatus(AuditStatusEnum.AUDIT_FIRST_PASS.getKey());
 			series.setStorageTime(new Date());
 		}
+		if (platform.getPlayCodeCustom() == YesNoEnum.NO.getKey()) {
+			series.setPlayCode(seriesBean.getCode());
+		}
 		try {
 			mediaService.saveSeries(series);
 		} catch (Exception e) {
@@ -401,12 +397,6 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				.getCspId() + "_" + programBean.getCode());
 		// 检查该媒资是否属于该CP
 		if (program != null) {
-			String cpId = StringUtils.trimToEmpty(program.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Program[" + programBean.getCode()
-						+ "]不存在！");
-			}
 		}
 		if ("DELETE".equalsIgnoreCase(programBean.getAction())) {
 			mediaService.deleteProgram(program);
@@ -568,6 +558,10 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			program.setAuditStatus(AuditStatusEnum.AUDIT_FIRST_PASS.getKey());
 			program.setStorageTime(new Date());
 		}
+
+		if (platform.getPlayCodeCustom() == YesNoEnum.NO.getKey()) {
+			program.setPlayCode(programBean.getCode());
+		}
 		try {
 			mediaService.saveProgram(program);
 		} catch (Exception e) {
@@ -585,12 +579,6 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 					.getProgramId());
 			// 检查该媒资是否属于该CP
 			if (program != null) {
-				String cpId = StringUtils.trimToEmpty(program.getCpId());
-				List<String> cpIds = Arrays.asList(cpId.split(","));
-				if (!cpIds.contains(currentCpId)) {
-					throw new DataException("Movie[" + movieBean.getCode()
-							+ "]不存在！");
-				}
 			}
 		}
 		if ("DELETE".equalsIgnoreCase(movieBean.getAction())) {
@@ -663,6 +651,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				}
 			}
 		}
+		if (platform.getPlayCodeCustom() == YesNoEnum.NO.getKey()) {
+			mediaFile.setPlayCode(movieBean.getCode());
+		}
 		mediaService.saveMediaFile(mediaFile);
 
 		if (platform.getNeedDownloadVideo() == YesNoEnum.YES.getKey()
@@ -716,21 +707,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 		// 检查该媒资是否属于该CP
 		if (series != null) {
-			String cpId = StringUtils.trimToEmpty(series.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Series[" + mappingBean.getParentCode()
-						+ "]不存在！");
-			}
 		}
 		// 检查该媒资是否属于该CP
 		if (program != null) {
-			String cpId = StringUtils.trimToEmpty(program.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Program["
-						+ mappingBean.getElementCode() + "]不存在！");
-			}
 		}
 		if ("DELETE".equalsIgnoreCase(mappingBean.getAction())) {
 			program.setSeries(null);
@@ -774,12 +753,6 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 		// 检查该媒资是否属于该CP
 		if (program != null) {
-			String cpId = StringUtils.trimToEmpty(program.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Program["
-						+ mappingBean.getParentCode() + "]不存在！");
-			}
 		}
 		if ("DELETE".equalsIgnoreCase(mappingBean.getAction())) {
 			mediaFile.setProgramId(null);
@@ -823,14 +796,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 		// 检查该媒资是否属于该CP
 		if (series != null) {
-			String cpId = StringUtils.trimToEmpty(series.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Series[" + mappingBean.getParentCode()
-						+ "]不存在！");
-			}
 		}
-
 		if (StringUtils.isEmpty(mappingBean.getSequence())
 				|| "1".equals(mappingBean.getSequence())) {
 			if ("DELETE".equalsIgnoreCase(mappingBean.getAction())
@@ -924,14 +890,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 		// 检查该媒资是否属于该CP
 		if (program != null) {
-			String cpId = StringUtils.trimToEmpty(program.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Program["
-						+ mappingBean.getParentCode() + "]不存在！");
-			}
 		}
-
 		if (StringUtils.isEmpty(mappingBean.getSequence())
 				|| "1".equals(mappingBean.getSequence())) {
 			if ("DELETE".equalsIgnoreCase(mappingBean.getAction())
@@ -1024,12 +983,6 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 		// 检查该媒资是否属于该CP
 		if (series != null) {
-			String cpId = StringUtils.trimToEmpty(series.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Series[" + mappingBean.getParentCode()
-						+ "]不存在！");
-			}
 		}
 		MediaImage mediaImage = mediaService.findMediaImageByCloudCode(platform
 				.getCspId() + "_" + mappingBean.getElementCode());
@@ -1087,14 +1040,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		}
 		// 检查该媒资是否属于该CP
 		if (program != null) {
-			String cpId = StringUtils.trimToEmpty(program.getCpId());
-			List<String> cpIds = Arrays.asList(cpId.split(","));
-			if (!cpIds.contains(currentCpId)) {
-				throw new DataException("Program["
-						+ mappingBean.getParentCode() + "]不存在！");
-			}
 		}
-
 		MediaImage mediaImage = mediaService.findMediaImageByCloudCode(platform
 				.getCspId() + "_" + mappingBean.getElementCode());
 		if ("DELETE".equalsIgnoreCase(mappingBean.getAction())) {

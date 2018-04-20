@@ -83,7 +83,7 @@ web:
    
 site:
   # 站点代码
-  code: 'TEST01'
+  code: 'FUJIANGD'
 
 injection:
   # 是否开启分发
