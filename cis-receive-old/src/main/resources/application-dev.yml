@@ -1,0 +1,69 @@
+datasource:
+  epg:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://115.231.111.174:3306/m1905_epg?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+    username: epg
+    password: joyu@epg
+    test-on-borrow: false
+    test-on-return: false
+    test-while-idle: true
+    max-wait-millis: 30000
+    validation-query: select 1
+    time-between-eviction-runs-millis: 30000
+    max-active: 20
+    max-idle: 5
+    min-idle: 2
+    initial-size: 3
+  cms:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://115.231.111.174:3306/m1905_cms?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+    username: epg
+    password: joyu@epg
+    test-on-borrow: false
+    test-on-return: false
+    test-while-idle: true
+    max-wait-millis: 30000
+    validation-query: select 1
+    time-between-eviction-runs-millis: 30000
+    max-active: 20
+    max-idle: 5
+    min-idle: 1
+    initial-size: 1
+
+            
+image:
+  upload:
+    path: /Users/luqin/work/workspace_java/epg/epg-admin/src/main/webapp/image
+  web:
+    path: http://127.0.0.1:8081/image
+  ftp:
+    path: ftp://anonymous:epg123@127.0.0.1:21//Users/luqin/work/workspace_java/epg/epg-admin/src/main/webapp/image
+      
+xml:
+  upload:
+    path: /Users/luqin/work/workspace_java/epg/epg-admin/src/main/webapp/xml
+  web:
+    path: http://127.0.0.1:8081/xml
+  ftp:
+    path: ftp://anonymous:epg123@127.0.0.1:21//Users/luqin/work/workspace_java/epg/epg-admin/src/main/webapp/xml
+    
+video:
+  upload:
+    path: /Users/luqin/work/workspace_java/epg/epg-admin/src/main/webapp/video
+  web:
+    path: http://127.0.0.1:8081/video
+  ftp:
+    path: ftp://anonymous:epg123@127.0.0.1:21//Users/luqin/work/workspace_java/epg/epg-admin/src/main/webapp/video
+
+  
+injection:
+  task.schedule: 0 0/1 * * * ?
+  task.maxNum: 20
+  task.maxRequestTimes: 3
+
+download:
+  enabled: true
+  task.schedule: 0 0/1 * * * ?
+  task.maxNum: 3
+  task.maxRequestTimes: 3
+  task.timeout: 12

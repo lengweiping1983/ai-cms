@@ -158,5 +158,6 @@
 		<module>cms-admin</module>
 		<module>cis-send</module>
 		<module>cis-receive</module>
+                <module>cis-receive-old</module>
 	</modules>
 </project>

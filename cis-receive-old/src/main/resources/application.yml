@@ -1,0 +1,36 @@
+## dev | test | 
+## 演示环境 demo | 
+## 福建广电 fujiangd | 
+
+spring:
+  profiles.active: dev
+---
+
+server:
+  port: 9020
+  contextPath: /cisreceive
+
+spring:
+  jpa:
+    database: MYSQL
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+
+  jmx:
+    enabled: false
+    
+  application:
+    name: 'CIS RECEIVE'
+
+info:
+  version: 1.0
+  name: ${spring.application.name}
+  
+logging:
+  path: /opt/logs/cisreceive
+  file: ${logging.path}/cisreceive.log
+    
