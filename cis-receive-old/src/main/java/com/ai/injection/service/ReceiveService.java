@@ -793,6 +793,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 		mediaFile.setProgramId(program.getId());
 		mediaFile.setSeriesId(program.getSeriesId());
+		mediaFile.setCdnFileCode(program.getPartnerItemCode());
 //		mediaFile.setEpisodeIndex(program.getEpisodeIndex());
 		mediaService.saveMediaFileAndMediaStatus(mediaFile,
 				mediaFile.getFilePath(), mediaFile.getTemplateId());
