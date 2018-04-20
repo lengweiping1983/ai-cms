@@ -32,5 +32,5 @@ info:
   
 logging:
   path: /opt/logs/cisreceive
-  file: ${logging.path}/cisreceive.log
+  file: ${logging.path}/cisreceiveold.log
     
