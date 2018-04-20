@@ -239,3 +239,5 @@ INSERT INTO `cms_injection_platform` VALUES
 
 update com_site set code='FUJIANGD',name='福建广电' where id=1;
 update cms_injection_platform set csp_id='MGTV',lsp_id='MGTV',service_url='http://localhost:9010/cissend/services/ctms?wsdl' where id=2;
+
+-- csp_id,lsp_id 填对应提供商代码，值填一样,service_url填福建广电cms分发通知接口地址

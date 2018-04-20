@@ -2,8 +2,8 @@ datasource:
   epg:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/ai_epg?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
-    username: epg
-    password: epg@ai
+    username: cms
+    password: cms@ai
     test-on-borrow: false
     test-on-return: false
     test-while-idle: true
@@ -17,8 +17,8 @@ datasource:
   cms:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/ai_cms?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
-    username: epg
-    password: epg@ai
+    username: cms
+    password: cms@ai
     test-on-borrow: false
     test-on-return: false
     test-while-idle: true
@@ -32,8 +32,8 @@ datasource:
   sys:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/ai_sys?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
-    username: epg
-    password: epg@ai
+    username: cms
+    password: cms@ai
     test-on-borrow: false
     test-on-return: false
     test-while-idle: true
@@ -52,7 +52,7 @@ image:
   web:
     path: http://172.25.137.2/image
   ftp:
-    path: ftp://epg:epg123@172.25.137.2:21/image
+    path: ftp://cms:cms123@172.25.137.2:21/image
       
 xml:
   upload:
@@ -60,7 +60,7 @@ xml:
   web:
     path: http://172.25.137.2/xml
   ftp:
-    path: ftp://epg:epg123@172.25.137.2:21/xml
+    path: ftp://cms:cms123@172.25.137.2:21/xml
     
 video:
   upload:
@@ -68,7 +68,7 @@ video:
   web:
     path: http://172.25.137.2/video
   ftp:
-    path: ftp://epg:epg123@172.25.137.2:21/video
+    path: ftp://cms:cms123@172.25.137.2:21/video
 
 m3u8:
   upload:
@@ -76,7 +76,7 @@ m3u8:
   web:
     path: http://172.25.137.2/m3u8
   ftp:
-    path: ftp://epg:epg123@172.25.137.2:21/m3u8
+    path: ftp://cms:cms123@172.25.137.2:21/m3u8
   
 web:
   access.url: http://172.25.137.2/cmsadmin #外网访问地址
