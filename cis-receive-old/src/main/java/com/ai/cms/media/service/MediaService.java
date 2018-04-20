@@ -405,18 +405,18 @@ public class MediaService extends AbstractService<Series, Long> {
 	 */
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void updateSeriesMediaStatus(Series series) {
-//		if (series == null) {
-//			return;
-//		}
-//		boolean updateFlag = false;
-//		int oldMediaStatus = series.getMediaStatus();
-//		List<MediaFile> mediaFileList = mediaFileRepository
-//				.findBySeriesId(series.getId());
-//		int newMediaStatus = calculateMediaStatus(oldMediaStatus, mediaFileList);
-//		if (newMediaStatus != oldMediaStatus) {
-//			series.setMediaStatus(newMediaStatus);
-//			updateFlag = true;
-//		}
+		if (series == null) {
+			return;
+		}
+		boolean updateFlag = false;
+		int oldMediaStatus = series.getMediaStatus();
+		List<MediaFile> mediaFileList = mediaFileRepository
+				.findBySeriesId(series.getId());
+		int newMediaStatus = calculateMediaStatus(oldMediaStatus, mediaFileList);
+		if (newMediaStatus != oldMediaStatus) {
+			series.setMediaStatus(newMediaStatus);
+			updateFlag = true;
+		}
 //		String oldTemplateId = series.getTemplateId();
 //		String newTemplateId = getSeriesTemplateId(series.getId());
 //		if (!StringUtils.trimToEmpty(oldTemplateId).equals(
@@ -424,9 +424,9 @@ public class MediaService extends AbstractService<Series, Long> {
 //			series.setTemplateId(newTemplateId);
 //			updateFlag = true;
 //		}
-//		if (updateFlag) {
-//			seriesRepository.save(series);
-//		}
+		if (updateFlag) {
+			seriesRepository.save(series);
+		}
 	}
 
 	/**

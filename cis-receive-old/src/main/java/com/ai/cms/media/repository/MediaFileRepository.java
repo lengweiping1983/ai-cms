@@ -46,6 +46,9 @@ public interface MediaFileRepository extends
 
 	@Cacheable
 	List<MediaFile> findByProgramIdAndType(Long programId, Integer type);
+	
+	@Query(" select t from MediaFile t where t.seriesId = :seriesId ")
+	List<MediaFile> findBySeriesId(@Param("seriesId") Long seriesId);
 
 	@Cacheable
 	@Query(" select f from MediaFile f where f.programId in :programIdList ")
