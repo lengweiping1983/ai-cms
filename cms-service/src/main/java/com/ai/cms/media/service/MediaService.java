@@ -535,7 +535,8 @@ public class MediaService extends AbstractService<Series, Long> {
 			}
 		}
 		if (newTemplateId != null) {
-			if (newTemplateId != mediaFile.getTemplateId()) {
+			if (mediaFile.getTemplateId() == null
+					|| newTemplateId != mediaFile.getTemplateId()) {
 				mediaFile.setTemplateId(newTemplateId);
 				updateFlag = true;
 			}
