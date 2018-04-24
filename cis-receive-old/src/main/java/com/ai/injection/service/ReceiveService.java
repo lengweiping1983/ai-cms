@@ -650,7 +650,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 					break;
 				}
 			}
-			if (mediaFile.getTemplateId() <= 0) {
+			if (mediaFile.getTemplateId() != null
+					&& mediaFile.getTemplateId() <= 0) {
 				for (MediaTemplate mediaTemplate : mediaTemplateList) {
 					if (StringUtils.trimToEmpty(movieBean.getMediaSpec())
 							.equalsIgnoreCase(mediaTemplate.getMediaSpec())) {
