@@ -139,6 +139,10 @@ public class ProgramController extends AbstractImageController {
 		}
 
 		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
 		Specification<Program> specification = SpecificationUtils
 				.getSpecification(filters);
 		Page<Program> page = find(specification, pageInfo, programRepository);
@@ -221,6 +225,9 @@ public class ProgramController extends AbstractImageController {
 			}
 		}
 
+		if (SecurityUtils.getCpId() != null) {
+			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		}
 		setModel(model);
 
 		return "media/program/edit";
@@ -245,6 +252,9 @@ public class ProgramController extends AbstractImageController {
 			model.addAttribute("series", series);
 		}
 
+		if (SecurityUtils.getCpId() != null) {
+			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		}
 		setModel(model);
 
 		return "media/program/edit";

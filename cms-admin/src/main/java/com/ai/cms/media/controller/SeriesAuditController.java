@@ -50,6 +50,10 @@ public class SeriesAuditController extends SeriesController {
 		}
 
 		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
 		Specification<Series> specification = SpecificationUtils
 				.getSpecification(filters);
 		Page<Series> page = find(specification, pageInfo, seriesRepository);

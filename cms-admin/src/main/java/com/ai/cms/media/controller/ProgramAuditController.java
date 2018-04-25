@@ -51,6 +51,10 @@ public class ProgramAuditController extends ProgramController {
 		}
 
 		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
 		Specification<Program> specification = SpecificationUtils
 				.getSpecification(filters);
 		Page<Program> page = find(specification, pageInfo, programRepository);

@@ -545,9 +545,17 @@
 										</div>
 										<div class="tab-pane" id="tab_2">
 											<div class="row">
-												<div class="col-md-6">
-													<tags:cpSelect value="${program.cpId}" />
-												</div>
+												<c:choose>
+													<c:when test="${empty currentCpId}">
+														<div class="col-md-6">
+															<tags:cpSelect value="${program.cpId}" />
+														</div>
+													</c:when>
+													<c:otherwise>
+														<input type="hidden" id="cpId" name="cpId"
+															value="${currentCpId}" />
+													</c:otherwise>
+												</c:choose>
 												<div class="col-md-6">
 													<div class="form-group">
 														<label class="control-label col-md-3">播出许可证: </label>

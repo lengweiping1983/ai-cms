@@ -101,7 +101,7 @@ ftp:
   # 媒资FTP服务地址
   address: ftp://anonymous:cms1234qwer@127.0.0.1:21/
   # 转码方式:passive=被动模式,active=主动模式
-  mode: passive
+  mode: active
   # FTP根目录
   root:
     path: /Users/luqin/work/workspace_java/ai_cms/cms-admin/src/main/webapp/video/

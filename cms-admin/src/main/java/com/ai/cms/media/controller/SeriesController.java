@@ -130,6 +130,10 @@ public class SeriesController extends AbstractImageController {
 		}
 
 		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
 		Specification<Series> specification = SpecificationUtils
 				.getSpecification(filters);
 		Page<Series> page = find(specification, pageInfo, seriesRepository);
@@ -181,6 +185,9 @@ public class SeriesController extends AbstractImageController {
 		Series series = new Series();
 		model.addAttribute("series", series);
 
+		if (SecurityUtils.getCpId() != null) {
+			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		}
 		setModel(model);
 
 		return "media/series/edit";
@@ -200,6 +207,9 @@ public class SeriesController extends AbstractImageController {
 		Series series = seriesRepository.findOne(id);
 		model.addAttribute("series", series);
 
+		if (SecurityUtils.getCpId() != null) {
+			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		}
 		setModel(model);
 
 		return "media/series/edit";
