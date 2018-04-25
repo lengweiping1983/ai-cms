@@ -115,6 +115,14 @@
 											<c:if test="${item.key eq t.status && item.key eq 1}">
 											</c:if>
 										</c:forEach>
+										<button class="btn btn-default btn-sm btn-outline green"
+											onclick="$.CpController.toEdit('${ctx}/config/cp/${t.id}/editCpFtp',${t.id});">
+											<i class="fa fa-gear"></i>设置FTP地址
+										</button>
+										<button class="btn btn-default btn-sm btn-outline green"
+											onclick="$.CpController.userList('${ctx}/system/user/',${t.id});">
+											<i class="fa fa-gear"></i>设置登录帐号
+										</button>
 									</td>
 								</tr>
 							</c:forEach>

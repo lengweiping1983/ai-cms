@@ -99,6 +99,9 @@ public class TranscodeTask extends AbstractEntity {
 	@Column(name = "is_callback")
 	private Integer isCallback = YesNoEnum.NO.getKey();// 0=未回写，1=已回写
 
+	@Column(name = "cp_id")
+	private String cpId; // 内容提供商id,多个使用','分割
+
 	public Integer getType() {
 		return type;
 	}
@@ -297,6 +300,14 @@ public class TranscodeTask extends AbstractEntity {
 
 	public void setIsCallback(Integer isCallback) {
 		this.isCallback = isCallback;
+	}
+
+	public String getCpId() {
+		return cpId;
+	}
+
+	public void setCpId(String cpId) {
+		this.cpId = cpId;
 	}
 
 }

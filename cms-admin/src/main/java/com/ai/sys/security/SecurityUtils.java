@@ -4,6 +4,7 @@ import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.subject.Subject;
 
 import com.ai.sys.entity.User;
+import com.ai.sys.enums.UserTypeEnum;
 
 public class SecurityUtils {
 	/**
@@ -35,6 +36,18 @@ public class SecurityUtils {
 		User user = SecurityUtils.getUser();
 		if (user != null) {
 			return user.getName();
+		}
+		return null;
+	}
+
+	public static String getCpId() {
+		User user = SecurityUtils.getUser();
+		if (user != null) {
+			if (user.getType() != null
+					&& user.getType() == UserTypeEnum.CP.getKey()
+					&& user.getCpId() != null) {
+				return user.getCpId();
+			}
 		}
 		return null;
 	}

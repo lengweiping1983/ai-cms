@@ -67,6 +67,39 @@ $(function () {
             $code.removeAttr("onclick");
             $.common.focus({id: "code"});
         },
+        
+        userList: function (path, id) {
+        	$.common.pushStackContentParam();
+        	
+        	$.common.ajaxLoadContent({
+        		url: path,
+                type: "GET",
+                dataType: "text",
+                contentType: "default",
+                data: {search_type__EQ_I: 2, search_cpId__EQ_L: id, from: 'cp'},
+                success: function (data) {
+                }
+            })
+        },
+        
+        ajaxLoadLastContent: function (config) {
+        	if (config == undefined) {
+        		var config = {};
+        	}
+        	var url = stackContentRequestPath.pop();
+        	var data = stackContentData.pop();
+            var containerId = config.containerId || "page-content-wrapper";
+            $.common.ajaxLoadContent({
+                url: url,
+                type: "GET",
+                dataType: "text",
+                contentType: "default",
+                containerId: containerId,
+                data: data,
+                success: function (data) {
+                }
+            })
+        },
 
     })
 });

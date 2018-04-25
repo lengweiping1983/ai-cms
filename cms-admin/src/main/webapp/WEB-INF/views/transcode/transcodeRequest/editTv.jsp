@@ -172,29 +172,6 @@
 						</div>
 						<div class="row">
 							<div class="col-md-6">
-								<tags:cpSelect value="${transcodeRequest.cpId}" />
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label col-md-3">优先级(<span
-										class="required">*</span>):
-									</label>
-
-									<div class="col-md-9">
-										<select name="priority" class="form-control">
-											<c:forEach varStatus="status" begin="1" end="20">
-												<option value="${status.index}"
-													<c:if test="${status.index eq transcodeRequest.priority}"> selected="selected" </c:if>>${status.index}</option>
-											</c:forEach>
-										</select>
-										<p class="help-block">数字越大优先级越高</p>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-6">
 								<tags:mediaTemplateSelect value="${transcodeRequest.templateId}" />
 							</div>
 							<div class="col-md-6">
@@ -280,6 +257,36 @@
 						<!-- 								</div> -->
 						<!-- 							</div> -->
 						<!-- 						</div> -->
+						<div class="row">
+							<c:choose>
+								<c:when test="${empty currentCpId}">
+									<div class="col-md-6">
+										<tags:cpSelect value="${transcodeRequest.cpId}" />
+									</div>
+								</c:when>
+								<c:otherwise>
+									<input type="hidden" id="cpId" name="cpId"
+										value="${currentCpId}" />
+								</c:otherwise>
+							</c:choose>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">优先级(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<select name="priority" class="form-control">
+											<c:forEach varStatus="status" begin="1" end="20">
+												<option value="${status.index}"
+													<c:if test="${status.index eq transcodeRequest.priority}"> selected="selected" </c:if>>${status.index}</option>
+											</c:forEach>
+										</select>
+										<p class="help-block">数字越大优先级越高</p>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</form>
 

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,8 @@ import com.ai.common.enums.MediaFileTypeEnum;
 import com.ai.common.enums.YesNoEnum;
 import com.ai.common.excel.ExportExcel;
 import com.ai.common.exception.ServiceException;
+import com.ai.common.jpa.PropertyFilter;
+import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.BeanInfoUtil;
 import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.entity.User;
@@ -101,8 +104,17 @@ public class TranscodeRequestController extends AbstractImageController {
 		if (StringUtils.isEmpty(pageInfo.getOrder())) {
 			pageInfo.setOrder("-createTime");
 		}
-		Page<TranscodeRequest> page = find(request, pageInfo,
+		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
+		Specification<TranscodeRequest> specification = SpecificationUtils
+				.getSpecification(filters);
+		Page<TranscodeRequest> page = find(specification, pageInfo,
 				transcodeRequestRepository);
+		// Page<TranscodeRequest> page = find(request, pageInfo,
+		// transcodeRequestRepository);
 		model.addAttribute("page", page);
 
 		setModel(model);
@@ -125,6 +137,10 @@ public class TranscodeRequestController extends AbstractImageController {
 
 		setModel(model);
 
+		if (SecurityUtils.getCpId() != null) {
+			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		}
+
 		TranscodeRequestTypeEnum typeEnum = TranscodeRequestTypeEnum
 				.getEnumByKey(type);
 		switch (typeEnum) {
@@ -145,6 +161,10 @@ public class TranscodeRequestController extends AbstractImageController {
 		model.addAttribute("transcodeRequest", transcodeRequest);
 
 		setModel(model);
+
+		if (SecurityUtils.getCpId() != null) {
+			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		}
 
 		TranscodeRequestTypeEnum typeEnum = TranscodeRequestTypeEnum
 				.getEnumByKey(transcodeRequest.getType());

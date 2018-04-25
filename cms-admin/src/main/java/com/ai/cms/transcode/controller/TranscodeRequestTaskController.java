@@ -1,10 +1,13 @@
 package com.ai.cms.transcode.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,9 @@ import com.ai.cms.transcode.repository.TranscodeRequestRepository;
 import com.ai.cms.transcode.repository.TranscodeTaskRepository;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractImageController;
+import com.ai.common.jpa.PropertyFilter;
+import com.ai.common.jpa.SpecificationUtils;
+import com.ai.sys.security.SecurityUtils;
 
 @Controller
 @RequestMapping(value = { "/transcode/{transcodeRequestId}/transcodeTask" })
@@ -57,8 +63,17 @@ public class TranscodeRequestTaskController extends AbstractImageController {
 				.findOne(transcodeRequestId);
 		model.addAttribute("transcodeRequest", transcodeRequest);
 
-		Page<TranscodeTask> page = find(request, pageInfo,
+		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
+		Specification<TranscodeTask> specification = SpecificationUtils
+				.getSpecification(filters);
+		Page<TranscodeTask> page = find(specification, pageInfo,
 				transcodeTaskRepository);
+		// Page<TranscodeTask> page = find(request, pageInfo,
+		// transcodeTaskRepository);
 		model.addAttribute("page", page);
 
 		setModel(model);

@@ -762,6 +762,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 			TranscodeRequest transcodeRequest, TranscodeRequestFile file,
 			MediaTemplate mediaTemplate, Program program, MediaFile mediaFile) {
 		TranscodeTask transcodeTask = new TranscodeTask();
+		transcodeTask.setCpId(transcodeRequest.getCpId());
 
 		transcodeTask.setType(TranscodeTaskTypeEnum.TRANSCODE.getKey());
 
@@ -807,6 +808,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 			TranscodeRequestFile file, MediaTemplate mediaTemplate,
 			Program program, MediaFile mediaFile) {
 		TranscodeTask transcodeTask = new TranscodeTask();
+		transcodeTask.setCpId(transcodeRequest.getCpId());
 
 		transcodeTask.setType(TranscodeTaskTypeEnum.IMAGE.getKey());
 
