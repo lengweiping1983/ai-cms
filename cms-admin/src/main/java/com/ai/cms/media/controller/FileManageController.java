@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ai.AdminGlobal;
 import com.ai.cms.config.entity.CpFtp;
 import com.ai.cms.config.service.ConfigService;
 import com.ai.cms.media.bean.BatchPathBean;
