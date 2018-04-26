@@ -31,7 +31,6 @@ import com.ai.common.controller.AbstractImageController;
 import com.ai.common.enums.FileTypeEnum;
 import com.ai.common.exception.ServiceException;
 import com.ai.common.utils.FtpUtils;
-import com.ai.sys.entity.User;
 import com.ai.sys.security.SecurityUtils;
 
 @Controller
@@ -96,11 +95,11 @@ public class FileManageController extends AbstractImageController {
 			boolean cache) {
 		List<FTPFileBean> files = null;
 		try {
+			String cacheKey = SecurityUtils.getUserId() + "-"
+					+ StringUtils.trimToEmpty(SecurityUtils.getCpCode()) + "-"
+					+ accessPath;
 			if (cache) {
-				ValueWrapper valueWrapper = ftpFileCache.get(StringUtils
-						.trimToEmpty(SecurityUtils.getCpCode())
-						+ "-"
-						+ accessPath);
+				ValueWrapper valueWrapper = ftpFileCache.get(cacheKey);
 				if (valueWrapper != null) {
 					files = (List<FTPFileBean>) valueWrapper.get();
 				}
@@ -118,9 +117,7 @@ public class FileManageController extends AbstractImageController {
 							"");
 				}
 				if (cache) {
-					ftpFileCache.put(
-							StringUtils.trimToEmpty(SecurityUtils.getCpCode())
-									+ "-" + accessPath, files);
+					ftpFileCache.put(cacheKey, files);
 				}
 			}
 		} catch (Exception e) {
@@ -164,10 +161,10 @@ public class FileManageController extends AbstractImageController {
 			}
 		}
 
-		User user = SecurityUtils.getUser();
+		Long userId = SecurityUtils.getUserId();
 		String accessPath = StringUtils.trimToEmpty(path);
 		if (StringUtils.isEmpty(accessPath)) {
-			accessPath = userAccessPathMap.get(user.getId());
+			accessPath = userAccessPathMap.get(userId);
 			if (StringUtils.isEmpty(accessPath)) {
 				accessPath = getFtpDefaultAccessPath(cpFtp);
 			}
@@ -175,7 +172,7 @@ public class FileManageController extends AbstractImageController {
 		List<FTPFileBean> files = getFtpFileList(accessPath, name, refresh);
 		model.addAttribute("files", files);
 
-		userAccessPathMap.put(user.getId(), accessPath);
+		userAccessPathMap.put(userId, accessPath);
 		model.addAttribute("path", accessPath);
 		model.addAttribute("typeEnum", FileTypeEnum.values());
 		model.addAttribute("transcodeRequestTypeEnum",
@@ -266,13 +263,22 @@ public class FileManageController extends AbstractImageController {
 			@RequestParam(value = "path", required = false) String path,
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "refresh", required = false, defaultValue = "0") Integer refresh) {
-		User user = SecurityUtils.getUser();
+		CpFtp cpFtp = null;
+		if (StringUtils.isNotEmpty(SecurityUtils.getCpCode())) {
+			cpFtp = configService.findCpFtpByCpCode(SecurityUtils.getCpCode());
+			if (cpFtp == null) {
+				model.addAttribute("path", "/");
+				model.addAttribute("typeEnum", FileTypeEnum.values());
+
+				return "media/file/selectFile";
+			}
+		}
+
+		Long userId = SecurityUtils.getUserId();
 		String accessPath = StringUtils.trimToEmpty(path);
 		if (StringUtils.isEmpty(accessPath)) {
-			accessPath = userAccessPathMap.get(user.getId());
+			accessPath = userAccessPathMap.get(userId);
 			if (StringUtils.isEmpty(accessPath)) {
-				CpFtp cpFtp = configService.findCpFtpByCpCode(SecurityUtils
-						.getCpCode());
 				accessPath = getFtpDefaultAccessPath(cpFtp);
 			}
 		}
@@ -280,7 +286,7 @@ public class FileManageController extends AbstractImageController {
 		List<FTPFileBean> files = getFtpFileList(accessPath, name, refresh);
 		model.addAttribute("files", files);
 
-		userAccessPathMap.put(user.getId(), accessPath);
+		userAccessPathMap.put(userId, accessPath);
 		model.addAttribute("path", accessPath);
 		model.addAttribute("typeEnum", FileTypeEnum.values());
 
