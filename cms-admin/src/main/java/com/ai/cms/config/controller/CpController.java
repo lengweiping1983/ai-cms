@@ -135,7 +135,10 @@ public class CpController extends AbstractController {
 		Cp cp = cpRepository.findOne(id);
 		model.addAttribute("cp", cp);
 
-		CpFtp cpFtp = cpFtpRepository.findOne(id);
+		CpFtp cpFtp = cpFtpRepository.findOneByCpId(id);
+		if (cpFtp == null) {
+			cpFtp = new CpFtp();
+		}
 		model.addAttribute("cpFtp", cpFtp);
 
 		model.addAttribute("typeEnum", CpTypeEnum.values());
@@ -151,8 +154,9 @@ public class CpController extends AbstractController {
 		if (id != null) {
 			cpFtpInfo = cpFtpRepository.findOneByCpId(id);
 			if (cpFtpInfo != null) {
-				BeanInfoUtil.bean2bean(cpFtp, cpFtpInfo,
-						"ip,port,username,password,rootPath,defaultAccessPath");
+				BeanInfoUtil
+						.bean2bean(cpFtp, cpFtpInfo,
+								"cpId,ip,port,username,password,rootPath,defaultAccessPath");
 			}
 		}
 		if (cpFtpInfo == null) {

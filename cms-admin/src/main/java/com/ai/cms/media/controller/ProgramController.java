@@ -744,7 +744,7 @@ public class ProgramController extends AbstractImageController {
 			if (program != null) {
 				injectionService.inInjection(program.getSeries(), program,
 						batchBean.getPlatformId(), batchBean.getTemplateId(),
-						batchBean.getPriority());
+						batchBean.getPriority(), SecurityUtils.getCpId());
 				operationObjectList.add(program);
 			}
 		}
@@ -787,7 +787,7 @@ public class ProgramController extends AbstractImageController {
 			if (program != null) {
 				injectionService.outInjection(program.getSeries(), program,
 						batchBean.getPlatformId(), batchBean.getTemplateId(),
-						batchBean.getPriority());
+						batchBean.getPriority(), SecurityUtils.getCpId());
 				operationObjectList.add(program);
 			}
 		}

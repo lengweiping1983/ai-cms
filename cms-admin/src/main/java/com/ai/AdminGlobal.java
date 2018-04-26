@@ -1,22 +1,16 @@
 package com.ai;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.ai.common.enums.MediaStatusEnum;
 import com.ai.common.enums.OnlineStatusEnum;
-import com.ai.common.utils.PathUtils;
 
 @Component
-public class AdminGlobal implements CommandLineRunner {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(AdminGlobal.class);
+public class AdminGlobal {
+	// private static final Logger logger = LoggerFactory
+	// .getLogger(AdminGlobal.class);
 
 	public static double SIZE_KB = 1024;
 	public static double SIZE_MB = 1024 * 1024;
@@ -246,92 +240,6 @@ public class AdminGlobal implements CommandLineRunner {
 			return (df.format(fileSize / SIZE_MB) + "MB");
 		} else {
 			return (df.format(fileSize / SIZE_KB) + "KB");
-		}
-	}
-
-	public static String ftpAddress;
-
-	public static String ftpMode;
-
-	public static String ftpRootPath;
-
-	public static String ftpDefaultAccessPath;
-
-	public static String transcodeOutputPath;
-
-	public static String collectOutputPath;
-
-	public static String getFtpAddress() {
-		return ftpAddress;
-	}
-
-	@Value("${ftp.address:}")
-	public void setFtpAddress(String ftpAddress) {
-		AdminGlobal.ftpAddress = ftpAddress;
-	}
-
-	public static String getFtpMode() {
-		return ftpMode;
-	}
-
-	@Value("${ftp.mode:}")
-	public void setFtpMode(String ftpMode) {
-		AdminGlobal.ftpMode = ftpMode;
-	}
-
-	public static String getFtpRootPath() {
-		return ftpRootPath;
-	}
-
-	@Value("${ftp.root.path:/}")
-	public void setFtpRootPath(String ftpRootPath) {
-		AdminGlobal.ftpRootPath = PathUtils.getFilePath(ftpRootPath);
-	}
-
-	public static String getFtpDefaultAccessPath() {
-		return ftpDefaultAccessPath;
-	}
-
-	@Value("${ftp.default.access.path:/}")
-	public void setFtpDefaultAccessPath(String ftpDefaultAccessPath) {
-		AdminGlobal.ftpDefaultAccessPath = ftpDefaultAccessPath;
-	}
-
-	public static String getTranscodeOutputPath() {
-		return transcodeOutputPath;
-	}
-
-	@Value("${transcode.output.path:transcode}")
-	public void setTranscodeOutputPath(String transcodeOutputPath) {
-		AdminGlobal.transcodeOutputPath = PathUtils
-				.getFilePath(transcodeOutputPath);
-	}
-
-	public static String getCollectOutputPath() {
-		return collectOutputPath;
-	}
-
-	@Value("${collect.output.path:download}")
-	public void setCollectOutputPath(String collectOutputPath) {
-		AdminGlobal.collectOutputPath = collectOutputPath;
-	}
-
-	@Override
-	public void run(String... args) {
-		logger.info("AdminGlobal startup load data ...");
-		loadData();
-	}
-
-	@Scheduled(cron = "${load.data.schedule:0 0/10 * * * ?}")
-	public void execute() {
-		logger.info("AdminGlobal load data ...");
-		loadData();
-	}
-
-	private void loadData() {
-		try {
-		} catch (Exception e) {
-
 		}
 	}
 

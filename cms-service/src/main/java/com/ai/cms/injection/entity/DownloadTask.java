@@ -77,6 +77,13 @@ public class DownloadTask extends AbstractEntity {
 	@Column(name = "source_file_md5")
 	private String sourceFileMd5;// 原始文件md5值
 
+	@Column(name = "cp_id")
+	private String cpId; // 内容提供商id,多个使用','分割
+
+	public DownloadTask() {
+
+	}
+
 	public Integer getModule() {
 		return module;
 	}
@@ -243,6 +250,14 @@ public class DownloadTask extends AbstractEntity {
 
 	public void setSourceFileMd5(String sourceFileMd5) {
 		this.sourceFileMd5 = sourceFileMd5;
+	}
+
+	public String getCpId() {
+		return cpId;
+	}
+
+	public void setCpId(String cpId) {
+		this.cpId = cpId;
 	}
 
 }

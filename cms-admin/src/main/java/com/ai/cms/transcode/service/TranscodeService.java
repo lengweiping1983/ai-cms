@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ai.AdminGlobal;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.repository.MediaTemplateRepository;
 import com.ai.cms.media.entity.MediaFile;
@@ -56,6 +55,9 @@ import com.ai.common.utils.PathUtils;
 public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 	private static final Log logger = LogFactory.getLog(TranscodeService.class);
 
+	@Value("${transcode.output.path:/transcode}")
+	private String transcodeOutputPath;
+
 	@Value("${transcode.callback.offlineUpload.url:}")
 	private String offlineUploadCallBack;
 
@@ -64,7 +66,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 
 	@Value("${transcode.callback.image.url:}")
 	private String imageCallBack;
-	
+
 	@Autowired
 	private MediaTemplateRepository mediaTemplateRepository;
 
@@ -147,7 +149,8 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 				logger.error(e.getMessage(), e);
 			}
 
-			transcodeTask.setStatus(TranscodeTaskStatusEnum.PROCESSING.getKey());
+			transcodeTask
+					.setStatus(TranscodeTaskStatusEnum.PROCESSING.getKey());
 			transcodeTask.setCloudTaskId(cloudTaskId);
 			transcodeTaskRepository.save(transcodeTask);
 			logger.info("offlineUpload task append new offlineUpload task!");
@@ -227,7 +230,8 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 				logger.error(e.getMessage(), e);
 			}
 
-			transcodeTask.setStatus(TranscodeTaskStatusEnum.PROCESSING.getKey());
+			transcodeTask
+					.setStatus(TranscodeTaskStatusEnum.PROCESSING.getKey());
 			transcodeTask.setCloudTaskId(cloudTaskId);
 			transcodeTaskRepository.save(transcodeTask);
 			logger.info("image task append new image task!");
@@ -567,7 +571,8 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		String[] templateIdArr = transcodeRequest.getTemplateId().split(",");
 		for (String templateIdS : templateIdArr) {
 			Long templateId = Long.valueOf(templateIdS);
-			MediaTemplate mediaTemplate = mediaTemplateRepository.findOne(templateId);
+			MediaTemplate mediaTemplate = mediaTemplateRepository
+					.findOne(templateId);
 			for (TranscodeRequestFile file : fileList) {
 				produceMediaFile(transcodeRequest, file, mediaTemplate, program);
 			}
@@ -679,7 +684,8 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		String[] templateIdArr = transcodeRequest.getTemplateId().split(",");
 		for (String templateIdS : templateIdArr) {
 			Long templateId = Long.valueOf(templateIdS);
-			MediaTemplate mediaTemplate = mediaTemplateRepository.findOne(templateId);
+			MediaTemplate mediaTemplate = mediaTemplateRepository
+					.findOne(templateId);
 			produceProgram(transcodeRequest, mediaName, mediaFilename,
 					mediaTemplate, series);
 		}
@@ -789,7 +795,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 				suffix = mediaTemplate.getvFormat().toLowerCase();
 			}
 			String rootPath = PathUtils.joinPath(
-					AdminGlobal.getTranscodeOutputPath(),
+					getTranscodeOutputPath(transcodeTask.getCpId()),
 					mediaTemplate.getCode() + "/" + storagePath);
 			String filename = StringUtils.trimToEmpty(mediaFilename) + "_"
 					+ program.getEpisodeIndex() + "_" + mediaFile.getId() + "_"
@@ -829,8 +835,8 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		String mediaFilename = program.getFilename();
 		String suffix = "jpg";
 		String rootPath = PathUtils.joinPath(
-				AdminGlobal.getTranscodeOutputPath(), mediaTemplate.getCode()
-						+ "/" + storagePath);
+				getTranscodeOutputPath(transcodeTask.getCpId()),
+				mediaTemplate.getCode() + "/" + storagePath);
 		String filename = StringUtils.trimToEmpty(mediaFilename) + "_"
 				+ program.getEpisodeIndex() + "_" + mediaFile.getId() + "_"
 				+ mediaTemplate.getCode() + "." + suffix;
@@ -841,6 +847,13 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 
 		genTranscodeTaskName(transcodeTask, file, program);
 		return transcodeTask;
+	}
+
+	private String getTranscodeOutputPath(String cpId) {
+		if (StringUtils.isNotEmpty(cpId)) {
+			return transcodeOutputPath + "/" + StringUtils.trimToEmpty(cpId);
+		}
+		return transcodeOutputPath;
 	}
 
 	private void genTranscodeTaskName(TranscodeTask transcodeTask,

@@ -111,6 +111,13 @@ public class ReceiveTask extends AbstractEntity {
 	@Column(name = "download_fail")
 	private Long downloadFail = 0l; // 下载失败任务数
 
+	@Column(name = "cp_id")
+	private String cpId; // 内容提供商id,多个使用','分割
+
+	public ReceiveTask() {
+
+	}
+
 	public Date getReceiveTime() {
 		return receiveTime;
 	}
@@ -325,6 +332,14 @@ public class ReceiveTask extends AbstractEntity {
 
 	public void setDownloadFail(Long downloadFail) {
 		this.downloadFail = downloadFail;
+	}
+
+	public String getCpId() {
+		return cpId;
+	}
+
+	public void setCpId(String cpId) {
+		this.cpId = cpId;
 	}
 
 }

@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.cms.config.entity.Cp;
+import com.ai.cms.config.entity.CpFtp;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.entity.Site;
+import com.ai.cms.config.repository.CpFtpRepository;
 import com.ai.cms.config.repository.CpRepository;
 import com.ai.cms.config.repository.MediaTemplateRepository;
 import com.ai.cms.config.repository.SiteRepository;
@@ -27,6 +29,9 @@ public class ConfigService extends AbstractService<Cp, Long> {
 
 	@Autowired
 	private CpRepository cpRepository;
+
+	@Autowired
+	private CpFtpRepository cpFtpRepository;
 
 	@Autowired
 	private MediaTemplateRepository mediaTemplateRepository;
@@ -72,7 +77,7 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		}
 		return cpMap;
 	}
-	
+
 	public String getCpShortNameByCpId(Map<Long, Cp> cpMap, String cpIds) {
 		StringBuffer result = new StringBuffer();
 		if (StringUtils.isNotEmpty(cpIds)) {
@@ -106,7 +111,7 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		}
 		return result.toString();
 	}
-	
+
 	public String getCpIdByCpName(Map<String, Cp> cpMap, String cpNames) {
 		StringBuffer result = new StringBuffer();
 		if (StringUtils.isNotEmpty(cpNames)) {
@@ -123,7 +128,7 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		}
 		return result.toString();
 	}
-	
+
 	public Map<Long, MediaTemplate> findAllMediaTemplateMap() {
 		Map<Long, MediaTemplate> mediaTemplateMap = new HashMap<Long, MediaTemplate>();
 		List<MediaTemplate> mediaTemplateList = mediaTemplateRepository
@@ -171,4 +176,9 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		}
 		return result.toString();
 	}
+
+	public CpFtp findCpFtpByCpId(Long cpId) {
+		return cpFtpRepository.findOneByCpId(cpId);
+	}
+
 }

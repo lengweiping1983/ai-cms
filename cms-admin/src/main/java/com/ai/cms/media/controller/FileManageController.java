@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ai.AdminGlobal;
+import com.ai.cms.config.entity.CpFtp;
+import com.ai.cms.config.service.ConfigService;
 import com.ai.cms.media.bean.BatchPathBean;
 import com.ai.cms.transcode.enums.TranscodeRequestTypeEnum;
 import com.ai.cms.transcode.utils.ShaTaClient;
@@ -41,7 +43,45 @@ public class FileManageController extends AbstractImageController {
 
 	private Cache ftpFileCache;
 
-	public CacheManager getCacheManager() {
+	@Autowired
+	private ConfigService configService;
+
+	@Value("${ftp.address:}")
+	private String ftpAddress;
+
+	@Value("${ftp.mode:}")
+	private String ftpMode;
+
+	@Value("${ftp.root.path:/}")
+	private String ftpRootPath;
+
+	@Value("${ftp.default.access.path:/}")
+	private String ftpDefaultAccessPath;
+
+	public String getFtpAddress(CpFtp cpFtp) {
+		if (cpFtp != null) {
+			// ftp://anonymous:cms1234qwer@127.0.0.1:21/
+			return "ftp://" + cpFtp.getUsername() + ":" + cpFtp.getPassword()
+					+ "@" + cpFtp.getIp() + ":" + cpFtp.getPort() + "/";
+		}
+		return ftpAddress;
+	}
+
+	public String getFtpRootPath(CpFtp cpFtp) {
+		if (cpFtp != null) {
+			return cpFtp.getRootPath();
+		}
+		return ftpRootPath;
+	}
+
+	public String getFtpDefaultAccessPath(CpFtp cpFtp) {
+		if (cpFtp != null) {
+			return cpFtp.getDefaultAccessPath();
+		}
+		return ftpDefaultAccessPath;
+	}
+
+	public CacheManager getCacheManager(CpFtp cpFtp) {
 		return cacheManager;
 	}
 
@@ -53,25 +93,40 @@ public class FileManageController extends AbstractImageController {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<FTPFileBean> _getFtpFileList(String accessPath, int refresh) {
+	public List<FTPFileBean> _getFtpFileList(String accessPath, int refresh,
+			boolean cache) {
 		List<FTPFileBean> files = null;
 		try {
-			ValueWrapper valueWrapper = ftpFileCache.get(accessPath);
-			if (valueWrapper != null) {
-				files = (List<FTPFileBean>) valueWrapper.get();
+			if (cache) {
+				ValueWrapper valueWrapper = ftpFileCache.get(StringUtils
+						.trimToEmpty(SecurityUtils.getCpId())
+						+ "-"
+						+ accessPath);
+				if (valueWrapper != null) {
+					files = (List<FTPFileBean>) valueWrapper.get();
+				}
 			}
 			if (files == null || refresh == 1) {
-				files = FtpUtils.getInstance(AdminGlobal.getFtpAddress(),
-						AdminGlobal.getFtpMode()).getFiles(
-						AdminGlobal.getFtpRootPath(), accessPath, "");
-				if ((files == null || files.size() == 0)
-						&& accessPath.equals(AdminGlobal
-								.getFtpDefaultAccessPath())) {
-					files = FtpUtils.getInstance(AdminGlobal.getFtpAddress(),
-							AdminGlobal.getFtpMode(), true).getFiles(
-							AdminGlobal.getFtpRootPath(), accessPath, "");
+				CpFtp cpFtp = null;
+				if (SecurityUtils.getCpId() != null) {
+					Long cpId = Long
+							.valueOf(SecurityUtils.getCpId().split(",")[0]);
+					cpFtp = configService.findCpFtpByCpId(cpId);
 				}
-				ftpFileCache.put(accessPath, files);
+
+				files = FtpUtils.getInstance(getFtpAddress(cpFtp), ftpMode)
+						.getFiles(getFtpRootPath(cpFtp), accessPath, "");
+				if ((files == null || files.size() == 0)
+						&& accessPath.equals(getFtpDefaultAccessPath(cpFtp))) {
+					files = FtpUtils.getInstance(getFtpAddress(cpFtp), ftpMode,
+							true).getFiles(getFtpRootPath(cpFtp), accessPath,
+							"");
+				}
+				if (cache) {
+					ftpFileCache.put(
+							StringUtils.trimToEmpty(SecurityUtils.getCpId())
+									+ "-" + accessPath, files);
+				}
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -82,7 +137,7 @@ public class FileManageController extends AbstractImageController {
 
 	public List<FTPFileBean> getFtpFileList(String accessPath, String name,
 			int refresh) {
-		List<FTPFileBean> files = _getFtpFileList(accessPath, refresh);
+		List<FTPFileBean> files = _getFtpFileList(accessPath, refresh, true);
 		if (StringUtils.isEmpty(name)) {
 			return files;
 		}
@@ -107,7 +162,13 @@ public class FileManageController extends AbstractImageController {
 		if (StringUtils.isEmpty(accessPath)) {
 			accessPath = userAccessPathMap.get(user.getId());
 			if (StringUtils.isEmpty(accessPath)) {
-				accessPath = AdminGlobal.getFtpDefaultAccessPath();
+				CpFtp cpFtp = null;
+				if (SecurityUtils.getCpId() != null) {
+					Long cpId = Long
+							.valueOf(SecurityUtils.getCpId().split(",")[0]);
+					cpFtp = configService.findCpFtpByCpId(cpId);
+				}
+				accessPath = getFtpDefaultAccessPath(cpFtp);
 			}
 		}
 		List<FTPFileBean> files = getFtpFileList(accessPath, name, refresh);
@@ -132,15 +193,7 @@ public class FileManageController extends AbstractImageController {
 			return new BaseResult();
 		}
 		try {
-			List<FTPFileBean> files = FtpUtils.getInstance(
-					AdminGlobal.getFtpAddress(), AdminGlobal.getFtpMode())
-					.getFiles(AdminGlobal.getFtpRootPath(), accessPath, "");
-			if ((files == null || files.size() == 0)
-					&& accessPath.equals(AdminGlobal.getFtpDefaultAccessPath())) {
-				files = FtpUtils.getInstance(AdminGlobal.getFtpAddress(),
-						AdminGlobal.getFtpMode(), true).getFiles(
-						AdminGlobal.getFtpRootPath(), accessPath, "");
-			}
+			List<FTPFileBean> files = _getFtpFileList(accessPath, 1, false);
 
 			int num = 0;
 			ShaTaClient shaTaClient = new ShaTaClient();
@@ -217,7 +270,13 @@ public class FileManageController extends AbstractImageController {
 		if (StringUtils.isEmpty(accessPath)) {
 			accessPath = userAccessPathMap.get(user.getId());
 			if (StringUtils.isEmpty(accessPath)) {
-				accessPath = AdminGlobal.getFtpDefaultAccessPath();
+				CpFtp cpFtp = null;
+				if (SecurityUtils.getCpId() != null) {
+					Long cpId = Long
+							.valueOf(SecurityUtils.getCpId().split(",")[0]);
+					cpFtp = configService.findCpFtpByCpId(cpId);
+				}
+				accessPath = getFtpDefaultAccessPath(cpFtp);
 			}
 		}
 

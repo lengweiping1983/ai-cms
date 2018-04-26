@@ -660,7 +660,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (platform.getNeedDownloadVideo() == YesNoEnum.YES.getKey()
 				&& !sourceFilePath.equals(inputFilePath)) {// 需要下载视频文件
 			DownloadTask downloadTask = new DownloadTask();
-
+			downloadTask.setCpId(receiveTask.getCpId());
 			downloadTask.setModule(DownloadModuleEnum.RECEIVE.getKey());
 			downloadTask.setPid(receiveTask.getId());
 

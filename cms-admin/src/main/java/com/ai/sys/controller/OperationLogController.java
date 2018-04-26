@@ -1,12 +1,14 @@
 package com.ai.sys.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +19,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ai.common.bean.BaseResult;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
+import com.ai.common.jpa.PropertyFilter;
+import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.DateUtils;
 import com.ai.sys.entity.OperationLog;
 import com.ai.sys.repository.OperationLogRepository;
+import com.ai.sys.security.SecurityUtils;
 
 @Controller
 @RequestMapping(value = { "/system/operationlog" })
@@ -34,7 +39,14 @@ public class OperationLogController extends AbstractController {
 		if (StringUtils.isEmpty(pageInfo.getOrder())) {
 			pageInfo.setOrder("-createTime");
 		}
-		Page<OperationLog> page = find(request, pageInfo,
+		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
+		Specification<OperationLog> specification = SpecificationUtils
+				.getSpecification(filters);
+		Page<OperationLog> page = find(specification, pageInfo,
 				operationLogRepository);
 		model.addAttribute("page", page);
 		return "system/operationlog/list";

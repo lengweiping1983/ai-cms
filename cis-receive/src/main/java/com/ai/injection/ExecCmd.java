@@ -69,6 +69,7 @@ public class ExecCmd {
 							CorrelateID);
 			if (receiveTask == null) {
 				receiveTask = new ReceiveTask();
+				receiveTask.setCpId(CSPID);
 				receiveTask.setPlatformId(platform.getId());
 				receiveTask.setCorrelateId(CorrelateID);
 				receiveTask.setReceiveTime(new Date());

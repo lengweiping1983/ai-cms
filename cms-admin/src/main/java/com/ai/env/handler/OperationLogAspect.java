@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -27,6 +26,7 @@ import com.ai.common.utils.IpUtils;
 import com.ai.sys.entity.OperationLog;
 import com.ai.sys.entity.User;
 import com.ai.sys.repository.OperationLogRepository;
+import com.ai.sys.security.SecurityUtils;
 
 @Aspect
 @Component
@@ -46,7 +46,7 @@ public class OperationLogAspect {
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
 				.getRequestAttributes();
 		HttpServletRequest request = requestAttributes.getRequest();
-		User user = (User) SecurityUtils.getSubject().getPrincipal();
+		User user = (User) SecurityUtils.getUser();
 		if (user == null) {
 			return;
 		}
@@ -54,6 +54,7 @@ public class OperationLogAspect {
 		OperationLog log = new OperationLog();
 		log.setUserId(user.getId());
 		log.setUserName(user.getName());
+		log.setCpId(SecurityUtils.getCpId());
 		log.setIp(ip);
 		log.setUri(request.getRequestURI());
 		OperationLogAnnotation an = getOperationLogAnnotation(pjp);

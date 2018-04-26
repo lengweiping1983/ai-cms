@@ -688,7 +688,7 @@ public class SeriesController extends AbstractImageController {
 			Series series = seriesRepository.findOne(itemId);
 			if (series != null) {
 				injectionService.inInjection(series, batchBean.getPlatformId(),
-						batchBean.getTemplateId(), batchBean.getPriority());
+						batchBean.getTemplateId(), batchBean.getPriority(), SecurityUtils.getCpId());
 				operationObjectList.add(series);
 			}
 		}
@@ -731,7 +731,7 @@ public class SeriesController extends AbstractImageController {
 			if (series != null) {
 				injectionService.outInjection(series,
 						batchBean.getPlatformId(), batchBean.getTemplateId(),
-						batchBean.getPriority());
+						batchBean.getPriority(), SecurityUtils.getCpId());
 				operationObjectList.add(series);
 			}
 		}

@@ -11,8 +11,8 @@
 			</div>
 			<div class="modal-body">
 				<form id="editForm">
-					<input type="hidden" name="id" value="${cp.id}" />
-
+					<input type="hidden" name="id" value="${cpFtp.id}" /> <input
+						type="hidden" name="cpId" value="${cp.id}" />
 					<div class="content form-horizontal">
 						<div class="form-group">
 							<label class="control-label col-md-4">FTP地址(<span
@@ -56,6 +56,28 @@
 							<div class="col-md-6">
 								<input type="text" name="password" value="${cpFtp.password}"
 									class="form-control validate[required]" placeholder="请输入密码">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="control-label col-md-4">FTP根目录(<span
+								class="required">*</span>):
+							</label>
+
+							<div class="col-md-6">
+								<input type="text" name="rootPath" value="${cpFtp.rootPath}"
+									class="form-control validate[required]" placeholder="请输入FTP根目录">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-md-4">默认访问目录(<span
+								class="required">*</span>):
+							</label>
+
+							<div class="col-md-6">
+								<input type="text" name="defaultAccessPath"
+									value="${cpFtp.defaultAccessPath}"
+									class="form-control validate[required]" placeholder="请输入默认访问目录">
 							</div>
 						</div>
 					</div>

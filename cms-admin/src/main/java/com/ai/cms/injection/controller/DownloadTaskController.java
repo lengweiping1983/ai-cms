@@ -33,6 +33,7 @@ import com.ai.common.controller.AbstractImageController;
 import com.ai.common.jpa.PropertyFilter;
 import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.sys.security.SecurityUtils;
 
 @Controller
 @RequestMapping(value = { "/injection/downloadTask" })
@@ -56,6 +57,10 @@ public class DownloadTaskController extends AbstractImageController {
 		}
 
 		List<PropertyFilter> filters = getPropertyFilters(request);
+		if (SecurityUtils.getCpId() != null) {
+			filters.add(new PropertyFilter("cpId__INMASK_S", ""
+					+ SecurityUtils.getCpId()));
+		}
 		Specification<Program> specification = SpecificationUtils
 				.getSpecification(filters);
 		Page<Program> page = find(specification, pageInfo,
