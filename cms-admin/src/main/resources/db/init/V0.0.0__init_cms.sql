@@ -1,6 +1,7 @@
 use ai_sys;
 ALTER TABLE `sys_operation_log` CHANGE COLUMN `object_id` `object_id` varchar(1024) DEFAULT NULL;
 ALTER TABLE `sys_operation_log` CHANGE COLUMN `object_name` `object_name` longtext DEFAULT NULL;
+ALTER TABLE `sys_user` CHANGE COLUMN `type` `type` int DEFAULT 1;
 
 use ai_cms;
 

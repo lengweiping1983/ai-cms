@@ -140,43 +140,43 @@
 							</div>
 						</div>
 
-<!-- 						<div class="row"> -->
-<!-- 							<div class="col-md-6"> -->
-<!-- 								<div class="form-group"> -->
-<!-- 									<label class="control-label col-md-3" style="padding-top: 0px;">是否需要截图(<span -->
-<!-- 										class="required">*</span>): -->
-<!-- 									</label> -->
+						<!-- 						<div class="row"> -->
+						<!-- 							<div class="col-md-6"> -->
+						<!-- 								<div class="form-group"> -->
+						<!-- 									<label class="control-label col-md-3" style="padding-top: 0px;">是否需要截图(<span -->
+						<!-- 										class="required">*</span>): -->
+						<!-- 									</label> -->
 
-<!-- 									<div class="col-md-9"> -->
-<!-- 										<select id="needSnapshot" name="needSnapshot" -->
-<!-- 											class="form-control"> -->
-<%-- 											<c:forEach var="item" items="${needSnapshotEnum}"> --%>
-<%-- 												<option value="${item.key}" --%>
-<%-- 													<c:if test="${item.key eq transcodeRequest.needSnapshot}"> selected="selected" </c:if>>${item.value}</option> --%>
-<%-- 											</c:forEach> --%>
-<!-- 										</select> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 							</div> -->
+						<!-- 									<div class="col-md-9"> -->
+						<!-- 										<select id="needSnapshot" name="needSnapshot" -->
+						<!-- 											class="form-control"> -->
+						<%-- 											<c:forEach var="item" items="${needSnapshotEnum}"> --%>
+						<%-- 												<option value="${item.key}" --%>
+						<%-- 													<c:if test="${item.key eq transcodeRequest.needSnapshot}"> selected="selected" </c:if>>${item.value}</option> --%>
+						<%-- 											</c:forEach> --%>
+						<!-- 										</select> -->
+						<!-- 									</div> -->
+						<!-- 								</div> -->
+						<!-- 							</div> -->
 
-<!-- 							<div class="col-md-6"> -->
-<!-- 								<div class="form-group"> -->
-<!-- 									<label class="control-label col-md-3" style="padding-top: 0px;">原始文件处理(<span -->
-<!-- 										class="required">*</span>): -->
-<!-- 									</label> -->
+						<!-- 							<div class="col-md-6"> -->
+						<!-- 								<div class="form-group"> -->
+						<!-- 									<label class="control-label col-md-3" style="padding-top: 0px;">原始文件处理(<span -->
+						<!-- 										class="required">*</span>): -->
+						<!-- 									</label> -->
 
-<!-- 									<div class="col-md-9"> -->
-<!-- 										<select id="originFileDeal" name="originFileDeal" -->
-<!-- 											class="form-control"> -->
-<%-- 											<c:forEach var="item" items="${originFileDealEnum}"> --%>
-<%-- 												<option value="${item.key}" --%>
-<%-- 													<c:if test="${item.key eq transcodeRequest.originFileDeal}"> selected="selected" </c:if>>${item.value}</option> --%>
-<%-- 											</c:forEach> --%>
-<!-- 										</select> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 							</div> -->
-<!-- 						</div> -->
+						<!-- 									<div class="col-md-9"> -->
+						<!-- 										<select id="originFileDeal" name="originFileDeal" -->
+						<!-- 											class="form-control"> -->
+						<%-- 											<c:forEach var="item" items="${originFileDealEnum}"> --%>
+						<%-- 												<option value="${item.key}" --%>
+						<%-- 													<c:if test="${item.key eq transcodeRequest.originFileDeal}"> selected="selected" </c:if>>${item.value}</option> --%>
+						<%-- 											</c:forEach> --%>
+						<!-- 										</select> -->
+						<!-- 									</div> -->
+						<!-- 								</div> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 						<div class="row">
 							<c:choose>
 								<c:when test="${empty currentCpCode}">
@@ -272,10 +272,20 @@
 						onclick="$.FileManageController.toSelectItem('${ctx}/media/file/selectFile?selectMode=multi');">
 						<i class="fa fa-plus"></i>增加文件
 					</button>
-					<button id="TranscodeRequestSave" class="btn btn-outline green"
-						onclick="$.TranscodeRequestController.edit('${ctx}/transcode/transcodeRequest/edit');">
-						<i class="fa fa-save"></i>保存
-					</button>
+					<c:choose>
+						<c:when test="${empty transcodeRequest.id}">
+							<button id="TranscodeRequestSave" class="btn btn-outline green"
+								onclick="$.TranscodeRequestController.edit('${ctx}/transcode/transcodeRequest/add');">
+								<i class="fa fa-save"></i>保存
+							</button>
+						</c:when>
+						<c:otherwise>
+							<button id="TranscodeRequestSave" class="btn btn-outline green"
+								onclick="$.TranscodeRequestController.edit('${ctx}/transcode/transcodeRequest/edit');">
+								<i class="fa fa-save"></i>保存
+							</button>
+						</c:otherwise>
+					</c:choose>
 					<button id="TranscodeRequestProduce" class="btn btn-outline green"
 						onclick="$.TranscodeRequestController.produce('${ctx}/transcode/transcodeRequest/produce');">
 						<i class="fa fa-hourglass-start"></i>执行

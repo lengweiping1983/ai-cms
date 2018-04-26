@@ -12,10 +12,12 @@
 						<i class="fa fa-globe"></i>渠道管理
 					</div>
 					<div class="actions">
-						<a href="javascript:;" class="btn btn-default btn-sm"
-							onclick="$.SiteController.toEdit('${ctx}/config/site/add')">
-							<i class="fa fa-plus"></i>增加渠道
-						</a>
+						<shiro:hasPermission name="config:site:add">
+							<a href="javascript:;" class="btn btn-default btn-sm"
+								onclick="$.SiteController.toEdit('${ctx}/config/site/add')">
+								<i class="fa fa-plus"></i>增加渠道
+							</a>
+						</shiro:hasPermission>
 					</div>
 				</div>
 				<div class="portlet-body">
@@ -66,7 +68,10 @@
 								<th class="sorting" abbr="code">渠道代码</th>
 								<th class="sorting" abbr="name">渠道名称</th>
 								<th class="sorting" abbr="status">状态</th>
-								<th>操作</th>
+								<shiro:hasAnyPermissions
+									name="config:site:edit,config:site:delete">
+									<th>操作</th>
+								</shiro:hasAnyPermissions>
 							</tr>
 						</thead>
 						<tfoot>
@@ -75,7 +80,10 @@
 								<th class="sorting" abbr="code">渠道代码</th>
 								<th class="sorting" abbr="name">渠道名称</th>
 								<th class="sorting" abbr="status">状态</th>
-								<th>操作</th>
+								<shiro:hasAnyPermissions
+									name="config:site:edit,config:site:delete">
+									<th>操作</th>
+								</shiro:hasAnyPermissions>
 							</tr>
 						</tfoot>
 						<tbody>
@@ -92,21 +100,26 @@
 												<span class="badge badge-success">${item.value}</span>
 											</c:if>
 										</c:forEach></td>
-									<td>
-										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.SiteController.toEdit('${ctx}/config/site/${t.id}/edit',${t.id});">
-											<i class="fa fa-edit"></i>修改
-										</button> <c:forEach var="item" items="${statusEnum}">
-											<c:if test="${item.key eq t.status && item.key eq 0}">
-												<!-- 													<button class="btn btn-default btn-sm btn-outline green" -->
-												<%-- 														onclick="$.SiteController.toDelete('${ctx}/config/site/${t.id}/delete','${t.name}');"> --%>
-												<!-- 														<i class="fa fa-remove"></i>删除 -->
-												<!-- 													</button> -->
-											</c:if>
-											<c:if test="${item.key eq t.status && item.key eq 1}">
-											</c:if>
-										</c:forEach>
-									</td>
+									<shiro:hasAnyPermissions
+										name="config:site:edit,config:site:delete">
+										<td><shiro:hasPermission name="config:site:edit">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.SiteController.toEdit('${ctx}/config/site/${t.id}/edit',${t.id});">
+													<i class="fa fa-edit"></i>修改
+												</button>
+											</shiro:hasPermission> <c:forEach var="item" items="${statusEnum}">
+												<c:if test="${item.key eq t.status && item.key eq 0}">
+													<shiro:hasPermission name="config:site:delete">
+														<!-- 														<button class="btn btn-default btn-sm btn-outline green" -->
+														<%-- 															onclick="$.SiteController.toDelete('${ctx}/config/site/${t.id}/delete','${t.name}');"> --%>
+														<!-- 															<i class="fa fa-remove"></i>删除 -->
+														<!-- 														</button> -->
+													</shiro:hasPermission>
+												</c:if>
+												<c:if test="${item.key eq t.status && item.key eq 1}">
+												</c:if>
+											</c:forEach></td>
+									</shiro:hasAnyPermissions>
 								</tr>
 							</c:forEach>
 						</tbody>

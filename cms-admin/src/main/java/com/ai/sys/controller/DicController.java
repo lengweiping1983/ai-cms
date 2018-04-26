@@ -56,6 +56,14 @@ public class DicController extends AbstractController {
 		return "system/dic/edit";
 	}
 
+	@OperationLogAnnotation(module = "系统管理", subModule = "字典管理", action = "增加", message = "增加字典")
+	@RequiresPermissions("system:dic:add")
+	@RequestMapping(value = "add", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public Dic add(@RequestBody Dic dic) {
+		return edit(dic);
+	}
+
 	@OperationLogAnnotation(module = "系统管理", subModule = "字典管理", action = "修改", message = "修改字典")
 	@RequiresPermissions("system:dic:edit")
 	@RequestMapping(value = "edit", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")

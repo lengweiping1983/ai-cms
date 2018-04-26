@@ -12,12 +12,14 @@
 						<i class="fa fa-globe"></i>分发平台配置
 					</div>
 					<div class="actions">
-						<c:forEach var="item" items="${injectionDirectionEnum}">
-							<a href="javascript:;" class="btn btn-default btn-sm"
-								onclick="$.InjectionPlatformController.toEdit('${ctx}/injection/platform/add/${item.key}')">
-								<i class="fa fa-plus"></i>增加${item.value}平台
-							</a>
-						</c:forEach>
+						<shiro:hasPermission name="injection:platform:add">
+							<c:forEach var="item" items="${injectionDirectionEnum}">
+								<a href="javascript:;" class="btn btn-default btn-sm"
+									onclick="$.InjectionPlatformController.toEdit('${ctx}/injection/platform/add/${item.key}')">
+									<i class="fa fa-plus"></i>增加${item.value}平台
+								</a>
+							</c:forEach>
+						</shiro:hasPermission>
 					</div>
 				</div>
 				<div class="portlet-body">
@@ -70,7 +72,10 @@
 								<th class="sorting" abbr="cspId">CSPID</th>
 								<th class="sorting" abbr="lspId">LSPID</th>
 								<th class="sorting" abbr="status">状态</th>
-								<th>操作</th>
+								<shiro:hasAnyPermissions
+									name="injection:platform:edit,injection:platform:delete">
+									<th>操作</th>
+								</shiro:hasAnyPermissions>
 							</tr>
 						</thead>
 						<tfoot>
@@ -86,7 +91,10 @@
 								<th class="sorting" abbr="cspId">CSPID</th>
 								<th class="sorting" abbr="lspId">LSPID</th>
 								<th class="sorting" abbr="status">状态</th>
-								<th>操作</th>
+								<shiro:hasAnyPermissions
+									name="injection:platform:edit,injection:platform:delete">
+									<th>操作</th>
+								</shiro:hasAnyPermissions>
 							</tr>
 						</tfoot>
 						<tbody>
@@ -121,21 +129,26 @@
 												<span class="badge badge-success">${item.value}</span>
 											</c:if>
 										</c:forEach></td>
-									<td>
-										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.InjectionPlatformController.toEdit('${ctx}/injection/platform/${t.id}/edit',${t.id});">
-											<i class="fa fa-edit"></i>修改
-										</button> <c:forEach var="item" items="${statusEnum}">
-											<c:if test="${item.key eq t.status && item.key eq 0}">
+									<shiro:hasAnyPermissions
+										name="injection:platform:edit,injection:platform:delete">
+										<td><shiro:hasPermission name="injection:platform:edit">
 												<button class="btn btn-default btn-sm btn-outline green"
-													onclick="$.InjectionPlatformController.toDelete('${ctx}/injection/platform/${t.id}/delete','${t.cspId}');">
-													<i class="fa fa-remove"></i>删除
+													onclick="$.InjectionPlatformController.toEdit('${ctx}/injection/platform/${t.id}/edit',${t.id});">
+													<i class="fa fa-edit"></i>修改
 												</button>
-											</c:if>
-											<c:if test="${item.key eq t.status && item.key eq 1}">
-											</c:if>
-										</c:forEach>
-									</td>
+											</shiro:hasPermission> <c:forEach var="item" items="${statusEnum}">
+												<c:if test="${item.key eq t.status && item.key eq 0}">
+													<shiro:hasPermission name="injection:platform:delete">
+														<button class="btn btn-default btn-sm btn-outline green"
+															onclick="$.InjectionPlatformController.toDelete('${ctx}/injection/platform/${t.id}/delete','${t.cspId}');">
+															<i class="fa fa-remove"></i>删除
+														</button>
+													</shiro:hasPermission>
+												</c:if>
+												<c:if test="${item.key eq t.status && item.key eq 1}">
+												</c:if>
+											</c:forEach></td>
+									</shiro:hasAnyPermissions>
 								</tr>
 							</c:forEach>
 						</tbody>

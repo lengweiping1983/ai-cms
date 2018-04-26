@@ -155,26 +155,34 @@
 									<td>${fns:getFileSizeS(t.fileSize)}</td>
 									<td><span class="badge badge-success">${t.percent}%</span></td>
 									<td><c:if test="${t.status ne 3}">
-											<button class="btn btn-default btn-sm btn-outline green"
-												onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/pause','${t.name}','暂停下载');">
-												<i class="fa fa-pause"></i>暂停
-											</button>
-											<button class="btn btn-default btn-sm btn-outline green"
-												onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/stop','${t.name}','暂停下载');">
-												<i class="fa fa-stop"></i>停止
-											</button>
+											<shiro:hasPermission name="injection:downloadTask:pause">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/pause','${t.name}','暂停下载');">
+													<i class="fa fa-pause"></i>暂停
+												</button>
+											</shiro:hasPermission>
+											<shiro:hasPermission name="injection:downloadTask:stop">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/stop','${t.name}','暂停下载');">
+													<i class="fa fa-stop"></i>停止
+												</button>
+											</shiro:hasPermission>
 										</c:if> <c:if
 											test="${t.status ne 3 && t.status ne 0 && t.status ne 1 && t.status ne 6}">
-											<button class="btn btn-default btn-sm btn-outline green"
-												onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/reset','${t.name}','继续下载');">
-												<i class="fa fa-play"></i>继续
-											</button>
+											<shiro:hasPermission name="injection:downloadTask:reset">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/reset','${t.name}','继续下载');">
+													<i class="fa fa-play"></i>继续
+												</button>
+											</shiro:hasPermission>
 										</c:if> <c:if
 											test="${t.status ne 0 && t.status ne 1 && t.status ne 6}">
-											<button class="btn btn-default btn-sm btn-outline green"
-												onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/renew','${t.name}','重新下载');">
-												<i class="fa fa-play-circle"></i>重新下载
-											</button>
+											<shiro:hasPermission name="injection:downloadTask:renew">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.DownloadTaskController.toSend('${contextPathPrefix}${t.id}/renew','${t.name}','重新下载');">
+													<i class="fa fa-play-circle"></i>重新下载
+												</button>
+											</shiro:hasPermission>
 										</c:if></td>
 								</tr>
 							</c:forEach>
@@ -184,28 +192,37 @@
 					<tags:pageInfo containerId="${containerId}" formId="${formId}" />
 
 					<div class="modal-footer">
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchPause', 109, '批量暂停下载');">
-							<i class="fa fa-pause"></i>批量暂停
-						</button>
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchStop', 109, '批量停止下载');">
-							<i class="fa fa-stop"></i>批量停止
-						</button>
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchReset', 109, '批量继续下载');">
-							<i class="fa fa-play"></i>批量继续
-						</button>
-
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchRenew', 109, '批量重新下载');">
-							<i class="fa fa-play-circle"></i>批量重新下载
-						</button>
-
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.DownloadTaskController.batchTo('${contextPathPrefix}batchChangePriority', 109);">
-							<i class="fa fa-edit"></i>批量调整优先级
-						</button>
+						<shiro:hasPermission name="injection:downloadTask:batchPause">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchPause', 109, '批量暂停下载');">
+								<i class="fa fa-pause"></i>批量暂停
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="injection:downloadTask:batchStop">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchStop', 109, '批量停止下载');">
+								<i class="fa fa-stop"></i>批量停止
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="injection:downloadTask:batchReset">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchReset', 109, '批量继续下载');">
+								<i class="fa fa-play"></i>批量继续
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="injection:downloadTask:batchRenew">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.DownloadTaskController.toBatchChangeStatus('${contextPathPrefix}batchRenew', 109, '批量重新下载');">
+								<i class="fa fa-play-circle"></i>批量重新下载
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission
+							name="injection:downloadTask:batchChangePriority">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.DownloadTaskController.batchTo('${contextPathPrefix}batchChangePriority', 109);">
+								<i class="fa fa-edit"></i>批量调整优先级
+							</button>
+						</shiro:hasPermission>
 					</div>
 				</div>
 			</div>

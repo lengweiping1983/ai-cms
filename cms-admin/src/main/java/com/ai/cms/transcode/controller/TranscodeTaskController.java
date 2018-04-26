@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,6 +35,7 @@ import com.ai.common.controller.AbstractImageController;
 import com.ai.common.jpa.PropertyFilter;
 import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.security.SecurityUtils;
 
 @Controller
@@ -69,7 +71,7 @@ public class TranscodeTaskController extends AbstractImageController {
 		if (StringUtils.isEmpty(pageInfo.getOrder())) {
 			pageInfo.setOrder("-createTime");
 		}
-		
+
 		List<PropertyFilter> filters = getPropertyFilters(request);
 		if (SecurityUtils.getCpCode() != null) {
 			filters.add(new PropertyFilter("cpCode__INMASK_S", ""
@@ -98,6 +100,8 @@ public class TranscodeTaskController extends AbstractImageController {
 		return "transcode/transcodeTask/edit";
 	}
 
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "增加", message = "增加任务")
+	@RequiresPermissions("transcode:transcodeTask:add")
 	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult add(@RequestBody TranscodeTask transcodeTask) {
@@ -114,6 +118,8 @@ public class TranscodeTaskController extends AbstractImageController {
 		return "transcode/transcodeTask/edit";
 	}
 
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "修改", message = "修改任务")
+	@RequiresPermissions("transcode:transcodeTask:edit")
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody TranscodeTask transcodeTask,
@@ -131,6 +137,8 @@ public class TranscodeTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "删除", message = "删除任务")
+	@RequiresPermissions("transcode:transcodeTask:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
@@ -160,6 +168,8 @@ public class TranscodeTaskController extends AbstractImageController {
 		return "transcode/transcodeTask/detail";
 	}
 
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "重发", message = "重发指令")
+	@RequiresPermissions("transcode:transcodeTask:reset")
 	@RequestMapping(value = { "{id}/reset" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult reset(@PathVariable("id") Long id) {
@@ -177,6 +187,8 @@ public class TranscodeTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "发送", message = "发送指令")
+	@RequiresPermissions("transcode:transcodeTask:send")
 	@RequestMapping(value = { "{id}/send" }, method = { RequestMethod.GET })
 	@ResponseBody
 	public BaseResult send(@PathVariable("id") Long id) {
@@ -216,6 +228,8 @@ public class TranscodeTaskController extends AbstractImageController {
 		return "transcode/transcodeTask/batchChangePriority";
 	}
 
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "批量修改", message = "批量调整优先级")
+	@RequiresPermissions("transcode:transcodeTask:batchChangePriority")
 	@RequestMapping(value = { "batchChangePriority" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchChangePriority(

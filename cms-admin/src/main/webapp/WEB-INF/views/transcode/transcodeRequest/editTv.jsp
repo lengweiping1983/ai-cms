@@ -345,10 +345,20 @@
 						onclick="$.FileManageController.toSelectItem('${ctx}/media/file/selectFile?selectMode=multi');">
 						<i class="fa fa-plus"></i>增加文件
 					</button>
-					<button id="TranscodeRequestSave" class="btn btn-outline green"
-						onclick="$.TranscodeRequestController.edit('${ctx}/transcode/transcodeRequest/edit');">
-						<i class="fa fa-save"></i>保存
-					</button>
+					<c:choose>
+						<c:when test="${empty transcodeRequest.id}">
+							<button id="TranscodeRequestSave" class="btn btn-outline green"
+								onclick="$.TranscodeRequestController.edit('${ctx}/transcode/transcodeRequest/add');">
+								<i class="fa fa-save"></i>保存
+							</button>
+						</c:when>
+						<c:otherwise>
+							<button id="TranscodeRequestSave" class="btn btn-outline green"
+								onclick="$.TranscodeRequestController.edit('${ctx}/transcode/transcodeRequest/edit');">
+								<i class="fa fa-save"></i>保存
+							</button>
+						</c:otherwise>
+					</c:choose>
 					<button id="TranscodeRequestProduce" class="btn btn-outline green"
 						onclick="$.TranscodeRequestController.produce('${ctx}/transcode/transcodeRequest/produce');">
 						<i class="fa fa-hourglass-start"></i>执行

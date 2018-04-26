@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,6 +35,7 @@ import com.ai.common.enums.YesNoEnum;
 import com.ai.common.jpa.PropertyFilter;
 import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.security.SecurityUtils;
 
 @Controller
@@ -75,8 +77,7 @@ public class SendTaskController extends AbstractImageController {
 		}
 		Specification<SendTask> specification = SpecificationUtils
 				.getSpecification(filters);
-		Page<SendTask> page = find(specification, pageInfo,
-				sendTaskRepository);
+		Page<SendTask> page = find(specification, pageInfo, sendTaskRepository);
 		model.addAttribute("page", page);
 
 		setModel(model);
@@ -94,6 +95,8 @@ public class SendTaskController extends AbstractImageController {
 		return "injection/sendTask/edit";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "增加", message = "增加分发工单")
+	@RequiresPermissions("injection:sendTask:add")
 	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult add(@RequestBody SendTask sendTask) {
@@ -116,6 +119,8 @@ public class SendTaskController extends AbstractImageController {
 		return "injection/sendTask/edit";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "修改", message = "修改分发工单")
+	@RequiresPermissions("injection:sendTask:edit")
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody SendTask sendTask,
@@ -131,6 +136,8 @@ public class SendTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "删除", message = "删除分发工单")
+	@RequiresPermissions("injection:sendTask:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
@@ -146,6 +153,8 @@ public class SendTaskController extends AbstractImageController {
 		return "injection/sendTask/detail";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "重发", message = "重发工单")
+	@RequiresPermissions("injection:sendTask:reset")
 	@RequestMapping(value = { "{id}/reset" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult reset(@PathVariable("id") Long id) {
@@ -156,6 +165,8 @@ public class SendTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "暂停", message = "暂停工单")
+	@RequiresPermissions("injection:sendTask:pause")
 	@RequestMapping(value = { "{id}/pause" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult pause(@PathVariable("id") Long id) {
@@ -168,6 +179,8 @@ public class SendTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "停止", message = "停止工单")
+	@RequiresPermissions("injection:sendTask:stop")
 	@RequestMapping(value = { "{id}/stop" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult stop(@PathVariable("id") Long id) {
@@ -180,6 +193,8 @@ public class SendTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "批量重发", message = "批量重发工单")
+	@RequiresPermissions("injection:sendTask:batchReset")
 	@RequestMapping(value = { "batchReset" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchReset(@RequestBody BatchStatusBean batchBean) {
@@ -201,6 +216,8 @@ public class SendTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "批量暂停", message = "批量暂停工单")
+	@RequiresPermissions("injection:sendTask:batchPause")
 	@RequestMapping(value = { "batchPause" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchPause(@RequestBody BatchStatusBean batchBean) {
@@ -223,6 +240,8 @@ public class SendTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "批量停止", message = "批量停止工单")
+	@RequiresPermissions("injection:sendTask:batchStop")
 	@RequestMapping(value = { "batchStop" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchStop(@RequestBody BatchStatusBean batchBean) {
@@ -256,6 +275,8 @@ public class SendTaskController extends AbstractImageController {
 		return "injection/sendTask/batchChangePriority";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "批量修改", message = "批量调整优先级")
+	@RequiresPermissions("injection:sendTask:batchChangePriority")
 	@RequestMapping(value = { "batchChangePriority" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchChangePriority(

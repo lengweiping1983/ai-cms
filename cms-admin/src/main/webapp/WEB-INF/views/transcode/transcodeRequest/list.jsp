@@ -13,10 +13,12 @@
 					</div>
 					<div class="actions">
 						<c:forEach var="item" items="${typeEnum}">
-							<a href="javascript:;" class="btn btn-default btn-sm"
-								onclick="$.TranscodeRequestController.toEdit('${ctx}/transcode/transcodeRequest/add/${item.key}')">
-								<i class="fa fa-plus"></i>增加${item.value}
-							</a>
+							<shiro:hasPermission name="transcode:transcodeRequest:add">
+								<a href="javascript:;" class="btn btn-default btn-sm"
+									onclick="$.TranscodeRequestController.toEdit('${ctx}/transcode/transcodeRequest/add/${item.key}')">
+									<i class="fa fa-plus"></i>增加${item.value}
+								</a>
+							</shiro:hasPermission>
 						</c:forEach>
 					</div>
 				</div>
@@ -223,20 +225,26 @@
 												</button>
 											</c:if>
 											<c:if test="${item.key eq t.status && item.key eq 1}">
-												<button class="btn btn-default btn-sm btn-outline green"
-													onclick="$.TranscodeRequestController.toEdit('${ctx}/transcode/transcodeRequest/${t.id}/edit',${t.id});">
-													<i class="fa fa-edit"></i>修改
-												</button>
+												<shiro:hasPermission name="transcode:transcodeRequest:edit">
+													<button class="btn btn-default btn-sm btn-outline green"
+														onclick="$.TranscodeRequestController.toEdit('${ctx}/transcode/transcodeRequest/${t.id}/edit',${t.id});">
+														<i class="fa fa-edit"></i>修改
+													</button>
+												</shiro:hasPermission>
 											</c:if>
-										</c:forEach>
-										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.TranscodeRequestController.toDelete('${ctx}/transcode/transcodeRequest/${t.id}/delete','${t.name}');">
-											<i class="fa fa-remove"></i>删除
-										</button> <c:if test="${t.status ne 1}">
+										</c:forEach> <shiro:hasPermission name="transcode:transcodeRequest:delete">
 											<button class="btn btn-default btn-sm btn-outline green"
-												onclick="$.TranscodeRequestController.toCopy('${ctx}/transcode/transcodeRequest/batchCopy',1101,${t.id});">
-												<i class="fa fa-copy"></i>快速复制
+												onclick="$.TranscodeRequestController.toDelete('${ctx}/transcode/transcodeRequest/${t.id}/delete','${t.name}');">
+												<i class="fa fa-remove"></i>删除
 											</button>
+										</shiro:hasPermission> <c:if test="${t.status ne 1}">
+											<shiro:hasPermission
+												name="transcode:transcodeRequest:batchCopy">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.TranscodeRequestController.toCopy('${ctx}/transcode/transcodeRequest/batchCopy',1101,${t.id});">
+													<i class="fa fa-copy"></i>快速复制
+												</button>
+											</shiro:hasPermission>
 										</c:if></td>
 								</tr>
 							</c:forEach>
@@ -245,23 +253,30 @@
 					<tags:pageInfo containerId="${containerId}" formId="${formId}" />
 
 					<div class="modal-footer">
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.TranscodeRequestController.toBatchProduce('${ctx}/transcode/transcodeRequest/batchProduce', 1101);">
-							<i class="fa fa-edit"></i>批量执行
-						</button>
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.TranscodeRequestController.toBatch('${ctx}/transcode/transcodeRequest/batchCopy', 1101);">
-							<i class="fa fa-copy"></i>批量复制
-						</button>
+						<shiro:hasPermission
+							name="transcode:transcodeRequest:batchProduce">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.TranscodeRequestController.toBatchProduce('${ctx}/transcode/transcodeRequest/batchProduce', 1101);">
+								<i class="fa fa-edit"></i>批量执行
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="transcode:transcodeRequest:batchCopy">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.TranscodeRequestController.toBatch('${ctx}/transcode/transcodeRequest/batchCopy', 1101);">
+								<i class="fa fa-copy"></i>批量复制
+							</button>
+						</shiro:hasPermission>
 
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.TranscodeRequestController.batchExport('${ctx}/transcode/transcodeRequest/batchExport', 1101);">
-							<i class="fa fa-cloud-download"></i>批量导出
-						</button>
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.TranscodeRequestController.exportAll('${ctx}/transcode/transcodeRequest/exportAll', 1101);">
-							<i class="fa fa-cloud-download"></i>导出全部
-						</button>
+						<shiro:hasPermission name="transcode:transcodeRequest:batchExport">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.TranscodeRequestController.batchExport('${ctx}/transcode/transcodeRequest/batchExport', 1101);">
+								<i class="fa fa-cloud-download"></i>批量导出
+							</button>
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.TranscodeRequestController.exportAll('${ctx}/transcode/transcodeRequest/exportAll', 1101);">
+								<i class="fa fa-cloud-download"></i>导出全部
+							</button>
+						</shiro:hasPermission>
 					</div>
 				</div>
 			</div>

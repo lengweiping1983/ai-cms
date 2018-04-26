@@ -233,21 +233,27 @@
 										</c:choose></td>
 									<td><c:forEach var="item" items="${statusEnum}">
 											<c:if test="${item.key eq t.status && (item.key eq 1)}">
-												<button class="btn btn-default btn-sm btn-outline green"
-													onclick="$.SendTaskController.toSend('${contextPathPrefix}${t.id}/pause','${t.name}','暂停');">
-													<i class="fa fa-pause"></i>暂停
-												</button>
-												<button class="btn btn-default btn-sm btn-outline green"
-													onclick="$.SendTaskController.toSend('${contextPathPrefix}${t.id}/stop','${t.name}','停止');">
-													<i class="fa fa-stop"></i>停止
-												</button>
+												<shiro:hasPermission name="injection:sendTask:pause">
+													<button class="btn btn-default btn-sm btn-outline green"
+														onclick="$.SendTaskController.toSend('${contextPathPrefix}${t.id}/pause','${t.name}','暂停');">
+														<i class="fa fa-pause"></i>暂停
+													</button>
+												</shiro:hasPermission>
+												<shiro:hasPermission name="injection:sendTask:stop">
+													<button class="btn btn-default btn-sm btn-outline green"
+														onclick="$.SendTaskController.toSend('${contextPathPrefix}${t.id}/stop','${t.name}','停止');">
+														<i class="fa fa-stop"></i>停止
+													</button>
+												</shiro:hasPermission>
 											</c:if>
 											<c:if
 												test="${item.key eq t.status && (item.key eq 2 || item.key eq 3 || item.key eq 4 || item.key eq 5 ||item.key eq 7)}">
-												<button class="btn btn-default btn-sm btn-outline green"
-													onclick="$.SendTaskController.toSend('${contextPathPrefix}${t.id}/reset','${t.name}','重发');">
-													<i class="fa fa-play-circle"></i>重发
-												</button>
+												<shiro:hasPermission name="injection:sendTask:reset">
+													<button class="btn btn-default btn-sm btn-outline green"
+														onclick="$.SendTaskController.toSend('${contextPathPrefix}${t.id}/reset','${t.name}','重发');">
+														<i class="fa fa-play-circle"></i>重发
+													</button>
+												</shiro:hasPermission>
 											</c:if>
 										</c:forEach></td>
 								</tr>
@@ -258,23 +264,30 @@
 					<tags:pageInfo containerId="${containerId}" formId="${formId}" />
 
 					<div class="modal-footer">
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.SendTaskController.toBatchChangeStatus('${contextPathPrefix}batchPause', 109, '批量暂停工单');">
-							<i class="fa fa-pause"></i>批量暂停
-						</button>
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.SendTaskController.toBatchChangeStatus('${contextPathPrefix}batchStop', 109, '批量停止工单');">
-							<i class="fa fa-stop"></i>批量停止
-						</button>
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.SendTaskController.toBatchChangeStatus('${contextPathPrefix}batchReset', 109, '批量重发工单');">
-							<i class="fa fa-play"></i>批量重发
-						</button>
-
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.SendTaskController.batchTo('${contextPathPrefix}batchChangePriority', 109);">
-							<i class="fa fa-edit"></i>批量调整优先级
-						</button>
+						<shiro:hasPermission name="injection:sendTask:batchPause">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.SendTaskController.toBatchChangeStatus('${contextPathPrefix}batchPause', 109, '批量暂停工单');">
+								<i class="fa fa-pause"></i>批量暂停
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="injection:sendTask:batchStop">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.SendTaskController.toBatchChangeStatus('${contextPathPrefix}batchStop', 109, '批量停止工单');">
+								<i class="fa fa-stop"></i>批量停止
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="injection:sendTask:batchReset">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.SendTaskController.toBatchChangeStatus('${contextPathPrefix}batchReset', 109, '批量重发工单');">
+								<i class="fa fa-play"></i>批量重发
+							</button>
+						</shiro:hasPermission>
+						<shiro:hasPermission name="injection:sendTask:batchChangePriority">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.SendTaskController.batchTo('${contextPathPrefix}batchChangePriority', 109);">
+								<i class="fa fa-edit"></i>批量调整优先级
+							</button>
+						</shiro:hasPermission>
 					</div>
 				</div>
 			</div>

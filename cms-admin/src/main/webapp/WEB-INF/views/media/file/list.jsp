@@ -49,10 +49,12 @@
 					</div>
 					<div class="modal-footer">
 						<c:forEach var="item" items="${transcodeRequestTypeEnum}">
-							<button class="btn btn-default btn-sm btn-outline green"
-								onclick="$.FileManageController.toEditRequest('${formId}','${ctx}/transcode/transcodeRequest/add/${item.key}')">
-								<i class="fa fa-plus"></i>增加${item.value}
-							</button>
+							<shiro:hasPermission name="transcode:transcodeRequest:add">
+								<button class="btn btn-default btn-sm btn-outline green"
+									onclick="$.FileManageController.toEditRequest('${formId}','${ctx}/transcode/transcodeRequest/add/${item.key}')">
+									<i class="fa fa-plus"></i>增加${item.value}
+								</button>
+							</shiro:hasPermission>
 						</c:forEach>
 
 						<!-- 						<button class="btn btn-default btn-sm btn-outline green" -->
@@ -141,10 +143,12 @@
 
 					<div class="modal-footer">
 						<c:forEach var="item" items="${transcodeRequestTypeEnum}">
-							<button class="btn btn-default btn-sm btn-outline green"
-								onclick="$.FileManageController.toEditRequest('${formId}', '${ctx}/transcode/transcodeRequest/add/${item.key}')">
-								<i class="fa fa-plus"></i>增加${item.value}
-							</button>
+							<shiro:hasPermission name="transcode:transcodeRequest:add">
+								<button class="btn btn-default btn-sm btn-outline green"
+									onclick="$.FileManageController.toEditRequest('${formId}', '${ctx}/transcode/transcodeRequest/add/${item.key}')">
+									<i class="fa fa-plus"></i>增加${item.value}
+								</button>
+							</shiro:hasPermission>
 						</c:forEach>
 
 						<!-- 						<button class="btn btn-default btn-sm btn-outline green" -->

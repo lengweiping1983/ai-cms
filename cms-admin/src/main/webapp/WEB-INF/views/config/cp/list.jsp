@@ -12,10 +12,12 @@
 						<i class="fa fa-globe"></i>提供商管理
 					</div>
 					<div class="actions">
-						<a href="javascript:;" class="btn btn-default btn-sm"
-							onclick="$.CpController.toEdit('${ctx}/config/cp/add')"> <i
-							class="fa fa-plus"></i>增加提供商
-						</a>
+						<shiro:hasPermission name="config:cp:add">
+							<a href="javascript:;" class="btn btn-default btn-sm"
+								onclick="$.CpController.toEdit('${ctx}/config/cp/add')"> <i
+								class="fa fa-plus"></i>增加提供商
+							</a>
+						</shiro:hasPermission>
 					</div>
 				</div>
 				<div class="portlet-body">
@@ -69,7 +71,9 @@
 								<th class="sorting" abbr="shortName">提供商简称</th>
 								<th class="sorting" abbr="type">类型</th>
 								<th class="sorting" abbr="status">状态</th>
-								<th>操作</th>
+								<shiro:hasAnyPermissions name="config:cp:edit,config:cp:delete">
+									<th>操作</th>
+								</shiro:hasAnyPermissions>
 							</tr>
 						</thead>
 						<tfoot>
@@ -81,7 +85,9 @@
 								<th class="sorting" abbr="shortName">提供商简称</th>
 								<th class="sorting" abbr="type">类型</th>
 								<th class="sorting" abbr="status">状态</th>
-								<th>操作</th>
+								<shiro:hasAnyPermissions name="config:cp:edit,config:cp:delete">
+									<th>操作</th>
+								</shiro:hasAnyPermissions>
 							</tr>
 						</tfoot>
 						<tbody>
@@ -101,29 +107,35 @@
 												<span class="badge badge-success">${item.value}</span>
 											</c:if>
 										</c:forEach></td>
-									<td>
-										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.CpController.toEdit('${ctx}/config/cp/${t.id}/edit',${t.id});">
-											<i class="fa fa-edit"></i>修改
-										</button> <c:forEach var="item" items="${statusEnum}">
-											<c:if test="${item.key eq t.status && item.key eq 0}">
-												<!-- 													<button class="btn btn-default btn-sm btn-outline green" -->
-												<%-- 														onclick="$.CpController.toDelete('${ctx}/config/cp/${t.id}/delete','${t.name}');"> --%>
-												<!-- 														<i class="fa fa-remove"></i>删除 -->
-												<!-- 													</button> -->
-											</c:if>
-											<c:if test="${item.key eq t.status && item.key eq 1}">
-											</c:if>
-										</c:forEach>
-										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.CpController.toEdit('${ctx}/config/cp/${t.code}/editCpFtp','${t.id}');">
-											<i class="fa fa-gear"></i>设置FTP地址
-										</button>
-										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.CpController.userList('${ctx}/system/user/','${t.code}');">
-											<i class="fa fa-gear"></i>设置登录帐号
-										</button>
-									</td>
+									<shiro:hasAnyPermissions name="config:cp:edit,config:cp:delete">
+										<td><shiro:hasPermission name="config:cp:edit">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.CpController.toEdit('${ctx}/config/cp/${t.id}/edit',${t.id});">
+													<i class="fa fa-edit"></i>修改
+												</button>
+											</shiro:hasPermission> <c:forEach var="item" items="${statusEnum}">
+												<c:if test="${item.key eq t.status && item.key eq 0}">
+													<shiro:hasPermission name="config:cp:delete">
+<!-- 														<button class="btn btn-default btn-sm btn-outline green" -->
+<%-- 															onclick="$.CpController.toDelete('${ctx}/config/cp/${t.id}/delete','${t.name}');"> --%>
+<!-- 															<i class="fa fa-remove"></i>删除 -->
+<!-- 														</button> -->
+													</shiro:hasPermission>
+												</c:if>
+												<c:if test="${item.key eq t.status && item.key eq 1}">
+												</c:if>
+											</c:forEach> <shiro:hasPermission name="config:cp:editCpFtp">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.CpController.toEdit('${ctx}/config/cp/${t.code}/editCpFtp','${t.id}');">
+													<i class="fa fa-gear"></i>设置FTP地址
+												</button>
+											</shiro:hasPermission> <shiro:hasPermission name="config:cp:user">
+												<button class="btn btn-default btn-sm btn-outline green"
+													onclick="$.CpController.userList('${ctx}/system/user/','${t.code}');">
+													<i class="fa fa-gear"></i>设置登录帐号
+												</button>
+											</shiro:hasPermission></td>
+									</shiro:hasAnyPermissions>
 								</tr>
 							</c:forEach>
 						</tbody>

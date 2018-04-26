@@ -168,22 +168,27 @@
 										</c:forEach></td>
 									<td><c:forEach var="item" items="${statusEnum}">
 											<c:if test="${item.key eq t.status && (item.key eq 1)}">
-												<button class="btn btn-default btn-sm btn-outline green"
-													onclick="$.TranscodeTaskController.toSend('${ctx}/transcode/transcodeTask/${t.id}/send','${t.name}','发送指令');">
-													<i class="fa fa-pencil"></i>发送指令
-												</button>
+												<shiro:hasPermission name="transcode:transcodeTask:send">
+													<button class="btn btn-default btn-sm btn-outline green"
+														onclick="$.TranscodeTaskController.toSend('${ctx}/transcode/transcodeTask/${t.id}/send','${t.name}','发送指令');">
+														<i class="fa fa-pencil"></i>发送指令
+													</button>
+												</shiro:hasPermission>
 											</c:if>
 											<c:if test="${item.key eq t.status && (item.key ne 1)}">
-												<button class="btn btn-default btn-sm btn-outline green"
-													onclick="$.TranscodeTaskController.toReset('${ctx}/transcode/transcodeTask/${t.id}/reset','${t.name}','重发指令');">
-													<i class="fa fa-pencil"></i>重发指令
-												</button>
+												<shiro:hasPermission name="transcode:transcodeTask:reset">
+													<button class="btn btn-default btn-sm btn-outline green"
+														onclick="$.TranscodeTaskController.toReset('${ctx}/transcode/transcodeTask/${t.id}/reset','${t.name}','重发指令');">
+														<i class="fa fa-pencil"></i>重发指令
+													</button>
+												</shiro:hasPermission>
 											</c:if>
-										</c:forEach>
-										<button class="btn btn-default btn-sm btn-outline green"
-											onclick="$.TranscodeTaskController.toDelete('${ctx}/transcode/transcodeTask/${t.id}/delete','${t.name}');">
-											<i class="fa fa-remove"></i>删除
-										</button></td>
+										</c:forEach> <shiro:hasPermission name="transcode:transcodeTask:delete">
+											<button class="btn btn-default btn-sm btn-outline green"
+												onclick="$.TranscodeTaskController.toDelete('${ctx}/transcode/transcodeTask/${t.id}/delete','${t.name}');">
+												<i class="fa fa-remove"></i>删除
+											</button>
+										</shiro:hasPermission></td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -192,10 +197,13 @@
 					<tags:pageInfo containerId="${containerId}" formId="${formId}" />
 
 					<div class="modal-footer">
-						<button class="btn btn-default btn-sm btn-outline green"
-							onclick="$.TranscodeTaskController.toBatch('${ctx}/transcode/transcodeTask/batchChangePriority', '1102');">
-							<i class="fa fa-edit"></i>批量调整优先级
-						</button>
+						<shiro:hasPermission
+							name="transcode:transcodeTask:batchChangePriority">
+							<button class="btn btn-default btn-sm btn-outline green"
+								onclick="$.TranscodeTaskController.toBatch('${ctx}/transcode/transcodeTask/batchChangePriority', '1102');">
+								<i class="fa fa-edit"></i>批量调整优先级
+							</button>
+						</shiro:hasPermission>
 					</div>
 				</div>
 			</div>

@@ -3,6 +3,7 @@ package com.ai.cms.config.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.enums.ValidStatusEnum;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.env.handler.OperationLogAnnotation;
 
 @Controller
 @RequestMapping(value = { "/config/site" })
@@ -48,12 +50,14 @@ public class SiteController extends AbstractController {
 	public String toAdd(Model model) {
 		Site site = new Site();
 		model.addAttribute("site", site);
-		
+
 		setModel(model);
 
 		return "config/site/edit";
 	}
 
+	@OperationLogAnnotation(module = "配置管理", subModule = "渠道管理", action = "增加", message = "增加渠道")
+	@RequiresPermissions("config:site:add")
 	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult add(@RequestBody Site site) {
@@ -70,6 +74,8 @@ public class SiteController extends AbstractController {
 		return "config/site/edit";
 	}
 
+	@OperationLogAnnotation(module = "配置管理", subModule = "渠道管理", action = "修改", message = "修改渠道")
+	@RequiresPermissions("config:site:edit")
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody Site site, @PathVariable("id") Long id) {
@@ -84,6 +90,8 @@ public class SiteController extends AbstractController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "配置管理", subModule = "渠道管理", action = "删除", message = "删除渠道")
+	@RequiresPermissions("config:site:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {

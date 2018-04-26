@@ -3,6 +3,7 @@ package com.ai.cms.config.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ import com.ai.common.controller.AbstractController;
 import com.ai.common.enums.CpTypeEnum;
 import com.ai.common.enums.ValidStatusEnum;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.env.handler.OperationLogAnnotation;
 
 @Controller
 @RequestMapping(value = { "/config/cp" })
@@ -62,6 +64,8 @@ public class CpController extends AbstractController {
 		return "config/cp/edit";
 	}
 
+	@OperationLogAnnotation(module = "配置管理", subModule = "提供商管理", action = "增加", message = "增加提供商")
+	@RequiresPermissions("config:cp:add")
 	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult add(@RequestBody Cp cp) {
@@ -78,6 +82,8 @@ public class CpController extends AbstractController {
 		return "config/cp/edit";
 	}
 
+	@OperationLogAnnotation(module = "配置管理", subModule = "提供商管理", action = "修改", message = "修改提供商")
+	@RequiresPermissions("config:cp:edit")
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody Cp cp, @PathVariable("id") Long id) {
@@ -92,6 +98,8 @@ public class CpController extends AbstractController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "配置管理", subModule = "提供商管理", action = "删除", message = "删除提供商")
+	@RequiresPermissions("config:cp:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
@@ -151,6 +159,8 @@ public class CpController extends AbstractController {
 		return "config/cp/editCpFtp";
 	}
 
+	@OperationLogAnnotation(module = "配置管理", subModule = "提供商管理", action = "修改", message = "修改提供商FTP地址")
+	@RequiresPermissions("config:cp:editCpFtp")
 	@RequestMapping(value = { "{cpCode}/editCpFtp" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult editCpFtp(@RequestBody CpFtp cpFtp,

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,6 +34,7 @@ import com.ai.common.controller.AbstractImageController;
 import com.ai.common.jpa.PropertyFilter;
 import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.security.SecurityUtils;
 
 @Controller
@@ -83,6 +85,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return "injection/downloadTask/edit";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "增加", message = "增加下载任务")
+	@RequiresPermissions("injection:downloadTask:add")
 	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult add(@RequestBody DownloadTask downloadTask) {
@@ -99,6 +103,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return "injection/downloadTask/edit";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "修改", message = "修改下载任务")
+	@RequiresPermissions("injection:downloadTask:edit")
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody DownloadTask downloadTask,
@@ -115,6 +121,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "删除", message = "删除下载任务")
+	@RequiresPermissions("injection:downloadTask:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
@@ -133,6 +141,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return "injection/downloadTask/detail";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "继续", message = "继续下载")
+	@RequiresPermissions("injection:downloadTask:reset")
 	@RequestMapping(value = { "{id}/reset" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult reset(@PathVariable("id") Long id) {
@@ -145,6 +155,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "暂停", message = "暂停下载")
+	@RequiresPermissions("injection:downloadTask:pause")
 	@RequestMapping(value = { "{id}/pause" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult pause(@PathVariable("id") Long id) {
@@ -158,6 +170,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "停止", message = "停止下载")
+	@RequiresPermissions("injection:downloadTask:stop")
 	@RequestMapping(value = { "{id}/stop" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult stop(@PathVariable("id") Long id) {
@@ -181,6 +195,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "重新", message = "重新下载")
+	@RequiresPermissions("injection:downloadTask:renew")
 	@RequestMapping(value = { "{id}/renew" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult renew(@PathVariable("id") Long id) {
@@ -196,6 +212,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量继续", message = "批量继续下载")
+	@RequiresPermissions("injection:downloadTask:batchReset")
 	@RequestMapping(value = { "batchReset" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchReset(@RequestBody BatchStatusBean batchBean) {
@@ -217,6 +235,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量暂停", message = "批量暂停下载")
+	@RequiresPermissions("injection:downloadTask:batchPause")
 	@RequestMapping(value = { "batchPause" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchPause(@RequestBody BatchStatusBean batchBean) {
@@ -239,6 +259,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量停止", message = "批量停止下载")
+	@RequiresPermissions("injection:downloadTask:batchStop")
 	@RequestMapping(value = { "batchStop" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchStop(@RequestBody BatchStatusBean batchBean) {
@@ -271,6 +293,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量重新", message = "批量重新下载")
+	@RequiresPermissions("injection:downloadTask:batchRenew")
 	@RequestMapping(value = { "batchRenew" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchRenew(@RequestBody BatchStatusBean batchBean) {
@@ -307,6 +331,8 @@ public class DownloadTaskController extends AbstractImageController {
 		return "injection/downloadTask/batchChangePriority";
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量修改", message = "批量调整优先级")
+	@RequiresPermissions("injection:downloadTask:batchChangePriority")
 	@RequestMapping(value = { "batchChangePriority" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchChangePriority(

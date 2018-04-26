@@ -2,6 +2,7 @@ package com.ai.cms.injection.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ import com.ai.common.controller.AbstractController;
 import com.ai.common.enums.ValidStatusEnum;
 import com.ai.common.enums.YesNoEnum;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.env.handler.OperationLogAnnotation;
 
 @Controller
 @RequestMapping(value = { "/injection/platform" })
@@ -89,6 +91,8 @@ public class InjectionPlatformController extends AbstractController {
 		}
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发平台管理", action = "增加", message = "增加分发平台")
+	@RequiresPermissions("injection:platform:add")
 	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult add(@RequestBody InjectionPlatform injectionPlatform) {
@@ -115,6 +119,8 @@ public class InjectionPlatformController extends AbstractController {
 		}
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发平台管理", action = "修改", message = "修改分发平台")
+	@RequiresPermissions("injection:platform:edit")
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody InjectionPlatform injectionPlatform,
@@ -139,6 +145,8 @@ public class InjectionPlatformController extends AbstractController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "媒资分发", subModule = "分发平台管理", action = "删除", message = "删除分发平台")
+	@RequiresPermissions("injection:platform:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {

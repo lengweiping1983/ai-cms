@@ -2,7 +2,6 @@ package com.ai.cms.transcode.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ai.AdminGlobal;
 import com.ai.cms.config.entity.Cp;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.service.ConfigService;
@@ -184,7 +183,16 @@ public class TranscodeRequestController extends AbstractImageController {
 		return toEdit(model, id);
 	}
 
-	@OperationLogAnnotation(module = "内容转码", subModule = "转码工单管理", action = "修改", message = "修改工单")
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "增加", message = "增加工单")
+	@RequiresPermissions("transcode:transcodeRequest:add")
+	@RequestMapping(value = { "add" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BaseResult add(@RequestBody TranscodeRequest transcodeRequest) {
+		return edit(transcodeRequest);
+	}
+
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "修改", message = "修改工单")
+	@RequiresPermissions("transcode:transcodeRequest:edit")
 	@RequestMapping(value = { "edit" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody TranscodeRequest transcodeRequest) {
@@ -198,7 +206,8 @@ public class TranscodeRequestController extends AbstractImageController {
 		return new BaseResult();
 	}
 
-	@OperationLogAnnotation(module = "内容转码", subModule = "转码工单管理", action = "执行", message = "执行工单")
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "执行", message = "执行工单")
+	@RequiresPermissions("transcode:transcodeRequest:produce")
 	@RequestMapping(value = { "produce" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult produce(@RequestBody TranscodeRequest transcodeRequest) {
@@ -211,15 +220,13 @@ public class TranscodeRequestController extends AbstractImageController {
 		if (StringUtils.isNotEmpty(templateId)) {
 			mediaTemplateMap.put(user.getId(), templateId);
 		}
-
-		AdminGlobal.operationLogMessage.set("执行工单： ID："
-				+ transcodeRequest.getId());
 		logger.info("produce run time="
 				+ (System.currentTimeMillis() - startTime) + "ms.");
 		return new BaseResult();
 	}
 
-	@OperationLogAnnotation(module = "内容转码", subModule = "转码工单管理", action = "批量执行", message = "批量执行工单")
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "批量执行", message = "批量执行工单")
+	@RequiresPermissions("transcode:transcodeRequest:batchProduce")
 	@RequestMapping(value = { "batchProduce" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchProduce(@RequestBody BatchBean batchBean) {
@@ -236,23 +243,19 @@ public class TranscodeRequestController extends AbstractImageController {
 					.findOne(itemId);
 			transcodeService.updateTranscodeRequest(transcodeRequest, true);
 		}
-		AdminGlobal.operationLogMessage.set("批量执行工单： ID："
-				+ Arrays.toString(itemIdArr));
 		logger.info("batch produce run time="
 				+ (System.currentTimeMillis() - startTime) + "ms.");
 		return new BaseResult();
 	}
 
-	@OperationLogAnnotation(module = "内容转码", subModule = "转码工单管理", action = "删除", message = "删除工单")
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "删除", message = "删除工单")
+	@RequiresPermissions("transcode:transcodeRequest:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
 		TranscodeRequest transcodeRequest = transcodeRequestRepository
 				.findOne(id);
 		transcodeService.deleteTranscodeRequest(transcodeRequest);
-		AdminGlobal.operationLogMessage.set("删除工单： ID："
-				+ transcodeRequest.getId() + " -- 工单名称："
-				+ transcodeRequest.getName());
 		return new BaseResult();
 	}
 
@@ -269,7 +272,8 @@ public class TranscodeRequestController extends AbstractImageController {
 		return "transcode/transcodeRequest/batchCopy";
 	}
 
-	@OperationLogAnnotation(module = "内容转码", subModule = "转码工单管理", action = "复制", message = "复制工单")
+	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "批量复制", message = "批量复制工单")
+	@RequiresPermissions("transcode:transcodeRequest:batchCopy")
 	@RequestMapping(value = { "batchCopy" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult batchCopy(@RequestBody BatchTranscodeBean batchBean) {
@@ -289,6 +293,7 @@ public class TranscodeRequestController extends AbstractImageController {
 		return new BaseResult();
 	}
 
+	@RequiresPermissions("transcode:transcodeRequest:batchExport")
 	@RequestMapping(value = "batchExport", method = RequestMethod.GET)
 	public String batchExport(Model model,
 			@RequestParam(value = "itemIds") String itemIds,
@@ -312,6 +317,7 @@ public class TranscodeRequestController extends AbstractImageController {
 		}
 	}
 
+	@RequiresPermissions("transcode:transcodeRequest:batchExport")
 	@RequestMapping(value = { "exportAll" }, method = RequestMethod.GET)
 	public BaseResult exportAll(Model model, HttpServletRequest request,
 			PageInfo pageInfo, HttpServletResponse response) {
