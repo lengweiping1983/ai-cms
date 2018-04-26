@@ -40,13 +40,13 @@ public class SecurityUtils {
 		return null;
 	}
 
-	public static String getCpId() {
+	public static String getCpCode() {
 		User user = SecurityUtils.getUser();
 		if (user != null) {
 			if (user.getType() != null
 					&& user.getType() == UserTypeEnum.CP.getKey()
-					&& user.getCpId() != null) {
-				return user.getCpId();
+					&& user.getCpCode() != null) {
+				return user.getCpCode();
 			}
 		}
 		return null;

@@ -179,7 +179,7 @@
 								<th class="sorting" abbr="contentType">内容类型</th>
 								<th class="sorting" abbr="tag">TAG</th>
 								<th class="sorting" abbr="internalTag">内部标签</th>
-								<th class="sorting" abbr="cpId">提供商</th>
+								<th class="sorting" abbr="cpCode">提供商</th>
 								<th class="sorting" abbr="templateId">码率</th>
 								<th class="sorting" abbr="mediaStatus">媒资状态</th>
 								<th class="sorting" abbr="source">来源</th>
@@ -201,7 +201,7 @@
 								<th class="sorting" abbr="contentType">内容类型</th>
 								<th class="sorting" abbr="tag">TAG</th>
 								<th class="sorting" abbr="internalTag">内部标签</th>
-								<th class="sorting" abbr="cpId">提供商</th>
+								<th class="sorting" abbr="cpCode">提供商</th>
 								<th class="sorting" abbr="templateId">码率</th>
 								<th class="sorting" abbr="mediaStatus">媒资状态</th>
 								<th class="sorting" abbr="source">来源</th>
@@ -227,7 +227,7 @@
 											enumList="${contentTypeEnum}" value="${t.contentType}" /></td>
 									<td><tags:tagView value="${t.tag}" /></td>
 									<td><tags:tagView value="${t.internalTag}" /></td>
-									<td><tags:cpView value="${t.cpId}" /></td>
+									<td><tags:cpView value="${t.cpCode}" /></td>
 									<td><tags:mediaTemplateView value="${t.templateId}" /></td>
 
 									<td>${fns:getMediaStatusDesc(t.mediaStatus)}</td>

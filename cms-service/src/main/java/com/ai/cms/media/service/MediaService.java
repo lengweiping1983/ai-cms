@@ -146,9 +146,9 @@ public class MediaService extends AbstractService<Series, Long> {
 	}
 
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
-	public void updateCpIdBySeriesId(Series series) {
+	public void updateCpCodeBySeriesId(Series series) {
 		programRepository
-				.updateCpIdBySeriesId(series.getId(), series.getCpId());
+				.updateCpCodeBySeriesId(series.getId(), series.getCpCode());
 	}
 
 	@Transactional(value = "slaveTransactionManager", readOnly = false)

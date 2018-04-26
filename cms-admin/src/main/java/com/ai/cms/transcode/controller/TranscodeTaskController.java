@@ -71,9 +71,9 @@ public class TranscodeTaskController extends AbstractImageController {
 		}
 		
 		List<PropertyFilter> filters = getPropertyFilters(request);
-		if (SecurityUtils.getCpId() != null) {
-			filters.add(new PropertyFilter("cpId__INMASK_S", ""
-					+ SecurityUtils.getCpId()));
+		if (SecurityUtils.getCpCode() != null) {
+			filters.add(new PropertyFilter("cpCode__INMASK_S", ""
+					+ SecurityUtils.getCpCode()));
 		}
 		Specification<TranscodeTask> specification = SpecificationUtils
 				.getSpecification(filters);

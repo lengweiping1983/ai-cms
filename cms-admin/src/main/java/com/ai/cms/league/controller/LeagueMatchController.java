@@ -21,7 +21,6 @@ import com.ai.AdminConstants;
 import com.ai.AppGlobal;
 import com.ai.cms.config.entity.Cp;
 import com.ai.cms.config.repository.CpRepository;
-import com.ai.cms.injection.enums.ProviderTypeEnum;
 import com.ai.cms.league.entity.LeagueMatch;
 import com.ai.cms.league.entity.LeagueMatchCode;
 import com.ai.cms.league.entity.LeagueSeason;
@@ -187,7 +186,7 @@ public class LeagueMatchController extends AbstractImageController {
                             leagueMatchInfo,
                             "type,sportContentType,leagueSeasonId,name,title,searchName,tag,keyword,area,beginTime,duration,viewpoint,info,"
                                     + "leagueIndex,episodeIndex,homeId,guestId,homeName,guestName,homeType,guestType,homeScore,guestScore,pointStatus,homePointNum,guestPointNum,"
-                                    + "image1,image2,channelId,scheduleId,splitProgram,mediaId,mediaEpisode,programId,cpId");
+                                    + "image1,image2,channelId,scheduleId,splitProgram,mediaId,mediaEpisode,programId,cpCode");
         } else {
             leagueMatchInfo = leagueMatch;
         }
@@ -384,8 +383,8 @@ public class LeagueMatchController extends AbstractImageController {
     // @Transactional(value = "slaveTransactionManager", readOnly = false)
     public void updateMetadata(Long itemId, BatchMetadataBean batchBean) {
         LeagueMatch leagueMatchInfo = leagueMatchRepository.findOne(itemId);
-        if (batchBean.getCpIdSwitch() != null && batchBean.getCpIdSwitch().equals("on")) {
-            leagueMatchInfo.setCpId(batchBean.getCpId());
+        if (batchBean.getCpCodeSwitch() != null && batchBean.getCpCodeSwitch().equals("on")) {
+            leagueMatchInfo.setCpCode(batchBean.getCpCode());
         }
         if (batchBean.getTagSwitch() != null && batchBean.getTagSwitch().equals("on")) {
             leagueMatchInfo.setTag(batchBean.getTag());

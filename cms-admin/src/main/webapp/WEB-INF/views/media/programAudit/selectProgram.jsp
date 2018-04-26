@@ -191,7 +191,7 @@
 			<th class="sorting" abbr="contentType">内容类型</th>
 			<th class="sorting" abbr="tag">TAG</th>
 			<th class="sorting" abbr="internalTag">内部标签</th>
-			<th class="sorting" abbr="cpId">提供商</th>
+			<th class="sorting" abbr="cpCode">提供商</th>
 			<th class="sorting" abbr="templateId">码率</th>
 			<th class="sorting" abbr="mediaStatus">媒资状态</th>
 			<th class="sorting" abbr="injectionStatus">分发状态</th>
@@ -215,7 +215,7 @@
 			<th class="sorting" abbr="contentType">内容类型</th>
 			<th class="sorting" abbr="tag">TAG</th>
 			<th class="sorting" abbr="internalTag">内部标签</th>
-			<th class="sorting" abbr="cpId">提供商</th>
+			<th class="sorting" abbr="cpCode">提供商</th>
 			<th class="sorting" abbr="templateId">码率</th>
 			<th class="sorting" abbr="mediaStatus">媒资状态</th>
 			<th class="sorting" abbr="injectionStatus">分发状态</th>
@@ -242,7 +242,7 @@
 					</c:when>
 						<c:otherwise>
 							<a href="javascript:;"
-								onclick="$.ProgramController.selectProgram('${param.selectMode}','${param.selectParam}','${t.id}','${t.name}','${t.title}','${t.contentType}','${t.tag}','${t.internalTag}','${t.episodeIndex}','${t.duration}','${t.status}','${t.cpId}','${t.filename}','${t.image1}','${t.image2}','${t.image3}','${t.image4}');">${t.name}</a>
+								onclick="$.ProgramController.selectProgram('${param.selectMode}','${param.selectParam}','${t.id}','${t.name}','${t.title}','${t.contentType}','${t.tag}','${t.internalTag}','${t.episodeIndex}','${t.duration}','${t.status}','${t.cpCode}','${t.filename}','${t.image1}','${t.image2}','${t.image3}','${t.image4}');">${t.name}</a>
 						</c:otherwise>
 					</c:choose></td>
 				<td>${t.title}</td>
@@ -251,7 +251,7 @@
 						enumList="${contentTypeEnum}" value="${t.contentType}" /></td>
 				<td><tags:tagView value="${t.tag}" /></td>
 				<td><tags:tagView value="${t.internalTag}" /></td>
-				<td><tags:cpView value="${t.cpId}" /></td>
+				<td><tags:cpView value="${t.cpCode}" /></td>
 				<td><tags:mediaTemplateView value="${t.templateId}" /></td>
 				<td>${fns:getMediaStatusDesc(t.mediaStatus)}</td>
 				<td><tags:injectionPlatformAndInjectionStatus value="${t.id}" /></td>

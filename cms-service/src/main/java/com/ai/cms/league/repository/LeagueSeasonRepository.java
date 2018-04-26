@@ -32,20 +32,20 @@ public interface LeagueSeasonRepository extends
 	@Query(" select p from LeagueSeason p where p.id = :idList and p.status = 1")
 	List<LeagueSeason> findByIdInAndOnline(List<Long> idList);
 	
-	@Query(" select p from LeagueSeason p where p.cpId = :cpId")
-	List<LeagueSeason> findByCpId(@Param("cpId") Long cpId);
+	@Query(" select p from LeagueSeason p where p.cpCode = :cpCode")
+	List<LeagueSeason> findByCpCode(@Param("cpCode") String cpCode);
 	
-	@Query(" select p from LeagueSeason p where p.cpId = :cpId")
-	Page<LeagueSeason> findByCpIdPage(@Param("cpId") Long cpId,Pageable pageable);
+	@Query(" select p from LeagueSeason p where p.cpCode = :cpCode")
+	Page<LeagueSeason> findByCpCodePage(@Param("cpCode") String cpCode,Pageable pageable);
 	
-	@Query(" select p from LeagueSeason p where p.cpId = :cpId and p.createTime<= :createTime ")
-	Page<LeagueSeason> findByCpIdPageByCreateTime(@Param("createTime") Date createTime,@Param("cpId") Long cpId,Pageable pageable);
+	@Query(" select p from LeagueSeason p where p.cpCode = :cpCode and p.createTime<= :createTime ")
+	Page<LeagueSeason> findByCpCodePageByCreateTime(@Param("createTime") Date createTime,@Param("cpCode") String cpCode,Pageable pageable);
 	
 	@Query(" select p from LeagueSeason p where p.createTime<= :createTime ")
 	Page<LeagueSeason> findByCreateTime(@Param("createTime") Date createTime,Pageable pageable);
 	
-	@Query(" select p from LeagueSeason p where p.cpId = :cpId and ( p.createTime>= :startTime and p.createTime<= :endTime or p.updateTime>= :startTime and p.updateTime<= :endTime )")
-	Page<LeagueSeason> findByTime(@Param("cpId") Long cpId,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
+	@Query(" select p from LeagueSeason p where p.cpCode = :cpCode and ( p.createTime>= :startTime and p.createTime<= :endTime or p.updateTime>= :startTime and p.updateTime<= :endTime )")
+	Page<LeagueSeason> findByTime(@Param("cpCode") String cpCode,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
 	
 	@Query(" select p from LeagueSeason p where p.status =1 and p.id = :id")
 	LeagueSeason findOneByIdAndStatus(@Param("id") Long id);

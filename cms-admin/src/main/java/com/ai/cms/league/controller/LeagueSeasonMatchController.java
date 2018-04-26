@@ -174,7 +174,7 @@ public class LeagueSeasonMatchController extends AbstractImageController {
                             leagueMatchInfo,
                             "type,sportContentType,leagueSeasonId,name,title,searchName,tag,keyword,area,beginTime,duration,viewpoint,info,"
                                     + "leagueIndex,episodeIndex,homeId,guestId,homeName,guestName,homeType,guestType,homeScore,guestScore,pointStatus,homePointNum,guestPointNum,"
-                                    + "image1,image2,channelId,scheduleId,splitProgram,mediaId,mediaEpisode,programId,cpId");
+                                    + "image1,image2,channelId,scheduleId,splitProgram,mediaId,mediaEpisode,programId,cpCode");
         }
 
         String image1 = "";

@@ -76,40 +76,40 @@ $(function () {
     	
     	initCpSearch: function (prefix) {
     		var _prefix = prefix || "";
-    		$('#' + _prefix + 'select_cpId__INMASK_S').multiselect({
+    		$('#' + _prefix + 'select_cpCode__INMASK_S').multiselect({
             	enableFiltering: true,
             	nonSelectedText:'请选择',
             	filterPlaceholder:'搜索',
             	nSelectedText:'项被选中',
             	includeSelectAllOption:false,
-            	checkboxName:'select_cpId__INMASK_S',
+            	checkboxName:'select_cpCode__INMASK_S',
             	selectAllText:'全选/取消全选',
             	allSelectedText:'已选中所有',
             });
-            $('#' + _prefix + 'select_cpId__INMASK_S').bind("change",function() {
-            	var value = $('#' + _prefix + 'select_cpId__INMASK_S').val();
-            	$('#' + _prefix + 'search_cpId__INMASK_S').val(value);
+            $('#' + _prefix + 'select_cpCode__INMASK_S').bind("change",function() {
+            	var value = $('#' + _prefix + 'select_cpCode__INMASK_S').val();
+            	$('#' + _prefix + 'search_cpCode__INMASK_S').val(value);
             });
-            $("input:checkbox[name=" + 'select_cpId__INMASK_S' + "]").uniform();
+            $("input:checkbox[name=" + 'select_cpCode__INMASK_S' + "]").uniform();
     	},
     
     	initCpSelect: function (prefix) {
     		var _prefix = prefix || "";
-    		$('#' + _prefix + 'select_cpId').multiselect({
+    		$('#' + _prefix + 'select_cpCode').multiselect({
             	enableFiltering: true,
             	nonSelectedText:'请选择',
             	filterPlaceholder:'搜索',
             	nSelectedText:'项被选中',
             	includeSelectAllOption:false,
-            	checkboxName:'select_cpId',
+            	checkboxName:'select_cpCode',
             	selectAllText:'全选/取消全选',
             	allSelectedText:'已选中所有',
             });
-            $('#' + _prefix + 'select_cpId').bind("change",function() {
-            	var value = $('#' + _prefix + 'select_cpId').val();
-            	$('#' + _prefix + 'cpId').val(value);
+            $('#' + _prefix + 'select_cpCode').bind("change",function() {
+            	var value = $('#' + _prefix + 'select_cpCode').val();
+            	$('#' + _prefix + 'cpCode').val(value);
             });
-            $("input:checkbox[name=" + 'select_cpId' + "]").uniform();
+            $("input:checkbox[name=" + 'select_cpCode' + "]").uniform();
     	},
     	
     	initMediaTemplateSelect: function (prefix) {

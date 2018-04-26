@@ -94,8 +94,8 @@ public class User extends AbstractEntity {
 
 	private Integer type = UserTypeEnum.SYSTEM.getKey();
 
-	@Column(name = "cp_id")
-	private String cpId; // 内容提供商id,多个使用','分割
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码,多个使用','分割
 
 	public String getLoginName() {
 		return loginName;
@@ -225,12 +225,12 @@ public class User extends AbstractEntity {
 		this.type = type;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 	@Transient
@@ -246,8 +246,8 @@ public class User extends AbstractEntity {
 				+ status + ", canBeDelete=" + canBeDelete + ", loginNum="
 				+ loginNum + ", loginIp=" + loginIp + ", loginTime="
 				+ loginTime + ", lastLoginIp=" + lastLoginIp
-				+ ", lastLoginTime=" + lastLoginTime + ", roleList=" + roleList
-				+ ", type=" + type + ", cpId=" + cpId + "]";
+				+ ", lastLoginTime=" + lastLoginTime + ", type=" + type
+				+ ", cpCode=" + cpCode + "]";
 	}
 
 }

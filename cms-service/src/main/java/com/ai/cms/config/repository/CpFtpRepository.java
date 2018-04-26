@@ -13,10 +13,10 @@ public interface CpFtpRepository extends AbstractRepository<CpFtp, Long> {
 
 	CpFtp findOne(Long id);
 
-	CpFtp findOneByCpId(Long cpId);
+	CpFtp findOneByCpCode(String cpCode);
 
 	@Modifying
-	@Query(" delete from CpFtp t where t.cpId = :cpId ")
-	void deleteByCpId(@Param("cpId") Long cpId);
+	@Query(" delete from CpFtp t where t.cpCode = :cpCode ")
+	void deleteByCpCode(@Param("cpCode") String cpCode);
 
 }

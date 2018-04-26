@@ -30,7 +30,7 @@ import com.ai.common.enums.YesNoEnum;
 public class TranscodeRequest extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
-	public static final String METADATA = "type,name,contentType,mediaId,mediaName,mediaFilename,genProgramNameRule,tag,internalTag,episodeTotal,cpId"
+	public static final String METADATA = "type,name,contentType,mediaId,mediaName,mediaFilename,genProgramNameRule,tag,internalTag,episodeTotal,cpCode"
 			+ ",templateId,genTask,priority,comment,needSnapshot,timePoints,originFileDeal,coverFile";
 
 	@NotNull
@@ -68,8 +68,8 @@ public class TranscodeRequest extends AbstractEntity {
 	@Column(name = "episode_total")
 	private Integer episodeTotal;// 总集数
 
-	@Column(name = "cp_id")
-	private String cpId; // 内容提供商id,多个使用','分割
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码,多个使用','分割
 
 	@Column(name = "template_id")
 	private String templateId; // 码率模板Id,多个使用','分割
@@ -208,12 +208,12 @@ public class TranscodeRequest extends AbstractEntity {
 		this.episodeTotal = episodeTotal;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 	public String getTemplateId() {

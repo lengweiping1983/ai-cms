@@ -219,23 +219,23 @@
 										<label class="control-label">提供商: </label>
 									</div>
 									<div class="col-md-2">
-										<input type="checkbox" class="make-switch" name="cpIdSwitch"
+										<input type="checkbox" class="make-switch" name="cpCodeSwitch"
 											data-on="success" data-on-color="success"
 											data-off-color="warning" data-size="small">
 									</div>
 									<div class="col-md-8">
-										<input type="hidden" id="cpId" name="cpId" value="" /> <select
-											class="form-control select2" id="select_cpId"
-											name="select_cpId" multiple="multiple">
+										<input type="hidden" id="cpCode" name="cpCode" value="" /> <select
+											class="form-control select2" id="select_cpCode"
+											name="select_cpCode" multiple="multiple">
 											<c:forEach var="item" items="${cpList}">
-												<c:set var="cpIdSelected" value="" />
-												<c:forEach var="cpId" items="">
-													<c:if test="${item.id eq cpId}">
-														<c:set var="cpIdSelected" value="1" />
+												<c:set var="cpCodeSelected" value="" />
+												<c:forEach var="cpCode" items="">
+													<c:if test="${item.code eq cpCode}">
+														<c:set var="cpCodeSelected" value="1" />
 													</c:if>
 												</c:forEach>
-												<option value="${item.id}"
-													<c:if test="${cpIdSelected eq 1}">selected="selected"</c:if>>${item.name}</option>
+												<option value="${item.code}"
+													<c:if test="${cpCodeSelected eq 1}">selected="selected"</c:if>>${item.name}</option>
 											</c:forEach>
 										</select>
 									</div>

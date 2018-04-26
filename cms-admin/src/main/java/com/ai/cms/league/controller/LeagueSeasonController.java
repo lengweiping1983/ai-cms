@@ -165,7 +165,7 @@ public class LeagueSeasonController extends AbstractImageController {
 							leagueSeason,
 							leagueSeasonInfo,
 							"leagueId,name,title,searchName,tag,keyword,area,viewpoint,info,beginTime,endTime,duration,image1,image2,status,"
-									+ "channelId,scheduleId,splitProgram,mediaId,mediaEpisode,programId,cpId");
+									+ "channelId,scheduleId,splitProgram,mediaId,mediaEpisode,programId,cpCode");
 		} else {
 			leagueSeasonInfo = leagueSeason;
 		}

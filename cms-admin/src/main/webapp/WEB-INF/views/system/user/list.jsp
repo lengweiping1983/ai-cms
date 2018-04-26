@@ -19,7 +19,7 @@
 					<div class="actions">
 						<shiro:hasPermission name="${permissionPrefix}add">
 							<a href="javascript:;" class="btn btn-default btn-sm"
-								onclick="$.UserController.toEdit('${contextPathPrefix}add?type=${param.search_type__EQ_I}&cpId=${param.search_cpId__EQ_L}');">
+								onclick="$.UserController.toEdit('${contextPathPrefix}add?type=${param.search_type__EQ_I}&cpCode=${param.search_cpCode__EQ_S}');">
 								<i class="fa fa-plus"></i>增加用户
 							</a>
 						</shiro:hasPermission>
@@ -38,7 +38,7 @@
 								<input type="hidden" name="from" value="${param.from}" /> <input
 									type="hidden" name="search_type__EQ_I"
 									value="${param.search_type__EQ_I}" /> <input type="hidden"
-									name="search_cpId__EQ_L" value="${param.search_cpId__EQ_L}" />
+									name="search_cpCode__EQ_S" value="${param.search_cpCode__EQ_S}" />
 								<div class="row">
 									<div class="col-md-12">
 										<div class="col-md-4">

@@ -35,8 +35,8 @@ public interface ProgramRepository extends AbstractRepository<Program, Long> {
 	void deleteBySeriesId(@Param("seriesId") Long seriesId);
 	
 	@Modifying
-	@Query(" update Program t set t.cpId = :toCpId where t.seriesId = :seriesId and t.cpId != :toCpId ")
-	void updateCpIdBySeriesId(@Param("seriesId") Long seriesId, @Param("toCpId") String toCpId);
+	@Query(" update Program t set t.cpCode = :toCpCode where t.seriesId = :seriesId and t.cpCode != :toCpCode ")
+	void updateCpCodeBySeriesId(@Param("seriesId") Long seriesId, @Param("toCpCode") String toCpCode);
 	
 	@Modifying
 	@Query(" update Program t set t.templateId = :templateId where t.id = :id and t.templateId != :templateId ")
@@ -63,7 +63,6 @@ public interface ProgramRepository extends AbstractRepository<Program, Long> {
     @Query(" select t from Program t where t.status = 1 and t.tag != '' ")
     List<Program> findAllProgram();
 
-	
 	Program findOneBySeriesIdAndEpisodeIndex(Long seriesId, Integer episodeIndex);
 	
 	@Query(" select count(p) from Program p ")
@@ -92,32 +91,6 @@ public interface ProgramRepository extends AbstractRepository<Program, Long> {
 	@Query(" select p from Program p where p.status =1 and p.id = :id")
 	Program findOneByIdAndStatus(@Param("id") Long id);
 	
-//	@Query(" select p from Program p where p.cpId = :cpId")
-//	List<Program> findByCpId(@Param("cpId") Long cpId);
-//	
-//	@Query(" select p from Program p where p.cpId = :cpId")
-//	Page<Program> findByCpIdPage(@Param("cpId") Long cpId,Pageable pageable);
-//	
-//	@Query(" select p from Program p where p.cpId = :cpId and p.createTime<= :createTime ")
-//	Page<Program> findByCpIdPageByCreateTime(@Param("createTime") Date createTime,@Param("cpId") Long cpId,Pageable pageable);
-//	
-//	@Query(" select p from Program p where p.createTime<= :createTime ")
-//	Page<Program> findByCreateTime(@Param("createTime") Date createTime,Pageable pageable);
-//	
-//	@Query(" select p from Program p where p.cpId = :cpId and ( p.createTime>= :startTime and p.createTime<= :endTime or p.updateTime>= :startTime and p.updateTime<= :endTime )")
-//	Page<Program> findByTime(@Param("cpId") Long cpId,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
-//
-//	@Query(" select p from Program p where p.cpId = :cpId and p.onlineTime>= :startTime and p.onlineTime<= :endTime")
-//	Page<Program> findByTimeAtOnLine(@Param("cpId") Long cpId,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
-//	
-//	@Query(" select p from Program p where p.cpId = :cpId and p.createTime >= :startTime and p.createTime <= :endTime")
-//	List<Program> findByCpIdAndPeriod(@Param("cpId") Long cpId, @Param("startTime") Date startTime,
-//			@Param("endTime") Date endTime);
-//	
-//	@Query(" select p from Program p where p.status = 1 and p.cpId = :cpId and p.createTime >= :startTime and p.createTime <= :endTime")
-//	List<Program> findByCpIdAndPeriodAndOnline(@Param("cpId") Long cpId, @Param("startTime") Date startTime,
-//			@Param("endTime") Date endTime);
-
 
 
 	@Cacheable

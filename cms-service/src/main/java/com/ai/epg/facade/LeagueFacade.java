@@ -1228,9 +1228,9 @@ public class LeagueFacade {
 
 	public static String addLeagueMatchExtParam(final String appCode,
 			final LeagueMatch leagueMatch, final String url) {
-		String cpCode = AppGlobal.cpIdToCodeMap.get("" + leagueMatch.getCpId());
+//		String cpCode = AppGlobal.cpIdToCodeMap.get("" + leagueMatch.getCpId());
 		return PathUtils.joinUrl(url,
-				"cpCode=" + StringUtils.trimToEmpty(cpCode));
+				"cpCode=" + StringUtils.trimToEmpty(leagueMatch.getCpCode()));
 	}
 	
 	/**
@@ -1255,8 +1255,8 @@ public class LeagueFacade {
 
 	public static String addLeagueSeasonExtParam(final String appCode,
 			final LeagueSeason leagueSeason, final String url) {
-		String cpCode = AppGlobal.cpIdToCodeMap.get("" + leagueSeason.getCpId());
+//		String cpCode = AppGlobal.cpIdToCodeMap.get("" + leagueSeason.getCpId());
 		return PathUtils.joinUrl(url,
-				"cpCode=" + StringUtils.trimToEmpty(cpCode));
+				"cpCode=" + StringUtils.trimToEmpty(leagueSeason.getCpCode()));
 	}
 }

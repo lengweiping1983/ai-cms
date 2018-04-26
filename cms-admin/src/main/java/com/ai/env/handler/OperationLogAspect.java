@@ -54,7 +54,7 @@ public class OperationLogAspect {
 		OperationLog log = new OperationLog();
 		log.setUserId(user.getId());
 		log.setUserName(user.getName());
-		log.setCpId(SecurityUtils.getCpId());
+		log.setCpCode(SecurityUtils.getCpCode());
 		log.setIp(ip);
 		log.setUri(request.getRequestURI());
 		OperationLogAnnotation an = getOperationLogAnnotation(pjp);

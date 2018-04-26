@@ -28,7 +28,7 @@
 					<div class="form-group">
 						<form id="user_edit_form">
 							<input type="hidden" name="type" value="${param.type}" /> <input
-								type="hidden" name="cpId" value="${param.cpId}" />
+								type="hidden" name="cpCode" value="${param.cpCode}" />
 							<div class="col-md-7">
 								<tags:message content="${message}" />
 								<div class="form-group">

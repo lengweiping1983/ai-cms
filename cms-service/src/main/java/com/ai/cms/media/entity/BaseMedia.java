@@ -25,7 +25,7 @@ public abstract class BaseMedia extends AbstractEntity {
 
 	public static final String METADATA = "name,enName,title,caption,contentType,director,actor,directorPinyin,actorPinyin,compere,guest,"
 			+ "year,area,language,rating,duration,subtitle,tag,internalTag,keyword,viewpoint,info,"
-			+ "orgAirDate,cpId,broadcastLicense,authorizeInfo,authorizeAddress,licensingWindowStart,licensingWindowEnd,"
+			+ "orgAirDate,broadcastLicense,authorizeInfo,authorizeAddress,licensingWindowStart,licensingWindowEnd,"
 			+ "searchName,reserved1,reserved2,reserved3,reserved4,reserved5";
 	public static final String METADATA_OTHER = "source,loveNum,hateNum,cloudId,cloudCode,kpeople,scriptWriter,reporter,incharge,"
 			+ "copyRight,vspCode,spCode,cpCode,orderNumber,sortName,filename,storagePath,";
@@ -132,9 +132,6 @@ public abstract class BaseMedia extends AbstractEntity {
 	@Column(name = "original_name")
 	private String originalName;// 原名
 
-	@Column(name = "cp_id")
-	private String cpId;// 内容提供商id
-
 	@Column(name = "love_num")
 	private Integer loveNum;// 喜欢数
 	@Column(name = "hate_num")
@@ -169,7 +166,7 @@ public abstract class BaseMedia extends AbstractEntity {
 	@Column(name = "sp_code")
 	private String spCode;// 服务提供商标识
 	@Column(name = "cp_code")
-	private String cpCode;// 内容提供商标识
+	private String cpCode; // 内容提供商代码,多个使用','分割
 
 	private String filename; // 媒体文件名标识,用作转码后的媒体文件名
 
@@ -570,14 +567,6 @@ public abstract class BaseMedia extends AbstractEntity {
 
 	public void setOriginalName(String originalName) {
 		this.originalName = originalName;
-	}
-
-	public String getCpId() {
-		return cpId;
-	}
-
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
 	}
 
 	public Integer getLoveNum() {

@@ -57,11 +57,11 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		return mediaTemplateRepository.findAll();
 	}
 
-	public Map<Long, Cp> findAllCpMap() {
-		Map<Long, Cp> cpMap = new HashMap<Long, Cp>();
+	public Map<String, Cp> findAllCpMap() {
+		Map<String, Cp> cpMap = new HashMap<String, Cp>();
 		List<Cp> cpList = cpRepository.findAll();
 		for (Cp cp : cpList) {
-			cpMap.put(cp.getId(), cp);
+			cpMap.put(cp.getCode(), cp);
 		}
 		return cpMap;
 	}
@@ -78,12 +78,12 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		return cpMap;
 	}
 
-	public String getCpShortNameByCpId(Map<Long, Cp> cpMap, String cpIds) {
+	public String getCpShortNameByCpCode(Map<String, Cp> cpMap, String cpCodes) {
 		StringBuffer result = new StringBuffer();
-		if (StringUtils.isNotEmpty(cpIds)) {
-			String[] cpIdArr = cpIds.split(",");
-			for (String cpId : cpIdArr) {
-				Cp cp = cpMap.get(Long.valueOf(cpId));
+		if (StringUtils.isNotEmpty(cpCodes)) {
+			String[] cpCodeArr = cpCodes.split(",");
+			for (String cpCode : cpCodeArr) {
+				Cp cp = cpMap.get(cpCode);
 				if (cp != null) {
 					if (result.toString().length() > 0) {
 						result.append(",");
@@ -95,12 +95,12 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		return result.toString();
 	}
 
-	public String getCpNameByCpId(Map<Long, Cp> cpMap, String cpIds) {
+	public String getCpNameByCpCode(Map<String, Cp> cpMap, String cpCodes) {
 		StringBuffer result = new StringBuffer();
-		if (StringUtils.isNotEmpty(cpIds)) {
-			String[] cpIdArr = cpIds.split(",");
-			for (String cpId : cpIdArr) {
-				Cp cp = cpMap.get(Long.valueOf(cpId));
+		if (StringUtils.isNotEmpty(cpCodes)) {
+			String[] cpCodeArr = cpCodes.split(",");
+			for (String cpCode : cpCodeArr) {
+				Cp cp = cpMap.get(cpCode);
 				if (cp != null) {
 					if (result.toString().length() > 0) {
 						result.append(",");
@@ -112,7 +112,7 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		return result.toString();
 	}
 
-	public String getCpIdByCpName(Map<String, Cp> cpMap, String cpNames) {
+	public String getCpCodeByCpName(Map<String, Cp> cpMap, String cpNames) {
 		StringBuffer result = new StringBuffer();
 		if (StringUtils.isNotEmpty(cpNames)) {
 			String[] cpNameArr = cpNames.split(",");
@@ -122,7 +122,7 @@ public class ConfigService extends AbstractService<Cp, Long> {
 					if (result.toString().length() > 0) {
 						result.append(",");
 					}
-					result.append(cp.getId());
+					result.append(cp.getCode());
 				}
 			}
 		}
@@ -177,8 +177,19 @@ public class ConfigService extends AbstractService<Cp, Long> {
 		return result.toString();
 	}
 
-	public CpFtp findCpFtpByCpId(Long cpId) {
-		return cpFtpRepository.findOneByCpId(cpId);
+	public CpFtp findCpFtpByCpCode(String cpCode) {
+		if (StringUtils.isNotEmpty(cpCode)) {
+			return cpFtpRepository.findOneByCpCode(cpCode);
+		}
+		return null;
+	}
+	
+	@Transactional(value = "slaveTransactionManager", readOnly = false)
+	public void deleteCp(Cp cp) {
+		if (cp != null) {
+			cpFtpRepository.deleteByCpCode(cp.getCode());
+			cpRepository.delete(cp);
+		}
 	}
 
 }

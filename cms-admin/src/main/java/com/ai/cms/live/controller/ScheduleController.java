@@ -196,13 +196,13 @@ public class ScheduleController extends AbstractImageController {
 							scheduleInfo,
 							"programName,searchName,genres,viewpoint,updateInfo,"
 									+ "episodeIndex,tag,keyword,beginTime,endTime,duration,status,"
-									+ "info,splitProgram,mediaId,mediaEpisode,programId,channel,channelId,partnerItemCode,cpId");
+									+ "info,splitProgram,mediaId,mediaEpisode,programId,channel,channelId,partnerItemCode,cpCode");
 		}
 		if (schedule.getChannelId() != null) {
 			Channel channel = channelRepository
 					.findOne(schedule.getChannelId());
 			if (channel != null) {
-				scheduleInfo.setCpId(channel.getCpId());
+				scheduleInfo.setCpCode(channel.getCpCode());
 			}
 		}
 

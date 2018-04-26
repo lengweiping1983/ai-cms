@@ -116,7 +116,7 @@ $(function () {
                 $.SeriesController.initSwitch("kuoZhanOne");
                 $.SeriesController.initSwitch("kuoZhanTwo");
                 
-                $.SeriesController.initSwitch("cpId", "select_cpId");
+                $.SeriesController.initSwitch("cpCode", "select_cpCode");
                 $.SeriesController.initCpSelect();
             });
         },
@@ -136,7 +136,7 @@ $(function () {
         	$.SeriesController.toSelect(contextPath + "/media/series/selectSeries" + addParam, 2);
         },
         
-        selectSeries: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeTotal,duration,status,cpId,filename,image1,image2,image3,image4) {
+        selectSeries: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeTotal,duration,status,cpCode,filename,image1,image2,image3,image4) {
         	if (selectMode == 'media') {
         		$("#mediaId").val(id);
 		        $("#mediaName").val(name);
@@ -149,7 +149,7 @@ $(function () {
 		        $("#contentType").val(contentType);
 	            $("#tag").val(tag);
 	            $("#internalTag").val(internalTag);
-	            $("#cpId").val(cpId);
+	            $("#cpCode").val(cpCode);
 	            try {
 	            	$("#episodeTotal").val(episodeTotal);
 	            } catch(e) {
@@ -183,7 +183,7 @@ $(function () {
         	$.SeriesController.toSelect(contextPath + "/media/series/selectItem" + addParam, 2);
         },
         
-        selectItem: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeTotal,duration,status,cpId,filename,image1,image2,image3,image4) {
+        selectItem: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeTotal,duration,status,cpCode,filename,image1,image2,image3,image4) {
         	if (selectMode == 'jump') {
         		$("#jumpItemId").val(id);
 	            $("#jumpItemName").val(name);

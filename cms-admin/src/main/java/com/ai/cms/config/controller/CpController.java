@@ -18,6 +18,7 @@ import com.ai.cms.config.entity.Cp;
 import com.ai.cms.config.entity.CpFtp;
 import com.ai.cms.config.repository.CpFtpRepository;
 import com.ai.cms.config.repository.CpRepository;
+import com.ai.cms.config.service.ConfigService;
 import com.ai.common.bean.BaseResult;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
@@ -34,6 +35,9 @@ public class CpController extends AbstractController {
 
 	@Autowired
 	private CpFtpRepository cpFtpRepository;
+
+	@Autowired
+	private ConfigService configService;
 
 	@RequestMapping(value = { "" })
 	public String list(Model model, HttpServletRequest request,
@@ -91,8 +95,8 @@ public class CpController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
-		cpFtpRepository.deleteByCpId(id);
-		cpRepository.delete(id);
+		Cp cp = cpRepository.findOne(id);
+		configService.deleteCp(cp);
 		return new BaseResult();
 	}
 
@@ -130,33 +134,34 @@ public class CpController extends AbstractController {
 		return exist;
 	}
 
-	@RequestMapping(value = { "{id}/editCpFtp" }, method = RequestMethod.GET)
-	public String editCpFtp(Model model, @PathVariable("id") Long id) {
-		Cp cp = cpRepository.findOne(id);
-		model.addAttribute("cp", cp);
+	@RequestMapping(value = { "{cpCode}/editCpFtp" }, method = RequestMethod.GET)
+	public String editCpFtp(Model model, @PathVariable("cpCode") String cpCode) {
+		if (StringUtils.isNotEmpty(cpCode)) {
+			CpFtp cpFtp = cpFtpRepository.findOneByCpCode(cpCode);
+			if (cpFtp == null) {
+				cpFtp = new CpFtp();
+			}
+			model.addAttribute("cpFtp", cpFtp);
 
-		CpFtp cpFtp = cpFtpRepository.findOneByCpId(id);
-		if (cpFtp == null) {
-			cpFtp = new CpFtp();
+			Cp cp = cpRepository.findOneByCode(cpCode);
+			model.addAttribute("cp", cp);
 		}
-		model.addAttribute("cpFtp", cpFtp);
-
 		model.addAttribute("typeEnum", CpTypeEnum.values());
 		model.addAttribute("statusEnum", ValidStatusEnum.values());
 		return "config/cp/editCpFtp";
 	}
 
-	@RequestMapping(value = { "{id}/editCpFtp" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	@RequestMapping(value = { "{cpCode}/editCpFtp" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult editCpFtp(@RequestBody CpFtp cpFtp,
-			@PathVariable("id") Long id) {
+			@PathVariable("cpCode") String cpCode) {
 		CpFtp cpFtpInfo = null;
-		if (id != null) {
-			cpFtpInfo = cpFtpRepository.findOneByCpId(id);
+		if (StringUtils.isNotEmpty(cpCode)) {
+			cpFtpInfo = cpFtpRepository.findOneByCpCode(cpCode);
 			if (cpFtpInfo != null) {
 				BeanInfoUtil
 						.bean2bean(cpFtp, cpFtpInfo,
-								"cpId,ip,port,username,password,rootPath,defaultAccessPath");
+								"cpCode,ip,port,username,password,rootPath,defaultAccessPath");
 			}
 		}
 		if (cpFtpInfo == null) {

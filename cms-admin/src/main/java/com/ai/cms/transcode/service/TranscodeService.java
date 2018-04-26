@@ -545,7 +545,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 			program.setEpisodeIndex(1);
 			program.setTag(transcodeRequest.getTag());
 			program.setInternalTag(transcodeRequest.getInternalTag());
-			program.setCpId(transcodeRequest.getCpId());
+			program.setCpCode(transcodeRequest.getCpCode());
 
 			program.setSource(SourceEnum.TRANSCODE.getKey());
 
@@ -666,7 +666,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 			series.setEpisodeTotal(transcodeRequest.getEpisodeTotal());
 			series.setTag(transcodeRequest.getTag());
 			series.setInternalTag(transcodeRequest.getInternalTag());
-			series.setCpId(transcodeRequest.getCpId());
+			series.setCpCode(transcodeRequest.getCpCode());
 
 			series.setSource(SourceEnum.TRANSCODE.getKey());
 
@@ -745,7 +745,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 				program.setEpisodeIndex(file.getEpisodeIndex());
 				program.setTag(transcodeRequest.getTag());
 				program.setInternalTag(transcodeRequest.getInternalTag());
-				program.setCpId(transcodeRequest.getCpId());
+				program.setCpCode(transcodeRequest.getCpCode());
 
 				program.setSource(SourceEnum.TRANSCODE.getKey());
 
@@ -768,7 +768,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 			TranscodeRequest transcodeRequest, TranscodeRequestFile file,
 			MediaTemplate mediaTemplate, Program program, MediaFile mediaFile) {
 		TranscodeTask transcodeTask = new TranscodeTask();
-		transcodeTask.setCpId(transcodeRequest.getCpId());
+		transcodeTask.setCpCode(transcodeRequest.getCpCode());
 
 		transcodeTask.setType(TranscodeTaskTypeEnum.TRANSCODE.getKey());
 
@@ -795,7 +795,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 				suffix = mediaTemplate.getvFormat().toLowerCase();
 			}
 			String rootPath = PathUtils.joinPath(
-					getTranscodeOutputPath(transcodeTask.getCpId()),
+					getTranscodeOutputPath(transcodeTask.getCpCode()),
 					mediaTemplate.getCode() + "/" + storagePath);
 			String filename = StringUtils.trimToEmpty(mediaFilename) + "_"
 					+ program.getEpisodeIndex() + "_" + mediaFile.getId() + "_"
@@ -814,7 +814,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 			TranscodeRequestFile file, MediaTemplate mediaTemplate,
 			Program program, MediaFile mediaFile) {
 		TranscodeTask transcodeTask = new TranscodeTask();
-		transcodeTask.setCpId(transcodeRequest.getCpId());
+		transcodeTask.setCpCode(transcodeRequest.getCpCode());
 
 		transcodeTask.setType(TranscodeTaskTypeEnum.IMAGE.getKey());
 
@@ -835,7 +835,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		String mediaFilename = program.getFilename();
 		String suffix = "jpg";
 		String rootPath = PathUtils.joinPath(
-				getTranscodeOutputPath(transcodeTask.getCpId()),
+				getTranscodeOutputPath(transcodeTask.getCpCode()),
 				mediaTemplate.getCode() + "/" + storagePath);
 		String filename = StringUtils.trimToEmpty(mediaFilename) + "_"
 				+ program.getEpisodeIndex() + "_" + mediaFile.getId() + "_"
@@ -849,9 +849,9 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		return transcodeTask;
 	}
 
-	private String getTranscodeOutputPath(String cpId) {
-		if (StringUtils.isNotEmpty(cpId)) {
-			return transcodeOutputPath + "/" + StringUtils.trimToEmpty(cpId);
+	private String getTranscodeOutputPath(String cpCode) {
+		if (StringUtils.isNotEmpty(cpCode)) {
+			return transcodeOutputPath + "/" + StringUtils.trimToEmpty(cpCode);
 		}
 		return transcodeOutputPath;
 	}

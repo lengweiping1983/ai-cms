@@ -119,7 +119,7 @@ $(function () {
                 $.ProgramController.initSwitch("kuoZhanOne");
                 $.ProgramController.initSwitch("kuoZhanTwo");
                 
-                $.ProgramController.initSwitch("cpId", "select_cpId");
+                $.ProgramController.initSwitch("cpCode", "select_cpCode");
                 $.ProgramController.initCpSelect();
             });
         },
@@ -148,7 +148,7 @@ $(function () {
         	$.ProgramController.toSelect(contextPath + "/media/program/selectProgram" + addParam, 1);
         },
         
-        selectProgram: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeIndex,duration,status,cpId,filename,image1,image2,image3,image4) {
+        selectProgram: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeIndex,duration,status,cpCode,filename,image1,image2,image3,image4) {
         	if (selectMode == 'media') {
         		$("#mediaId").val(id);
 		        $("#mediaName").val(name);
@@ -161,7 +161,7 @@ $(function () {
 		        $("#contentType").val(contentType);
 		        $("#tag").val(tag);
 	            $("#internalTag").val(internalTag);
-	            $("#cpId").val(cpId);
+	            $("#cpCode").val(cpCode);
         	} else if (selectMode == 'batch_media') {
         		$("#mediaId_" + selectParam).val(id);
                 $("#mediaId_" + selectParam).trigger("change");
@@ -198,7 +198,7 @@ $(function () {
         	$.ProgramController.toSelect(contextPath + "/media/program/selectItem" + addParam, 1);
         },
         
-        selectItem: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeIndex,duration,status,cpId,filename,image1,image2,image3,image4) {
+        selectItem: function (selectMode, selectParam, id,name,title,contentType,tag,internalTag,episodeIndex,duration,status,cpCode,filename,image1,image2,image3,image4) {
         	if (selectMode == 'jump') {
         		$("#jumpItemId").val(id);
 	            $("#jumpItemName").val(name);

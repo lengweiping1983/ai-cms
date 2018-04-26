@@ -76,7 +76,7 @@ $(function () {
                 type: "GET",
                 dataType: "text",
                 contentType: "default",
-                data: {search_type__EQ_I: 2, search_cpId__EQ_L: id, from: 'cp'},
+                data: {search_type__EQ_I: 2, search_cpCode__EQ_S: id, from: 'cp'},
                 success: function (data) {
                 }
             })

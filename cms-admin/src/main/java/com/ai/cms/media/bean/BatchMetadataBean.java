@@ -6,9 +6,9 @@ public class BatchMetadataBean extends BatchBean {
 
 	private Integer contentType;
 
-	private String cpIdSwitch;
+	private String cpCodeSwitch;
 
-	private String cpId;
+	private String cpCode;
 
 	private String tagSwitch;
 
@@ -70,20 +70,20 @@ public class BatchMetadataBean extends BatchBean {
 		this.contentType = contentType;
 	}
 
-	public String getCpIdSwitch() {
-		return cpIdSwitch;
+	public String getCpCodeSwitch() {
+		return cpCodeSwitch;
 	}
 
-	public void setCpIdSwitch(String cpIdSwitch) {
-		this.cpIdSwitch = cpIdSwitch;
+	public void setCpCodeSwitch(String cpCodeSwitch) {
+		this.cpCodeSwitch = cpCodeSwitch;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 	public String getTagSwitch() {

@@ -1258,9 +1258,9 @@ public class ContentFacade {
 
 	public static String addProgramExtParam(final String appCode,
 			final Program program, final String url) {
-		String cpCode = AppGlobal.cpIdToCodeMap.get("" + program.getCpId());
+//		String cpCode = AppGlobal.cpIdToCodeMap.get("" + program.getCpId());
 		return PathUtils.joinUrl(url,
-				"cpCode=" + StringUtils.trimToEmpty(cpCode));
+				"cpCode=" + StringUtils.trimToEmpty(program.getCpCode()));
 	}
 	
 	/**
@@ -1285,9 +1285,9 @@ public class ContentFacade {
 
 	public static String addSeriesExtParam(final String appCode,
 			final Series series, final String url) {
-		String cpCode = AppGlobal.cpIdToCodeMap.get("" + series.getCpId());
+//		String cpCode = AppGlobal.cpIdToCodeMap.get("" + series.getCpId());
 		return PathUtils.joinUrl(url,
-				"cpCode=" + StringUtils.trimToEmpty(cpCode));
+				"cpCode=" + StringUtils.trimToEmpty(series.getCpCode()));
 	}
 	
 	/**

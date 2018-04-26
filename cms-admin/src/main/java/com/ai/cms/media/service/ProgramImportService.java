@@ -77,9 +77,9 @@ public class ProgramImportService extends AbstractService<MediaImport, Long> {
 				throw new ServiceException("第" + row + "行，节目名称为空!");
 			}
 			if (StringUtils.isNotEmpty(log.getCpName())) {
-				String cpId = configService.getCpIdByCpName(cpMap,
+				String cpCode = configService.getCpCodeByCpName(cpMap,
 						StringUtils.trimToEmpty(log.getCpName()));
-				if (StringUtils.isEmpty(cpId)) {
+				if (StringUtils.isEmpty(cpCode)) {
 					throw new ServiceException("第" + row + "行，内容提供商["
 							+ log.getCpName() + "]不存在!");
 				}
@@ -111,16 +111,16 @@ public class ProgramImportService extends AbstractService<MediaImport, Long> {
 			}
 
 			Integer contentType = null;
-			String cpId = null;
+			String cpCode = null;
 			if (StringUtils.isNotEmpty(log.getContentType())) {
 				contentType = ContentTypeEnum.getKeyByValue(log
 						.getContentType());
 			}
 			if (StringUtils.isNotEmpty(log.getCpName())) {
-				cpId = configService.getCpIdByCpName(cpMap,
+				cpCode = configService.getCpCodeByCpName(cpMap,
 						StringUtils.trimToEmpty(log.getCpName()));
 			}
-			importProgram(mediaImport, row, log, contentType, cpId);
+			importProgram(mediaImport, row, log, contentType, cpCode);
 		}
 		mediaImport.setImportTime(new Date());
 		mediaImportRepository.save(mediaImport);
@@ -128,10 +128,10 @@ public class ProgramImportService extends AbstractService<MediaImport, Long> {
 	}
 
 	public synchronized void importProgram(MediaImport mediaImport, int row,
-			ProgramImportLog log, Integer contentType, String cpId) {
+			ProgramImportLog log, Integer contentType, String cpCode) {
 		if (log.getId() != null) {
 			Program program = programRepository.findOne(log.getId());
-			updateProgram(mediaImport, row, log, contentType, cpId, program);
+			updateProgram(mediaImport, row, log, contentType, cpCode, program);
 		} else {
 			Integer episodeIndex = 1;
 			if (StringUtils.isNotEmpty(log.getEpisodeIndex())) {
@@ -144,17 +144,18 @@ public class ProgramImportService extends AbstractService<MediaImport, Long> {
 			List<Program> programList = programRepository
 					.findByNameAndEpisodeIndex(log.getName(), episodeIndex);
 			if (programList == null || programList.size() == 0) {
-				updateProgram(mediaImport, row, log, contentType, cpId, null);
+				updateProgram(mediaImport, row, log, contentType, cpCode, null);
 			}
 			for (Program program : programList) {
-				updateProgram(mediaImport, row, log, contentType, cpId, program);
+				updateProgram(mediaImport, row, log, contentType, cpCode,
+						program);
 			}
 		}
 	}
 
 	@Transactional(value = "slaveTransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void updateProgram(MediaImport mediaImport, int row,
-			ProgramImportLog log, Integer contentType, String cpId,
+			ProgramImportLog log, Integer contentType, String cpCode,
 			Program program) {
 		if (program == null) {
 			if (mediaImport.getCreateMetadata() == YesNoEnum.YES.getKey()) {
@@ -186,8 +187,8 @@ public class ProgramImportService extends AbstractService<MediaImport, Long> {
 
 			}
 		}
-		if (StringUtils.isNotEmpty(cpId)) {
-			program.setCpId(cpId);
+		if (StringUtils.isNotEmpty(cpCode)) {
+			program.setCpCode(cpCode);
 		}
 		if (StringUtils.isNotEmpty(log.getName())) {
 			program.setName(log.getName());

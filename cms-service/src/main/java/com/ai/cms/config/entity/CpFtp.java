@@ -14,8 +14,8 @@ import com.ai.common.entity.AbstractEntity;
 public class CpFtp extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "cp_id")
-	private Long cpId;// 提供商Id
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码
 
 	private String ip;// ip
 
@@ -31,12 +31,12 @@ public class CpFtp extends AbstractEntity {
 	@Column(name = "default_access_path")
 	private String defaultAccessPath = "/";// 默认访问目录
 
-	public Long getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(Long cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 	public String getIp() {

@@ -76,9 +76,9 @@ public class SeriesImportService extends AbstractService<MediaImport, Long> {
 				throw new ServiceException("第" + row + "行，节目名称为空!");
 			}
 			if (StringUtils.isNotEmpty(log.getCpName())) {
-				String cpId = configService.getCpIdByCpName(cpMap,
+				String cpCode = configService.getCpCodeByCpName(cpMap,
 						StringUtils.trimToEmpty(log.getCpName()));
-				if (StringUtils.isEmpty(cpId)) {
+				if (StringUtils.isEmpty(cpCode)) {
 					throw new ServiceException("第" + row + "行，内容提供商["
 							+ log.getCpName() + "]不存在!");
 				}
@@ -110,16 +110,16 @@ public class SeriesImportService extends AbstractService<MediaImport, Long> {
 			}
 
 			Integer contentType = null;
-			String cpId = null;
+			String cpCode = null;
 			if (StringUtils.isNotEmpty(log.getContentType())) {
 				contentType = ContentTypeEnum.getKeyByValue(log
 						.getContentType());
 			}
 			if (StringUtils.isNotEmpty(log.getCpName())) {
-				cpId = configService.getCpIdByCpName(cpMap,
+				cpCode = configService.getCpCodeByCpName(cpMap,
 						StringUtils.trimToEmpty(log.getCpName()));
 			}
-			importSeries(mediaImport, row, log, contentType, cpId);
+			importSeries(mediaImport, row, log, contentType, cpCode);
 		}
 		mediaImport.setImportTime(new Date());
 		mediaImportRepository.save(mediaImport);
@@ -127,26 +127,26 @@ public class SeriesImportService extends AbstractService<MediaImport, Long> {
 	}
 
 	public synchronized void importSeries(MediaImport mediaImport, int row,
-			SeriesImportLog log, Integer contentType, String cpId) {
+			SeriesImportLog log, Integer contentType, String cpCode) {
 		logger.info("importMediaData row=" + row + " begin...");
 		if (log.getId() != null) {
 			Series series = seriesRepository.findOne(log.getId());
-			updateSeries(mediaImport, row, log, contentType, cpId, series);
+			updateSeries(mediaImport, row, log, contentType, cpCode, series);
 		} else {
 			List<Series> seriesList = seriesRepository
 					.findByName(log.getName());
 			if (seriesList == null || seriesList.size() == 0) {
-				updateSeries(mediaImport, row, log, contentType, cpId, null);
+				updateSeries(mediaImport, row, log, contentType, cpCode, null);
 			}
 			for (Series series : seriesList) {
-				updateSeries(mediaImport, row, log, contentType, cpId, series);
+				updateSeries(mediaImport, row, log, contentType, cpCode, series);
 			}
 		}
 	}
 
 	@Transactional(value = "slaveTransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void updateSeries(MediaImport mediaImport, int row,
-			SeriesImportLog log, Integer contentType, String cpId, Series series) {
+			SeriesImportLog log, Integer contentType, String cpCode, Series series) {
 		if (series == null) {
 			if (mediaImport.getCreateMetadata() == YesNoEnum.YES.getKey()) {
 				series = new Series();
@@ -165,8 +165,8 @@ public class SeriesImportService extends AbstractService<MediaImport, Long> {
 
 			}
 		}
-		if (StringUtils.isNotEmpty(cpId)) {
-			series.setCpId(cpId);
+		if (StringUtils.isNotEmpty(cpCode)) {
+			series.setCpCode(cpCode);
 		}
 		if (StringUtils.isNotEmpty(log.getName())) {
 			series.setName(log.getName());

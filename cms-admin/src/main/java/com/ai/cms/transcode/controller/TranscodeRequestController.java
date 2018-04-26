@@ -105,9 +105,9 @@ public class TranscodeRequestController extends AbstractImageController {
 			pageInfo.setOrder("-createTime");
 		}
 		List<PropertyFilter> filters = getPropertyFilters(request);
-		if (SecurityUtils.getCpId() != null) {
-			filters.add(new PropertyFilter("cpId__INMASK_S", ""
-					+ SecurityUtils.getCpId()));
+		if (SecurityUtils.getCpCode() != null) {
+			filters.add(new PropertyFilter("cpCode__INMASK_S", ""
+					+ SecurityUtils.getCpCode()));
 		}
 		Specification<TranscodeRequest> specification = SpecificationUtils
 				.getSpecification(filters);
@@ -137,8 +137,8 @@ public class TranscodeRequestController extends AbstractImageController {
 
 		setModel(model);
 
-		if (SecurityUtils.getCpId() != null) {
-			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		if (SecurityUtils.getCpCode() != null) {
+			model.addAttribute("currentCpCode", SecurityUtils.getCpCode());
 		}
 
 		TranscodeRequestTypeEnum typeEnum = TranscodeRequestTypeEnum
@@ -162,8 +162,8 @@ public class TranscodeRequestController extends AbstractImageController {
 
 		setModel(model);
 
-		if (SecurityUtils.getCpId() != null) {
-			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		if (SecurityUtils.getCpCode() != null) {
+			model.addAttribute("currentCpCode", SecurityUtils.getCpCode());
 		}
 
 		TranscodeRequestTypeEnum typeEnum = TranscodeRequestTypeEnum
@@ -336,7 +336,7 @@ public class TranscodeRequestController extends AbstractImageController {
 			ids.add(transcodeRequest.getId());
 		}
 
-		Map<Long, Cp> cpMap = configService.findAllCpMap();
+		Map<String, Cp> cpMap = configService.findAllCpMap();
 		Map<Long, MediaTemplate> mediaTemplateMap = configService
 				.findAllMediaTemplateMap();
 
@@ -355,8 +355,8 @@ public class TranscodeRequestController extends AbstractImageController {
 						transcodeRequest.getType()).getValue());
 				log.setContentType(ContentTypeEnum.getEnumByKey(
 						transcodeRequest.getContentType()).getValue());
-				log.setCpName(configService.getCpNameByCpId(cpMap,
-						transcodeRequest.getCpId()));
+				log.setCpName(configService.getCpNameByCpCode(cpMap,
+						transcodeRequest.getCpCode()));
 				log.setTemplateTitle(configService
 						.getTemplateTitleByTemplateId(mediaTemplateMap,
 								transcodeRequest.getTemplateId()));

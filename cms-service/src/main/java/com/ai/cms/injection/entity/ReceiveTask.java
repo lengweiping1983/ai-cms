@@ -111,8 +111,8 @@ public class ReceiveTask extends AbstractEntity {
 	@Column(name = "download_fail")
 	private Long downloadFail = 0l; // 下载失败任务数
 
-	@Column(name = "cp_id")
-	private String cpId; // 内容提供商id,多个使用','分割
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码,多个使用','分割
 
 	public ReceiveTask() {
 
@@ -334,12 +334,12 @@ public class ReceiveTask extends AbstractEntity {
 		this.downloadFail = downloadFail;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 }

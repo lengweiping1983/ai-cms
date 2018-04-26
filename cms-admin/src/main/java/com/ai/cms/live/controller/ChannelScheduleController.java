@@ -176,14 +176,14 @@ public class ChannelScheduleController extends AbstractImageController {
 				AdminGlobal.operationLogMessage.set("节目单修改标题：<br/>" + scheduleInfo.getProgramName() + "  ==>  " + schedule.getProgramName());
 			}
             BeanInfoUtil.bean2bean(schedule, scheduleInfo, "programName,searchName,genres,viewpoint,updateInfo,"
-                    + "episodeIndex,tag,keyword,beginTime,endTime,duration,status,info,splitProgram,mediaId,mediaEpisode,programId,partnerItemCode,cpId");
+                    + "episodeIndex,tag,keyword,beginTime,endTime,duration,status,info,splitProgram,mediaId,mediaEpisode,programId,partnerItemCode,cpCode");
         }
 
 		if (schedule.getChannelId() != null) {
 			Channel channel = channelRepository
 					.findOne(schedule.getChannelId());
 			if (channel != null) {
-				scheduleInfo.setCpId(channel.getCpId());
+				scheduleInfo.setCpCode(channel.getCpCode());
 			}
 		}
         liveService.saveSchedule(scheduleInfo);

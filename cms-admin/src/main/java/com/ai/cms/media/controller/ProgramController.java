@@ -139,9 +139,9 @@ public class ProgramController extends AbstractImageController {
 		}
 
 		List<PropertyFilter> filters = getPropertyFilters(request);
-		if (SecurityUtils.getCpId() != null) {
-			filters.add(new PropertyFilter("cpId__INMASK_S", ""
-					+ SecurityUtils.getCpId()));
+		if (SecurityUtils.getCpCode() != null) {
+			filters.add(new PropertyFilter("cpCode__INMASK_S", ""
+					+ SecurityUtils.getCpCode()));
 		}
 		Specification<Program> specification = SpecificationUtils
 				.getSpecification(filters);
@@ -225,8 +225,8 @@ public class ProgramController extends AbstractImageController {
 			}
 		}
 
-		if (SecurityUtils.getCpId() != null) {
-			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		if (SecurityUtils.getCpCode() != null) {
+			model.addAttribute("currentCpCode", SecurityUtils.getCpCode());
 		}
 		setModel(model);
 
@@ -252,8 +252,8 @@ public class ProgramController extends AbstractImageController {
 			model.addAttribute("series", series);
 		}
 
-		if (SecurityUtils.getCpId() != null) {
-			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		if (SecurityUtils.getCpCode() != null) {
+			model.addAttribute("currentCpCode", SecurityUtils.getCpCode());
 		}
 		setModel(model);
 
@@ -485,9 +485,9 @@ public class ProgramController extends AbstractImageController {
 						&& batchBean.getContentTypeSwitch().equals("on")) {
 					programInfo.setContentType(batchBean.getContentType());
 				}
-				if (batchBean.getCpIdSwitch() != null
-						&& batchBean.getCpIdSwitch().equals("on")) {
-					programInfo.setCpId(batchBean.getCpId());
+				if (batchBean.getCpCodeSwitch() != null
+						&& batchBean.getCpCodeSwitch().equals("on")) {
+					programInfo.setCpCode(batchBean.getCpCode());
 				}
 				if (batchBean.getTagSwitch() != null
 						&& batchBean.getTagSwitch().equals("on")) {
@@ -744,7 +744,7 @@ public class ProgramController extends AbstractImageController {
 			if (program != null) {
 				injectionService.inInjection(program.getSeries(), program,
 						batchBean.getPlatformId(), batchBean.getTemplateId(),
-						batchBean.getPriority(), SecurityUtils.getCpId());
+						batchBean.getPriority(), SecurityUtils.getCpCode());
 				operationObjectList.add(program);
 			}
 		}
@@ -787,7 +787,7 @@ public class ProgramController extends AbstractImageController {
 			if (program != null) {
 				injectionService.outInjection(program.getSeries(), program,
 						batchBean.getPlatformId(), batchBean.getTemplateId(),
-						batchBean.getPriority(), SecurityUtils.getCpId());
+						batchBean.getPriority(), SecurityUtils.getCpCode());
 				operationObjectList.add(program);
 			}
 		}
@@ -1081,7 +1081,7 @@ public class ProgramController extends AbstractImageController {
 	private boolean getExportMetadataExcel(List<Program> programs,
 			HttpServletResponse response) throws IOException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Map<Long, Cp> cpMap = configService.findAllCpMap();
+		Map<String, Cp> cpMap = configService.findAllCpMap();
 		Map<Long, Series> seriesMap = new HashMap<Long, Series>();
 		List<Long> ids = new ArrayList<Long>();
 		for (Program program : programs) {
@@ -1110,8 +1110,8 @@ public class ProgramController extends AbstractImageController {
 			}
 			log.setEpisodeIndex(program.getEpisodeIndex());
 
-			log.setCpName(configService.getCpShortNameByCpId(cpMap,
-					program.getCpId()));
+			log.setCpName(configService.getCpShortNameByCpCode(cpMap,
+					program.getCpCode()));
 
 			log.setId(program.getId());
 			log.setName(program.getName());

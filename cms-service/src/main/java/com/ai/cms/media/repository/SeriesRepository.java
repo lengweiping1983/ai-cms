@@ -1,6 +1,5 @@
 package com.ai.cms.media.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.cache.annotation.CacheConfig;
@@ -44,24 +43,6 @@ public interface SeriesRepository extends AbstractRepository<Series, Long> {
 	@Query(" select p from Series p where p.name = :name ")
 	List<Series> findByName(@Param("name") String name);
 	
-//	@Query(" select p from Series p where p.cpId = :cpId")
-//	List<Series> findByCpId(@Param("cpId") Long cpId);
-//	
-//	@Query(" select p from Series p where p.cpId = :cpId")
-//	Page<Series> findByCpIdPage(@Param("cpId") Long cpId,Pageable pageable);
-//	
-//	@Query(" select p from Series p where p.cpId = :cpId and p.createTime<= :createTime ")
-//	Page<Series> findByCpIdPageByCreateTime(@Param("createTime") Date createTime,@Param("cpId") Long cpId,Pageable pageable);
-//	
-//	@Query(" select p from Series p where p.createTime<= :createTime ")
-//	Page<Series> findByCreateTime(@Param("createTime") Date createTime,Pageable pageable);
-//	
-//	@Query(" select p from Series p where p.cpId = :cpId and ( p.createTime>= :startTime and p.createTime<= :endTime or p.updateTime>= :startTime and p.updateTime<= :endTime )")
-//	Page<Series> findByTime(@Param("cpId") Long cpId,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
-//	 
-//	@Query(" select p from Series p where p.cpId = :cpId and p.onlineTime>= :startTime and p.onlineTime<= :endTime")
-//	Page<Series> findByTimeAtOnLine(@Param("cpId") Long cpId,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
-//	
 	@Query(" select p from Series p where p.id in :idList ")
     List<Series> findByListIn(@Param("idList") List<Long> idList);
 	

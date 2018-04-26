@@ -782,7 +782,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	 * 分发剧头
 	 */
 	public synchronized void inInjection(Series series, Long[] platformIds,
-			String[] templateIds, Integer[] prioritys, String cpId) {
+			String[] templateIds, Integer[] prioritys, String cpCode) {
 		if (series == null || platformIds == null || templateIds == null) {
 			return;
 		}
@@ -797,7 +797,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				InjectionObject seriesInjectionObject = getAndNewInjectionObject(
 						series, platformIds[i], category);
 				inInjection(injectionPlatform, series, seriesInjectionObject,
-						category, categoryMap.get(category), prioritys[i], cpId);
+						category, categoryMap.get(category), prioritys[i],
+						cpCode);
 			}
 		}
 		updateInjectionStatus(null, series, true);
@@ -805,11 +806,11 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 
 	private synchronized Long inInjection(InjectionPlatform injectionPlatform,
 			Series series, InjectionObject seriesInjectionObject,
-			String category, String templateId, Integer priority, String cpId) {
+			String category, String templateId, Integer priority, String cpCode) {
 		Long taskId = null;
 		if (!isInjection(seriesInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(seriesInjectionObject);
-			sendTask.setCpId(cpId);
+			sendTask.setCpCode(cpCode);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			if (isInjected(seriesInjectionObject.getInjectionStatus())) {
 				sendTask.setAction(InjectionActionTypeEnum.UPDATE.getKey());
@@ -859,7 +860,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 					seriesInjectionObject.getCategory());
 			inInjection(injectionPlatform, series, seriesInjectionObject,
 					program, programInjectionObject, category, templateId,
-					priority, cpId, taskId);
+					priority, cpCode, taskId);
 		}
 		return taskId;
 	}
@@ -869,7 +870,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	 */
 	public synchronized void inInjection(Series series, Program program,
 			Long[] platformIds, String[] templateIds, Integer[] prioritys,
-			String cpId) {
+			String cpCode) {
 		if (program == null || platformIds == null || templateIds == null) {
 			return;
 		}
@@ -899,14 +900,14 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 					// 剧头没有分发，先分发剧头
 					preTaskId = inInjection(injectionPlatform, series,
 							seriesInjectionObject, category,
-							categoryMap.get(category), prioritys[i], cpId);
+							categoryMap.get(category), prioritys[i], cpCode);
 				}
 
 				InjectionObject programInjectionObject = getAndNewInjectionObject(
 						program, platformIds[i], category);
 				inInjection(injectionPlatform, series, seriesInjectionObject,
 						program, programInjectionObject, category,
-						categoryMap.get(category), prioritys[i], cpId,
+						categoryMap.get(category), prioritys[i], cpCode,
 						preTaskId);
 			}
 		}
@@ -916,8 +917,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	private synchronized Long inInjection(InjectionPlatform injectionPlatform,
 			Series series, InjectionObject seriesInjectionObject,
 			Program program, InjectionObject programInjectionObject,
-			String category, String templateId, Integer priority, String cpId,
-			Long preTaskId) {
+			String category, String templateId, Integer priority,
+			String cpCode, Long preTaskId) {
 		if (program.getMediaStatus() != MediaStatusEnum.OK.getKey()
 				&& program.getMediaStatus() != MediaStatusEnum.MISS_IMAGE
 						.getKey()) {
@@ -939,7 +940,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		Long taskId = null;
 		if (!isInjection(programInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(programInjectionObject);
-			sendTask.setCpId(cpId);
+			sendTask.setCpCode(cpCode);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			if (isInjected(programInjectionObject.getInjectionStatus())) {
 				sendTask.setAction(InjectionActionTypeEnum.UPDATE.getKey());
@@ -994,7 +995,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 					programInjectionObject.getCategory());
 			inInjection(injectionPlatform, series, program,
 					programInjectionObject, mediaFile,
-					mediaFileInjectionObject, category, priority, cpId, taskId);
+					mediaFileInjectionObject, category, priority, cpCode,
+					taskId);
 		}
 		return taskId;
 	}
@@ -1003,7 +1005,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			Series series, Program program,
 			InjectionObject programInjectionObject, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject, String category,
-			Integer priority, String cpId, Long preTaskId) {
+			Integer priority, String cpCode, Long preTaskId) {
 		if (StringUtils.isEmpty(mediaFile.getFilePath())) {
 			throw new ServiceException("节目[" + program.getName()
 					+ "]媒体文件路径为空，不能分发!");
@@ -1014,7 +1016,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		}
 		if (!isInjection(mediaFileInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(mediaFileInjectionObject);
-			sendTask.setCpId(cpId);
+			sendTask.setCpCode(cpCode);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			if (isInjected(mediaFileInjectionObject.getInjectionStatus())) {
 				sendTask.setAction(InjectionActionTypeEnum.UPDATE.getKey());
@@ -1063,7 +1065,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	 * 回收剧头
 	 */
 	public synchronized void outInjection(Series series, Long[] platformIds,
-			String[] templateIds, Integer[] prioritys, String cpId) {
+			String[] templateIds, Integer[] prioritys, String cpCode) {
 		if (series == null || platformIds == null || templateIds == null) {
 			return;
 		}
@@ -1078,7 +1080,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				InjectionObject seriesInjectionObject = getAndNewInjectionObject(
 						series, platformIds[i], category);
 				outInjection(injectionPlatform, series, seriesInjectionObject,
-						category, categoryMap.get(category), prioritys[i], cpId);
+						category, categoryMap.get(category), prioritys[i],
+						cpCode);
 			}
 		}
 		updateInjectionStatus(null, series, true);
@@ -1086,7 +1089,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 
 	private synchronized void outInjection(InjectionPlatform injectionPlatform,
 			Series series, InjectionObject seriesInjectionObject,
-			String category, String templateId, Integer priority, String cpId) {
+			String category, String templateId, Integer priority, String cpCode) {
 		// 节目先回收
 		List<Program> programList = programRepository.findBySeriesId(series
 				.getId());
@@ -1096,12 +1099,12 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 					seriesInjectionObject.getCategory());
 			outInjection(injectionPlatform, series, seriesInjectionObject,
 					program, programInjectionObject, category, templateId,
-					priority, cpId);
+					priority, cpCode);
 		}
 
 		if (isInjected(seriesInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(seriesInjectionObject);
-			sendTask.setCpId(cpId);
+			sendTask.setCpCode(cpCode);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			sendTask.setAction(InjectionActionTypeEnum.DELETE.getKey());
 			sendTask.setItemType(InjectionItemTypeEnum.SERIES.getKey());
@@ -1142,7 +1145,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	 */
 	public synchronized void outInjection(Series series, Program program,
 			Long[] platformIds, String[] templateIds, Integer[] prioritys,
-			String cpId) {
+			String cpCode) {
 		if (program == null || platformIds == null || templateIds == null) {
 			return;
 		}
@@ -1165,7 +1168,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 
 				outInjection(injectionPlatform, series, seriesInjectionObject,
 						program, programInjectionObject, category,
-						categoryMap.get(category), prioritys[i], cpId);
+						categoryMap.get(category), prioritys[i], cpCode);
 			}
 		}
 		updateInjectionStatus(null, program, true);
@@ -1174,7 +1177,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	private synchronized void outInjection(InjectionPlatform injectionPlatform,
 			Series series, InjectionObject seriesInjectionObject,
 			Program program, InjectionObject programInjectionObject,
-			String category, String templateId, Integer priority, String cpId) {
+			String category, String templateId, Integer priority, String cpCode) {
 		// 媒体内容一起回收
 		List<Long> templateIdList = new ArrayList<Long>();
 		for (String tempId : templateId.split(",")) {
@@ -1193,12 +1196,12 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 					programInjectionObject.getCategory());
 			outInjection(injectionPlatform, series, program,
 					programInjectionObject, mediaFile,
-					mediaFileInjectionObject, category, priority, cpId);
+					mediaFileInjectionObject, category, priority, cpCode);
 		}
 
 		if (isInjected(programInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(programInjectionObject);
-			sendTask.setCpId(cpId);
+			sendTask.setCpCode(cpCode);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			sendTask.setAction(InjectionActionTypeEnum.DELETE.getKey());
 			sendTask.setItemType(InjectionItemTypeEnum.PROGRAM.getKey());
@@ -1241,10 +1244,10 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			Series series, Program program,
 			InjectionObject programInjectionObject, MediaFile mediaFile,
 			InjectionObject mediaFileInjectionObject, String category,
-			Integer priority, String cpId) {
+			Integer priority, String cpCode) {
 		if (isInjected(mediaFileInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(mediaFileInjectionObject);
-			sendTask.setCpId(cpId);
+			sendTask.setCpCode(cpCode);
 			sendTask.setType(InjectionObjectTypeEnum.OBJECT.getKey());
 			sendTask.setAction(InjectionActionTypeEnum.DELETE.getKey());
 			sendTask.setItemType(InjectionItemTypeEnum.MOVIE.getKey());

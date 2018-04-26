@@ -65,8 +65,8 @@ public class Channel extends AbstractEntity {
 	@Column(name = "site_code")
 	private String siteCode;// 渠道代码
 
-	@Column(name = "cp_id")
-	private String cpId;// 内容提供商id
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码,多个使用','分割
 
 	private String tag;// tag，之间使用','分割
 	private String keyword;// 关键字，内部使用
@@ -231,12 +231,12 @@ public class Channel extends AbstractEntity {
 		this.siteCode = siteCode;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 	public String getTag() {

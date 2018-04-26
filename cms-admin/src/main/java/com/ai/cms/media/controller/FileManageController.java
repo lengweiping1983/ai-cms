@@ -60,7 +60,6 @@ public class FileManageController extends AbstractImageController {
 
 	public String getFtpAddress(CpFtp cpFtp) {
 		if (cpFtp != null) {
-			// ftp://anonymous:cms1234qwer@127.0.0.1:21/
 			return "ftp://" + cpFtp.getUsername() + ":" + cpFtp.getPassword()
 					+ "@" + cpFtp.getIp() + ":" + cpFtp.getPort() + "/";
 		}
@@ -99,7 +98,7 @@ public class FileManageController extends AbstractImageController {
 		try {
 			if (cache) {
 				ValueWrapper valueWrapper = ftpFileCache.get(StringUtils
-						.trimToEmpty(SecurityUtils.getCpId())
+						.trimToEmpty(SecurityUtils.getCpCode())
 						+ "-"
 						+ accessPath);
 				if (valueWrapper != null) {
@@ -107,12 +106,8 @@ public class FileManageController extends AbstractImageController {
 				}
 			}
 			if (files == null || refresh == 1) {
-				CpFtp cpFtp = null;
-				if (SecurityUtils.getCpId() != null) {
-					Long cpId = Long
-							.valueOf(SecurityUtils.getCpId().split(",")[0]);
-					cpFtp = configService.findCpFtpByCpId(cpId);
-				}
+				CpFtp cpFtp = configService.findCpFtpByCpCode(SecurityUtils
+						.getCpCode());
 
 				files = FtpUtils.getInstance(getFtpAddress(cpFtp), ftpMode)
 						.getFiles(getFtpRootPath(cpFtp), accessPath, "");
@@ -124,7 +119,7 @@ public class FileManageController extends AbstractImageController {
 				}
 				if (cache) {
 					ftpFileCache.put(
-							StringUtils.trimToEmpty(SecurityUtils.getCpId())
+							StringUtils.trimToEmpty(SecurityUtils.getCpCode())
 									+ "-" + accessPath, files);
 				}
 			}
@@ -162,12 +157,8 @@ public class FileManageController extends AbstractImageController {
 		if (StringUtils.isEmpty(accessPath)) {
 			accessPath = userAccessPathMap.get(user.getId());
 			if (StringUtils.isEmpty(accessPath)) {
-				CpFtp cpFtp = null;
-				if (SecurityUtils.getCpId() != null) {
-					Long cpId = Long
-							.valueOf(SecurityUtils.getCpId().split(",")[0]);
-					cpFtp = configService.findCpFtpByCpId(cpId);
-				}
+				CpFtp cpFtp = configService.findCpFtpByCpCode(SecurityUtils
+						.getCpCode());
 				accessPath = getFtpDefaultAccessPath(cpFtp);
 			}
 		}
@@ -270,12 +261,8 @@ public class FileManageController extends AbstractImageController {
 		if (StringUtils.isEmpty(accessPath)) {
 			accessPath = userAccessPathMap.get(user.getId());
 			if (StringUtils.isEmpty(accessPath)) {
-				CpFtp cpFtp = null;
-				if (SecurityUtils.getCpId() != null) {
-					Long cpId = Long
-							.valueOf(SecurityUtils.getCpId().split(",")[0]);
-					cpFtp = configService.findCpFtpByCpId(cpId);
-				}
+				CpFtp cpFtp = configService.findCpFtpByCpCode(SecurityUtils
+						.getCpCode());
 				accessPath = getFtpDefaultAccessPath(cpFtp);
 			}
 		}

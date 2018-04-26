@@ -135,7 +135,7 @@ public class ChannelController extends AbstractImageController {
             image2Old = channelInfo.getImage2();
 
             BeanInfoUtil.bean2bean(channel, channelInfo, "type,code,name,number,"
-                    + "country,state,city,zipcode,language,bilingual,image1,image2,status,sortIndex,info,cpId");
+                    + "country,state,city,zipcode,language,bilingual,image1,image2,status,sortIndex,info,cpCode");
         }
 
         String image1 = "";

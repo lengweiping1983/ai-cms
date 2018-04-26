@@ -134,8 +134,8 @@ public class LeagueMatch extends AbstractEntity {
 	@Column(name = "cloud_code")
 	private String cloudCode;// 云端代码
 
-	@Column(name = "cp_id")
-	private String cpId;// 内容提供商id
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码,多个使用','分割
 
 	@Column(name = "channel_id")
 	private Long channelId;// 频道id
@@ -465,12 +465,12 @@ public class LeagueMatch extends AbstractEntity {
 		this.cloudCode = cloudCode;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 	public Long getChannelId() {

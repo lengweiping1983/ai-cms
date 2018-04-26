@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.AdminGlobal;
-import com.ai.cms.config.entity.Cp;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.service.ConfigService;
 import com.ai.cms.injection.bean.ADI;
@@ -112,8 +111,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	public void handleTask(ReceiveTask receiveTask, InjectionPlatform platform,
 			ADI adi) throws DataException {
 		// 4.1获取对象
-		Cp cp = configService.findOneCpByCode(platform.getCspId());
-		String currentCpId = (cp != null) ? "" + cp.getId() : "";
+		String currentCpCode = platform.getCspId();
 
 		List<ObjectBean> objects = adi.getObjects();
 		List<MappingBean> mappings = adi.getMappings();
@@ -138,7 +136,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		for (ObjectBean objectBean : objects) {
 			if (objectBean instanceof SeriesBean) {
 				SeriesBean seriesBean = (SeriesBean) objectBean;
-				saveSeries(seriesBean, receiveTask, platform, currentCpId);
+				saveSeries(seriesBean, receiveTask, platform, currentCpCode);
 			}
 		}
 
@@ -146,7 +144,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		for (ObjectBean objectBean : objects) {
 			if (objectBean instanceof ProgramBean) {
 				ProgramBean programBean = (ProgramBean) objectBean;
-				saveProgram(programBean, receiveTask, platform, currentCpId);
+				saveProgram(programBean, receiveTask, platform, currentCpCode);
 			}
 		}
 
@@ -156,7 +154,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 					&& "Program".equalsIgnoreCase(mappingBean.getElementType())) {
 				// 当Mapping关系涉及Series和Program间绑定时，Sequence必须填写；
 				saveSeriesProgramMapping(mappingBean, receiveTask, platform,
-						currentCpId);
+						currentCpCode);
 			}
 		}
 
@@ -164,7 +162,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		for (ObjectBean objectBean : objects) {
 			if (objectBean instanceof MovieBean) {
 				MovieBean movieBean = (MovieBean) objectBean;
-				saveMediaFile(movieBean, receiveTask, platform, currentCpId);
+				saveMediaFile(movieBean, receiveTask, platform, currentCpCode);
 			}
 		}
 
@@ -173,7 +171,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			if ("Program".equalsIgnoreCase(mappingBean.getParentType())
 					&& "Movie".equalsIgnoreCase(mappingBean.getElementType())) {
 				saveProgramMediaFileMapping(mappingBean, receiveTask, platform,
-						currentCpId);
+						currentCpCode);
 			}
 		}
 
@@ -192,11 +190,11 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 						if ("Program".equalsIgnoreCase(mappingBean
 								.getParentType())) {
 							saveProgramPosterMapping(mappingBean, pictureBean,
-									receiveTask, platform, currentCpId);
+									receiveTask, platform, currentCpCode);
 						} else if ("Series".equalsIgnoreCase(mappingBean
 								.getParentType())) {
 							saveSeriesPosterMapping(mappingBean, pictureBean,
-									receiveTask, platform, currentCpId);
+									receiveTask, platform, currentCpCode);
 						}
 					}
 				} else if (StringUtils.isNotEmpty(mappingBean.getType())) {
@@ -209,11 +207,11 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 						if ("Program".equalsIgnoreCase(mappingBean
 								.getParentType())) {
 							saveProgramImageMapping(mappingBean, pictureBean,
-									receiveTask, platform, currentCpId);
+									receiveTask, platform, currentCpCode);
 						} else if ("Series".equalsIgnoreCase(mappingBean
 								.getParentType())) {
 							saveSeriesImageMapping(mappingBean, pictureBean,
-									receiveTask, platform, currentCpId);
+									receiveTask, platform, currentCpCode);
 						}
 					}
 				}
@@ -227,7 +225,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	}
 
 	private void saveSeries(SeriesBean seriesBean, ReceiveTask receiveTask,
-			InjectionPlatform platform, String currentCpId) {
+			InjectionPlatform platform, String currentCpCode) {
 		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
 				+ "_" + seriesBean.getCode());
 		// 检查该媒资是否属于该CP
@@ -240,7 +238,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (series == null) {
 			series = new Series();
 			series.setSource(SourceEnum.INJECTION.getKey());
-			series.setCpId(currentCpId);
+			series.setCpCode(currentCpCode);
 			series.setCloudId(platform.getCspId() + "_" + seriesBean.getID());
 			series.setCloudCode(platform.getCspId() + "_"
 					+ seriesBean.getCode());
@@ -392,7 +390,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	}
 
 	private void saveProgram(ProgramBean programBean, ReceiveTask receiveTask,
-			InjectionPlatform platform, String currentCpId) {
+			InjectionPlatform platform, String currentCpCode) {
 		Program program = mediaService.findProgramByCloudCode(platform
 				.getCspId() + "_" + programBean.getCode());
 		// 检查该媒资是否属于该CP
@@ -405,7 +403,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (program == null) {
 			program = new Program();
 			program.setSource(SourceEnum.INJECTION.getKey());
-			program.setCpId(currentCpId);
+			program.setCpCode(currentCpCode);
 			program.setCloudId(platform.getCspId() + "_" + programBean.getID());
 			program.setCloudCode(platform.getCspId() + "_"
 					+ programBean.getCode());
@@ -571,7 +569,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 	}
 
 	private void saveMediaFile(MovieBean movieBean, ReceiveTask receiveTask,
-			InjectionPlatform platform, String currentCpId) {
+			InjectionPlatform platform, String currentCpCode) {
 		MediaFile mediaFile = mediaService.findMediaFileByCloudCode(platform
 				.getCspId() + "_" + movieBean.getCode());
 		if (mediaFile != null) {
@@ -660,7 +658,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 		if (platform.getNeedDownloadVideo() == YesNoEnum.YES.getKey()
 				&& !sourceFilePath.equals(inputFilePath)) {// 需要下载视频文件
 			DownloadTask downloadTask = new DownloadTask();
-			downloadTask.setCpId(receiveTask.getCpId());
+			downloadTask.setCpCode(receiveTask.getCpCode());
 			downloadTask.setModule(DownloadModuleEnum.RECEIVE.getKey());
 			downloadTask.setPid(receiveTask.getId());
 
@@ -693,7 +691,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveSeriesProgramMapping(MappingBean mappingBean,
 			ReceiveTask receiveTask, InjectionPlatform platform,
-			String currentCpId) {
+			String currentCpCode) {
 		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
 				+ "_" + mappingBean.getParentCode());
 		Program program = mediaService.findProgramByCloudCode(platform
@@ -739,7 +737,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveProgramMediaFileMapping(MappingBean mappingBean,
 			ReceiveTask receiveTask, InjectionPlatform platform,
-			String currentCpId) {
+			String currentCpCode) {
 		Program program = mediaService.findProgramByCloudCode(platform
 				.getCspId() + "_" + mappingBean.getParentCode());
 		MediaFile mediaFile = mediaService.findMediaFileByCloudCode(platform
@@ -788,7 +786,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveSeriesPosterMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
-			InjectionPlatform platform, String currentCpId) {
+			InjectionPlatform platform, String currentCpCode) {
 		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
 				+ "_" + mappingBean.getParentCode());
 		if (series == null) {
@@ -882,7 +880,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveProgramPosterMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
-			InjectionPlatform platform, String currentCpId) {
+			InjectionPlatform platform, String currentCpCode) {
 		Program program = mediaService.findProgramByCloudCode(platform
 				.getCspId() + "_" + mappingBean.getParentCode());
 		if (program == null) {
@@ -975,7 +973,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveSeriesImageMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
-			InjectionPlatform platform, String currentCpId) {
+			InjectionPlatform platform, String currentCpCode) {
 		Series series = mediaService.findSeriesByCloudCode(platform.getCspId()
 				+ "_" + mappingBean.getParentCode());
 		if (series == null) {
@@ -1032,7 +1030,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 	private void saveProgramImageMapping(MappingBean mappingBean,
 			PictureBean pictureBean, ReceiveTask receiveTask,
-			InjectionPlatform platform, String currentCpId) {
+			InjectionPlatform platform, String currentCpCode) {
 		Program program = mediaService.findProgramByCloudCode(platform
 				.getCspId() + "_" + mappingBean.getParentCode());
 		if (program == null) {

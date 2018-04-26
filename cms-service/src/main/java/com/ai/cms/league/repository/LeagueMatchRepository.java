@@ -33,20 +33,20 @@ public interface LeagueMatchRepository extends
 	@Query("select  p from LeagueMatch p where  p.id in (:idList) order by FIELD (p.id,:idList) ")
 	List<LeagueMatch> findByIdIn(@Param("idList") List<Long> idList);
 
-	@Query(" select p from LeagueMatch p where p.cpId = :cpId")
-	List<LeagueMatch> findByCpId(@Param("cpId") Long cpId);
+	@Query(" select p from LeagueMatch p where p.cpCode = :cpCode")
+	List<LeagueMatch> findByCpCode(@Param("cpCode") String cpCode);
 	
-	@Query(" select p from LeagueMatch p where p.cpId = :cpId")
-	Page<LeagueMatch> findByCpIdPage(@Param("cpId") Long cpId,Pageable pageable);
+	@Query(" select p from LeagueMatch p where p.cpCode = :cpCode")
+	Page<LeagueMatch> findByCpCodePage(@Param("cpCode") String cpCode,Pageable pageable);
 	
-	@Query(" select p from LeagueMatch p where p.cpId = :cpId and p.createTime<= :createTime ")
-	Page<LeagueMatch> findByCpIdPageByCreateTime(@Param("createTime") Date createTime,@Param("cpId") Long cpId,Pageable pageable);
+	@Query(" select p from LeagueMatch p where p.cpCode = :cpCode and p.createTime<= :createTime ")
+	Page<LeagueMatch> findByCpCodePageByCreateTime(@Param("createTime") Date createTime,@Param("cpCode") String cpCode,Pageable pageable);
 	
 	@Query(" select p from LeagueMatch p where p.createTime<= :createTime ")
 	Page<LeagueMatch> findByCreateTime(@Param("createTime") Date createTime,Pageable pageable);
 	
-	@Query(" select p from LeagueMatch p where p.cpId = :cpId and ( p.createTime>= :startTime and p.createTime<= :endTime or p.updateTime>= :startTime and p.updateTime<= :endTime )")
-	Page<LeagueMatch> findByTime(@Param("cpId") Long cpId,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
+	@Query(" select p from LeagueMatch p where p.cpCode = :cpCode and ( p.createTime>= :startTime and p.createTime<= :endTime or p.updateTime>= :startTime and p.updateTime<= :endTime )")
+	Page<LeagueMatch> findByTime(@Param("cpCode") String cpCode,@Param("startTime") Date startTime,@Param("endTime") Date endTime,Pageable pageable);
 	
 	@Cacheable
 	@Query(" select p from LeagueMatch p where p.leagueSeasonId = :leagueSeasonId and p.status = 1 ORDER BY p.beginTime ASC")

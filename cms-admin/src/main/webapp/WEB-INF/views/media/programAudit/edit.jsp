@@ -546,14 +546,14 @@
 										<div class="tab-pane" id="tab_2">
 											<div class="row">
 												<c:choose>
-													<c:when test="${empty currentCpId}">
+													<c:when test="${empty currentCpCode}">
 														<div class="col-md-6">
-															<tags:cpSelect value="${program.cpId}" />
+															<tags:cpSelect value="${program.cpCode}" />
 														</div>
 													</c:when>
 													<c:otherwise>
-														<input type="hidden" id="cpId" name="cpId"
-															value="${currentCpId}" />
+														<input type="hidden" id="cpCode" name="cpCode"
+															value="${currentCpCode}" />
 													</c:otherwise>
 												</c:choose>
 												<div class="col-md-6">

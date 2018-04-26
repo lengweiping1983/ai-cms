@@ -130,9 +130,9 @@ public class SeriesController extends AbstractImageController {
 		}
 
 		List<PropertyFilter> filters = getPropertyFilters(request);
-		if (SecurityUtils.getCpId() != null) {
-			filters.add(new PropertyFilter("cpId__INMASK_S", ""
-					+ SecurityUtils.getCpId()));
+		if (SecurityUtils.getCpCode() != null) {
+			filters.add(new PropertyFilter("cpCode__INMASK_S", ""
+					+ SecurityUtils.getCpCode()));
 		}
 		Specification<Series> specification = SpecificationUtils
 				.getSpecification(filters);
@@ -185,8 +185,8 @@ public class SeriesController extends AbstractImageController {
 		Series series = new Series();
 		model.addAttribute("series", series);
 
-		if (SecurityUtils.getCpId() != null) {
-			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		if (SecurityUtils.getCpCode() != null) {
+			model.addAttribute("currentCpCode", SecurityUtils.getCpCode());
 		}
 		setModel(model);
 
@@ -207,8 +207,8 @@ public class SeriesController extends AbstractImageController {
 		Series series = seriesRepository.findOne(id);
 		model.addAttribute("series", series);
 
-		if (SecurityUtils.getCpId() != null) {
-			model.addAttribute("currentCpId", SecurityUtils.getCpId());
+		if (SecurityUtils.getCpCode() != null) {
+			model.addAttribute("currentCpCode", SecurityUtils.getCpCode());
 		}
 		setModel(model);
 
@@ -429,10 +429,10 @@ public class SeriesController extends AbstractImageController {
 						&& batchBean.getContentTypeSwitch().equals("on")) {
 					seriesInfo.setContentType(batchBean.getContentType());
 				}
-				if (batchBean.getCpIdSwitch() != null
-						&& batchBean.getCpIdSwitch().equals("on")) {
-					seriesInfo.setCpId(batchBean.getCpId());
-					mediaService.updateCpIdBySeriesId(seriesInfo);
+				if (batchBean.getCpCodeSwitch() != null
+						&& batchBean.getCpCodeSwitch().equals("on")) {
+					seriesInfo.setCpCode(batchBean.getCpCode());
+					mediaService.updateCpCodeBySeriesId(seriesInfo);
 				}
 				if (batchBean.getTagSwitch() != null
 						&& batchBean.getTagSwitch().equals("on")) {
@@ -688,7 +688,7 @@ public class SeriesController extends AbstractImageController {
 			Series series = seriesRepository.findOne(itemId);
 			if (series != null) {
 				injectionService.inInjection(series, batchBean.getPlatformId(),
-						batchBean.getTemplateId(), batchBean.getPriority(), SecurityUtils.getCpId());
+						batchBean.getTemplateId(), batchBean.getPriority(), SecurityUtils.getCpCode());
 				operationObjectList.add(series);
 			}
 		}
@@ -731,7 +731,7 @@ public class SeriesController extends AbstractImageController {
 			if (series != null) {
 				injectionService.outInjection(series,
 						batchBean.getPlatformId(), batchBean.getTemplateId(),
-						batchBean.getPriority(), SecurityUtils.getCpId());
+						batchBean.getPriority(), SecurityUtils.getCpCode());
 				operationObjectList.add(series);
 			}
 		}
@@ -812,7 +812,7 @@ public class SeriesController extends AbstractImageController {
 	private boolean getExportMetadataExcel(List<Series> seriess,
 			HttpServletResponse response) throws IOException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Map<Long, Cp> cpMap = configService.findAllCpMap();
+		Map<String, Cp> cpMap = configService.findAllCpMap();
 
 		List<SeriesExportLog> logs = new ArrayList<SeriesExportLog>();
 		for (Series series : seriess) {
@@ -822,8 +822,8 @@ public class SeriesController extends AbstractImageController {
 						.getValue());
 			}
 			log.setEpisodeTotal(series.getEpisodeTotal());
-			log.setCpName(configService.getCpShortNameByCpId(cpMap,
-					series.getCpId()));
+			log.setCpName(configService.getCpShortNameByCpCode(cpMap,
+					series.getCpCode()));
 
 			log.setId(series.getId());
 			log.setName(series.getName());

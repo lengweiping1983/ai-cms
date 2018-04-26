@@ -12,7 +12,7 @@
 			<div class="modal-body">
 				<form id="editForm">
 					<input type="hidden" name="id" value="${cpFtp.id}" /> <input
-						type="hidden" name="cpId" value="${cp.id}" />
+						type="hidden" name="cpCode" value="${cp.code}" />
 					<div class="content form-horizontal">
 						<div class="form-group">
 							<label class="control-label col-md-4">FTP地址(<span

@@ -119,9 +119,9 @@ public class SendTask extends AbstractEntity {
 	@Column(name = "operation_object_ids")
 	private String operationObjectIds; // 操作对象Id列表,格式如o:Program:REGIST:288872:00000001000000010000000000288872;o:Picture:REGIST:1000288872:00000001000000080000001000288872;o:Movie:REGIST:285303:00000001000000020000000000285303;
 
-	@Column(name = "cp_id")
-	private String cpId; // 内容提供商id,多个使用','分割
-	
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码,多个使用','分割
+
 	public SendTask() {
 
 	}
@@ -383,12 +383,12 @@ public class SendTask extends AbstractEntity {
 		this.operationObjectIds = operationObjectIds;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
-	
+
 }

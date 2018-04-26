@@ -114,5 +114,3 @@ ALTER TABLE `cms_media_file` CHANGE COLUMN `media_status` `media_status` int DEF
 ALTER TABLE `cms_media_file` CHANGE COLUMN `play_code_status` `play_code_status` int DEFAULT 0;
 ALTER TABLE `cms_media_file` CHANGE COLUMN `injection_status` `injection_status` varchar(255) DEFAULT '0';
 ALTER TABLE `cms_media_file` CHANGE COLUMN `template_id` `template_id` bigint DEFAULT -1;
-
-CREATE UNIQUE INDEX cms_media_program_series_episode on cms_media_program(`series_id`,`episode_index`);

@@ -39,8 +39,8 @@ public class OperationLog extends AbstractEntity {
 	@Column(name = "object_name")
 	private String objectName;// 对象名称
 
-	@Column(name = "cp_id")
-	private String cpId; // 内容提供商id,多个使用','分割
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码,多个使用','分割
 
 	public Long getUserId() {
 		return userId;
@@ -130,12 +130,12 @@ public class OperationLog extends AbstractEntity {
 		this.objectName = objectName;
 	}
 
-	public String getCpId() {
-		return cpId;
+	public String getCpCode() {
+		return cpCode;
 	}
 
-	public void setCpId(String cpId) {
-		this.cpId = cpId;
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class OperationLog extends AbstractEntity {
 				+ ", subModule=" + subModule + ", action=" + action
 				+ ", actionResult=" + actionResult + ", message=" + message
 				+ ", objectId=" + objectId + ", objectName=" + objectName
-				+ ", cpId=" + cpId + "]";
+				+ ", cpCode=" + cpCode + "]";
 	}
 
 }
