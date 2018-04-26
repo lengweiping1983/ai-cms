@@ -58,10 +58,10 @@ public class FileManageController extends AbstractImageController {
 	private String ftpDefaultAccessPath;
 
 	public String getFtpAddress(CpFtp cpFtp) {
-		if (cpFtp != null) {
-			return "ftp://" + cpFtp.getUsername() + ":" + cpFtp.getPassword()
-					+ "@" + cpFtp.getIp() + ":" + cpFtp.getPort() + "/";
-		}
+		// if (cpFtp != null) {
+		// return "ftp://" + cpFtp.getUsername() + ":" + cpFtp.getPassword()
+		// + "@" + cpFtp.getIp() + ":" + cpFtp.getPort() + "/";
+		// }
 		return ftpAddress;
 	}
 

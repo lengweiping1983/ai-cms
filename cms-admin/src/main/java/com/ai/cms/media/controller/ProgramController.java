@@ -276,6 +276,19 @@ public class ProgramController extends AbstractImageController {
 		String image3Data = imageBean.getImage3Data();
 		String image4Data = imageBean.getImage4Data();
 
+		if (program.getType() != null
+				&& program.getType() == ProgramTypeEnum.MOVIE.getKey()) {
+			long existNum = 0;
+			if (id != null && id > 0) {
+				existNum = programRepository.countByNameAndNotId(
+						program.getName(), id);
+			} else {
+				existNum = programRepository.countByName(program.getName());
+			}
+			if (existNum > 0) {
+				throw new ServiceException("节目[" + program.getName() + "]已存在！");
+			}
+		}
 		Program programInfo = null;
 		String image1Old = "";
 		String image2Old = "";

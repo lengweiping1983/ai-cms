@@ -30,6 +30,12 @@ public interface ProgramRepository extends AbstractRepository<Program, Long> {
 	@Cacheable
 	List<Program> findByIdIn(List<Long> idList);
 	
+	@Query(" select count(p) from Program p where p.name = :name ")
+	long countByName(@Param("name") String name);
+
+	@Query(" select count(p) from Program p where p.name = :name and p.id != :id ")
+	long countByNameAndNotId(@Param("name") String name, @Param("id") Long id);
+	
 	@Modifying
 	@Query(" delete from Program p where p.seriesId = :seriesId ")
 	void deleteBySeriesId(@Param("seriesId") Long seriesId);
@@ -202,12 +208,4 @@ public interface ProgramRepository extends AbstractRepository<Program, Long> {
 	Page<Program> findByNewestProgram(
 			@Param("contentTypes") List<Integer> contentTypes, Pageable pageable);
 
-	/******************************** 相关推荐 start ********************************/
-	@Cacheable
-	@Query(" select p from Program p where p.status = 1 order by orgAirDate desc ")
-	Page<Program> findByOrgAirDate(Pageable pageable);
-	/******************************** 相关推荐 end ********************************/
-	
-	
-	
 }

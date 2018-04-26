@@ -14,59 +14,58 @@
 					<input type="hidden" name="id" value="${cpFtp.id}" /> <input
 						type="hidden" name="cpCode" value="${cp.code}" />
 					<div class="content form-horizontal">
+						<!-- 						<div class="form-group"> -->
+						<!-- 							<label class="control-label col-md-4">FTP地址(<span -->
+						<!-- 								class="required">*</span>): -->
+						<!-- 							</label> -->
+
+						<!-- 							<div class="col-md-6"> -->
+						<%-- 								<input type="text" name="ip" value="${cpFtp.ip}" --%>
+						<!-- 									class="form-control validate[required]" placeholder="请输入FTP地址"> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
+
+						<!-- 						<div class="form-group"> -->
+						<!-- 							<label class="control-label col-md-4">FTP端号(<span -->
+						<!-- 								class="required">*</span>): -->
+						<!-- 							</label> -->
+
+						<!-- 							<div class="col-md-6"> -->
+						<%-- 								<input type="text" name="port" value="${cpFtp.port}" --%>
+						<!-- 									class="form-control validate[required,custom[integer]]" -->
+						<!-- 									placeholder="请输入FTP端号"> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
+
+						<!-- 						<div class="form-group"> -->
+						<!-- 							<label class="control-label col-md-4">用户名(<span -->
+						<!-- 								class="required">*</span>): -->
+						<!-- 							</label> -->
+
+						<!-- 							<div class="col-md-6"> -->
+						<%-- 								<input type="text" name="username" value="${cpFtp.username}" --%>
+						<!-- 									class="form-control validate[required]" placeholder="请输入用户名"> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
+
+						<!-- 						<div class="form-group"> -->
+						<!-- 							<label class="control-label col-md-4">密码(<span -->
+						<!-- 								class="required">*</span>): -->
+						<!-- 							</label> -->
+
+						<!-- 							<div class="col-md-6"> -->
+						<%-- 								<input type="text" name="password" value="${cpFtp.password}" --%>
+						<!-- 									class="form-control validate[required]" placeholder="请输入密码"> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 						<div class="form-group">
 							<label class="control-label col-md-4">FTP地址(<span
 								class="required">*</span>):
 							</label>
 
 							<div class="col-md-6">
-								<input type="text" name="ip" value="${cpFtp.ip}"
-									class="form-control validate[required]" placeholder="请输入FTP地址">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="control-label col-md-4">FTP端号(<span
-								class="required">*</span>):
-							</label>
-
-							<div class="col-md-6">
-								<input type="text" name="port" value="${cpFtp.port}"
-									class="form-control validate[required,custom[integer]]"
-									placeholder="请输入FTP端号">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="control-label col-md-4">用户名(<span
-								class="required">*</span>):
-							</label>
-
-							<div class="col-md-6">
-								<input type="text" name="username" value="${cpFtp.username}"
-									class="form-control validate[required]" placeholder="请输入用户名">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="control-label col-md-4">密码(<span
-								class="required">*</span>):
-							</label>
-
-							<div class="col-md-6">
-								<input type="text" name="password" value="${cpFtp.password}"
-									class="form-control validate[required]" placeholder="请输入密码">
-							</div>
-						</div>
-
-						<div class="form-group">
-							<label class="control-label col-md-4">FTP目录(<span
-								class="required">*</span>):
-							</label>
-
-							<div class="col-md-6">
 								<input type="text" name="dirPath" value="${cpFtp.dirPath}"
-									class="form-control validate[required]" placeholder="请输入FTP目录">
+									class="form-control validate[required]" placeholder="请输入FTP地址">
 							</div>
 						</div>
 					</div>

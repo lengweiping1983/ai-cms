@@ -231,6 +231,17 @@ public class SeriesController extends AbstractImageController {
 		String image3Data = imageBean.getImage3Data();
 		String image4Data = imageBean.getImage4Data();
 
+		long existNum = 0;
+		if (id != null && id > 0) {
+			existNum = seriesRepository.countByNameAndNotId(series.getName(),
+					id);
+		} else {
+			existNum = seriesRepository.countByName(series.getName());
+		}
+		if (existNum > 0) {
+			throw new ServiceException("剧头[" + series.getName() + "]已存在！");
+		}
+
 		Series seriesInfo = null;
 		String image1Old = "";
 		String image2Old = "";
@@ -688,7 +699,8 @@ public class SeriesController extends AbstractImageController {
 			Series series = seriesRepository.findOne(itemId);
 			if (series != null) {
 				injectionService.inInjection(series, batchBean.getPlatformId(),
-						batchBean.getTemplateId(), batchBean.getPriority(), SecurityUtils.getCpCode());
+						batchBean.getTemplateId(), batchBean.getPriority(),
+						SecurityUtils.getCpCode());
 				operationObjectList.add(series);
 			}
 		}

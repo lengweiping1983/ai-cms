@@ -26,6 +26,12 @@ public interface SeriesRepository extends AbstractRepository<Series, Long> {
 	@Cacheable
 	List<Series> findAll(Iterable<Long> ids);
 	
+	@Query(" select count(p) from Series p where p.name = :name ")
+	long countByName(@Param("name") String name);
+
+	@Query(" select count(p) from Series p where p.name = :name and p.id != :id ")
+	long countByNameAndNotId(@Param("name") String name, @Param("id") Long id);
+	
 	@Modifying
 	@Query(" update Series t set t.templateId = :templateId where t.id = :id and t.templateId != :templateId")
 	void updateTemplateIdById(@Param("id") Long id, @Param("templateId") String templateId);
@@ -106,8 +112,5 @@ public interface SeriesRepository extends AbstractRepository<Series, Long> {
 	@Query(" select s from Series s where s.contentType = 1 and s.status = 1 and s.tag like CONCAT('%',:tagName,'%') ORDER BY s.orgAirDate DESC ")
 	Page<Series> findByTag(@Param("tagName") String tagName, Pageable pageable);
 
-	@Cacheable
-	@Query(" select s from Series s where s.status = 1 order by orgAirDate desc ")
-	Page<Series> findByOrgAirDate(Pageable pageable);
 	/******************************** 相关推荐 end ********************************/
 }
