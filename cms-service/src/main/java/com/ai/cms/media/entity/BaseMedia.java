@@ -26,9 +26,9 @@ public abstract class BaseMedia extends AbstractEntity {
 	public static final String METADATA = "name,enName,title,caption,contentType,director,actor,directorPinyin,actorPinyin,compere,guest,"
 			+ "year,area,language,rating,duration,subtitle,tag,internalTag,keyword,viewpoint,info,"
 			+ "orgAirDate,broadcastLicense,authorizeInfo,authorizeAddress,licensingWindowStart,licensingWindowEnd,"
-			+ "searchName,reserved1,reserved2,reserved3,reserved4,reserved5";
+			+ "searchName,reserved1,reserved2,reserved3,reserved4,reserved5,cpCode";
 	public static final String METADATA_OTHER = "source,loveNum,hateNum,cloudId,cloudCode,kpeople,scriptWriter,reporter,incharge,"
-			+ "copyRight,vspCode,spCode,cpCode,orderNumber,sortName,filename,storagePath,";
+			+ "copyRight,vspCode,spCode,orderNumber,sortName,filename,storagePath,";
 	public static final String POSTER = "image1,image2,image3,image4";
 
 	@NotNull

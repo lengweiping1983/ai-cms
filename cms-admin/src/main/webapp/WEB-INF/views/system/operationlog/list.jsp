@@ -15,10 +15,12 @@
 						<i class="fa fa-globe"></i>操作行为日志
 					</div>
 					<div class="actions">
-						<a href="javascript:;" class="btn btn-default btn-sm"
-							onclick="$.OperationLogController.toClear('${ctx}/system/operationlog/clear')">
-							<i class="fa fa-plus"></i>清空历史日志
-						</a>
+						<shiro:hasPermission name="system:log:clear">
+							<a href="javascript:;" class="btn btn-default btn-sm"
+								onclick="$.OperationLogController.toClear('${ctx}/system/operationlog/clear')">
+								<i class="fa fa-plus"></i>清空历史日志
+							</a>
+						</shiro:hasPermission>
 					</div>
 				</div>
 				<div class="portlet-body">

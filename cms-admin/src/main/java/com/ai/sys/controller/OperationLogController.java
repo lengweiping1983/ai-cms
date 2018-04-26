@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,6 +23,7 @@ import com.ai.common.controller.AbstractController;
 import com.ai.common.jpa.PropertyFilter;
 import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.DateUtils;
+import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.entity.OperationLog;
 import com.ai.sys.repository.OperationLogRepository;
 import com.ai.sys.security.SecurityUtils;
@@ -57,6 +59,8 @@ public class OperationLogController extends AbstractController {
 		return "system/operationlog/clear";
 	}
 
+	@OperationLogAnnotation(module = "系统管理", subModule = "操作行为日志", action = "批量删除", message = "清空历史日志")
+	@RequiresPermissions("system:log:clear")
 	@RequestMapping(value = { "clear/{createTime}" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult clear(@PathVariable("createTime") String createTime) {

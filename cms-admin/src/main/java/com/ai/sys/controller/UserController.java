@@ -25,6 +25,7 @@ import com.ai.common.bean.jstree.JsTreeBean;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.exception.RestException;
 import com.ai.common.utils.BeanInfoUtil;
+import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.bean.IdsBean;
 import com.ai.sys.bean.PasswordBean;
 import com.ai.sys.entity.Role;
@@ -62,6 +63,7 @@ public class UserController extends AbstractController {
 		return "/system/user/edit";
 	}
 
+	@OperationLogAnnotation(module = "系统管理", subModule = "用户管理", action = "增加", message = "增加用户")
 	@RequiresPermissions("system:user:add")
 	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
@@ -77,6 +79,7 @@ public class UserController extends AbstractController {
 		return "/system/user/edit";
 	}
 
+	@OperationLogAnnotation(module = "系统管理", subModule = "用户管理", action = "修改", message = "修改用户")
 	@RequiresPermissions("system:user:edit")
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
@@ -118,6 +121,7 @@ public class UserController extends AbstractController {
 		return new BaseResult();
 	}
 
+	@OperationLogAnnotation(module = "系统管理", subModule = "用户管理", action = "删除", message = "删除用户")
 	@RequiresPermissions("system:user:delete")
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
@@ -134,6 +138,7 @@ public class UserController extends AbstractController {
 		return "system/user/editPassword";
 	}
 
+	@OperationLogAnnotation(module = "系统管理", subModule = "用户管理", action = "修改", message = "修改密码")
 	@RequiresPermissions("system:user:editPassword")
 	@RequestMapping(value = { "{id}/editPassword" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
