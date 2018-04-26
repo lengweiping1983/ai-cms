@@ -78,11 +78,10 @@ CREATE TABLE `cms_cp_ftp` (
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `cp_code` varchar(255) DEFAULT NULL,
-  `default_access_path` varchar(255) DEFAULT NULL,
   `ip` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `port` int(11) DEFAULT NULL,
-  `root_path` varchar(255) DEFAULT NULL,
+  `dir_path` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

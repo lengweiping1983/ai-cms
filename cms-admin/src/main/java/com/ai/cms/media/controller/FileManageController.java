@@ -68,14 +68,14 @@ public class FileManageController extends AbstractImageController {
 
 	public String getFtpRootPath(CpFtp cpFtp) {
 		if (cpFtp != null) {
-			return cpFtp.getRootPath();
+			return ftpRootPath + "/" + cpFtp.getDirPath();
 		}
 		return ftpRootPath;
 	}
 
 	public String getFtpDefaultAccessPath(CpFtp cpFtp) {
 		if (cpFtp != null) {
-			return cpFtp.getDefaultAccessPath();
+			return "/";
 		}
 		return ftpDefaultAccessPath;
 	}
@@ -151,14 +151,24 @@ public class FileManageController extends AbstractImageController {
 			@RequestParam(value = "path", required = false) String path,
 			@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "refresh", required = false, defaultValue = "0") Integer refresh) {
+		CpFtp cpFtp = null;
+		if (StringUtils.isNotEmpty(SecurityUtils.getCpCode())) {
+			cpFtp = configService.findCpFtpByCpCode(SecurityUtils.getCpCode());
+			if (cpFtp == null) {
+				model.addAttribute("path", "/");
+				model.addAttribute("typeEnum", FileTypeEnum.values());
+				model.addAttribute("transcodeRequestTypeEnum",
+						TranscodeRequestTypeEnum.values());
+
+				return "media/file/list";
+			}
+		}
 
 		User user = SecurityUtils.getUser();
 		String accessPath = StringUtils.trimToEmpty(path);
 		if (StringUtils.isEmpty(accessPath)) {
 			accessPath = userAccessPathMap.get(user.getId());
 			if (StringUtils.isEmpty(accessPath)) {
-				CpFtp cpFtp = configService.findCpFtpByCpCode(SecurityUtils
-						.getCpCode());
 				accessPath = getFtpDefaultAccessPath(cpFtp);
 			}
 		}

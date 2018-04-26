@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ai.cms.config.entity.CpFtp;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.repository.MediaTemplateRepository;
+import com.ai.cms.config.service.ConfigService;
 import com.ai.cms.media.entity.MediaFile;
 import com.ai.cms.media.entity.Program;
 import com.ai.cms.media.entity.Series;
@@ -49,6 +51,7 @@ import com.ai.common.repository.AbstractRepository;
 import com.ai.common.service.AbstractService;
 import com.ai.common.utils.BeanInfoUtil;
 import com.ai.common.utils.PathUtils;
+import com.ai.sys.security.SecurityUtils;
 
 @Service
 @Transactional(value = "slaveTransactionManager", readOnly = false)
@@ -90,6 +93,9 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 
 	@Autowired
 	private MediaService mediaService;
+
+	@Autowired
+	private ConfigService configService;
 
 	@Override
 	public AbstractRepository<TranscodeRequest, Long> getRepository() {
@@ -624,18 +630,21 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 			mediaService.saveMediaFile(mediaFile);
 		}
 
+		CpFtp cpFtp = configService
+				.findCpFtpByCpCode(SecurityUtils.getCpCode());
 		// 2.生成转码任务
 		if (transcodeRequest.getGenTask() == GenTaskModeStatusEnum.DEFAULT
 				.getKey()) {
 			// 正常转码
 			TranscodeTask transcodeTask = produceTranscodeTask(
-					transcodeRequest, file, mediaTemplate, program, mediaFile);
+					transcodeRequest, file, mediaTemplate, program, mediaFile,
+					cpFtp);
 			transcodeTaskRepository.save(transcodeTask);
 
 			if (transcodeRequest.getNeedSnapshot() == NeedSnapshotEnum.YES
 					.getKey()) {
 				TranscodeTask imageTask = produceImageTask(transcodeRequest,
-						file, mediaTemplate, program, mediaFile);
+						file, mediaTemplate, program, mediaFile, cpFtp);
 				imageTask.setPreTaskId(transcodeTask.getId());
 				imageTask.setPreTaskStatus(YesNoEnum.NO.getKey());
 				imageTask.setTimePoints(transcodeRequest.getTimePoints());
@@ -644,7 +653,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		} else if (transcodeRequest.getGenTask() == GenTaskModeStatusEnum.LOCAL
 				.getKey()) {
 			// 本地已转码，标记转码成功
-			mediaFile.setFilePath(file.getFilePath());
+			mediaFile.setFilePath(getFilePath(cpFtp, file.getFilePath()));
 			mediaFile.setMediaStatus(MediaStatusEnum.OK.getKey());
 			mediaService.saveMediaFile(mediaFile);
 		}
@@ -766,7 +775,8 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 
 	private TranscodeTask produceTranscodeTask(
 			TranscodeRequest transcodeRequest, TranscodeRequestFile file,
-			MediaTemplate mediaTemplate, Program program, MediaFile mediaFile) {
+			MediaTemplate mediaTemplate, Program program, MediaFile mediaFile,
+			CpFtp cpFtp) {
 		TranscodeTask transcodeTask = new TranscodeTask();
 		transcodeTask.setCpCode(transcodeRequest.getCpCode());
 
@@ -781,7 +791,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		transcodeTask.setTemplateId(mediaTemplate.getId());
 		transcodeTask.setProfile(mediaTemplate.getExternalCode());
 
-		transcodeTask.setInputFilePath(file.getFilePath());
+		transcodeTask.setInputFilePath(getFilePath(cpFtp, file.getFilePath()));
 		transcodeTask.setInputSubtitleFilePath(file.getSubtitleFilePath());
 
 		if (YesNoEnum.YES.getKey() == transcodeRequest.getCoverFile()
@@ -812,7 +822,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 
 	private TranscodeTask produceImageTask(TranscodeRequest transcodeRequest,
 			TranscodeRequestFile file, MediaTemplate mediaTemplate,
-			Program program, MediaFile mediaFile) {
+			Program program, MediaFile mediaFile, CpFtp cpFtp) {
 		TranscodeTask transcodeTask = new TranscodeTask();
 		transcodeTask.setCpCode(transcodeRequest.getCpCode());
 
@@ -828,7 +838,7 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 		transcodeTask.setProfile(mediaTemplate.getExternalCode());
 		transcodeTask.setTimePoints(transcodeRequest.getTimePoints());
 
-		transcodeTask.setInputFilePath(file.getFilePath());
+		transcodeTask.setInputFilePath(getFilePath(cpFtp, file.getFilePath()));
 		transcodeTask.setInputSubtitleFilePath(file.getSubtitleFilePath());
 
 		String storagePath = program.getStoragePath();
@@ -847,6 +857,13 @@ public class TranscodeService extends AbstractService<TranscodeRequest, Long> {
 
 		genTranscodeTaskName(transcodeTask, file, program);
 		return transcodeTask;
+	}
+
+	private String getFilePath(CpFtp cpFtp, String filePath) {
+		if (cpFtp != null && StringUtils.isNotEmpty(cpFtp.getDirPath())) {
+			return StringUtils.trimToEmpty(cpFtp.getDirPath()) + filePath;
+		}
+		return filePath;
 	}
 
 	private String getTranscodeOutputPath(String cpCode) {

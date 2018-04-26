@@ -169,9 +169,8 @@ public class CpController extends AbstractController {
 		if (StringUtils.isNotEmpty(cpCode)) {
 			cpFtpInfo = cpFtpRepository.findOneByCpCode(cpCode);
 			if (cpFtpInfo != null) {
-				BeanInfoUtil
-						.bean2bean(cpFtp, cpFtpInfo,
-								"cpCode,ip,port,username,password,rootPath,defaultAccessPath");
+				BeanInfoUtil.bean2bean(cpFtp, cpFtpInfo,
+						"cpCode,ip,port,username,password,dirPath");
 			}
 		}
 		if (cpFtpInfo == null) {

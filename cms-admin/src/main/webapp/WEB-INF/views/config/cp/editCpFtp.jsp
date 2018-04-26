@@ -60,24 +60,13 @@
 						</div>
 
 						<div class="form-group">
-							<label class="control-label col-md-4">FTP根目录(<span
+							<label class="control-label col-md-4">FTP目录(<span
 								class="required">*</span>):
 							</label>
 
 							<div class="col-md-6">
-								<input type="text" name="rootPath" value="${cpFtp.rootPath}"
-									class="form-control validate[required]" placeholder="请输入FTP根目录">
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="control-label col-md-4">默认访问目录(<span
-								class="required">*</span>):
-							</label>
-
-							<div class="col-md-6">
-								<input type="text" name="defaultAccessPath"
-									value="${cpFtp.defaultAccessPath}"
-									class="form-control validate[required]" placeholder="请输入默认访问目录">
+								<input type="text" name="dirPath" value="${cpFtp.dirPath}"
+									class="form-control validate[required]" placeholder="请输入FTP目录">
 							</div>
 						</div>
 					</div>

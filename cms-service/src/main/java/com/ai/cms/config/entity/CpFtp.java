@@ -25,11 +25,8 @@ public class CpFtp extends AbstractEntity {
 
 	private String password;// 密码
 
-	@Column(name = "root_path")
-	private String rootPath = "/";// FTP根目录
-
-	@Column(name = "default_access_path")
-	private String defaultAccessPath = "/";// 默认访问目录
+	@Column(name = "dir_path")
+	private String dirPath = "/";// FTP目录
 
 	public String getCpCode() {
 		return cpCode;
@@ -71,20 +68,12 @@ public class CpFtp extends AbstractEntity {
 		this.password = password;
 	}
 
-	public String getRootPath() {
-		return rootPath;
+	public String getDirPath() {
+		return dirPath;
 	}
 
-	public void setRootPath(String rootPath) {
-		this.rootPath = rootPath;
-	}
-
-	public String getDefaultAccessPath() {
-		return defaultAccessPath;
-	}
-
-	public void setDefaultAccessPath(String defaultAccessPath) {
-		this.defaultAccessPath = defaultAccessPath;
+	public void setDirPath(String dirPath) {
+		this.dirPath = dirPath;
 	}
 
 }
