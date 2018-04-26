@@ -140,16 +140,16 @@ public class ServerToClient extends AbstractFTPClient {
 				finishSize += count;
 				double currentPercent = (finishSize * 1.0) / (totalSize * 1.0);
 				long now = System.currentTimeMillis();
-				if (currentPercent - finishPercent > 0.01
+				if (finishSize == totalSize) {
+					finishPercent = currentPercent;
+					callback.success(taskId);
+				} else if (currentPercent - finishPercent > 0.01
 						|| (now - startTime) > 60 * 1000l) {
 					finishPercent = currentPercent;
 					startTime = now;
 					if (!callback.percent(taskId, finishPercent)) {
 						break;
 					}
-				} else if (finishSize == totalSize) {
-					finishPercent = currentPercent;
-					callback.success(taskId);
 				} else if (finishSize > totalSize) {
 
 				}
@@ -222,16 +222,18 @@ public class ServerToClient extends AbstractFTPClient {
 				finishSize += count;
 				double currentPercent = (finishSize * 1.0) / (totalSize * 1.0);
 				long now = System.currentTimeMillis();
-				if (currentPercent - finishPercent > 0.01
+				if (finishSize == totalSize) {
+					finishPercent = currentPercent;
+					callback.success(taskId);
+				} else if (currentPercent - finishPercent > 0.01
 						|| (now - startTime) > 60 * 1000l) {
 					finishPercent = currentPercent;
 					startTime = now;
 					if (!callback.percent(taskId, finishPercent)) {
 						break;
 					}
-				} else if (finishSize >= totalSize) {
-					finishPercent = currentPercent;
-					callback.success(taskId);
+				} else if (finishSize > totalSize) {
+
 				}
 			}
 			return true;
