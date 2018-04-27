@@ -29,7 +29,6 @@ import com.ai.cms.media.service.ProgramImportService;
 import com.ai.cms.media.service.SeriesImportService;
 import com.ai.common.bean.BaseResult;
 import com.ai.common.bean.PageInfo;
-import com.ai.common.controller.AbstractImageController;
 import com.ai.common.enums.AuditStatusEnum;
 import com.ai.common.enums.MediaImportTypeEnum;
 import com.ai.common.enums.YesNoEnum;
@@ -41,8 +40,8 @@ import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.security.SecurityUtils;
 
 @Controller
-@RequestMapping(value = { "/media/mediaImport" })
-public class MediaImportController extends AbstractImageController {
+@RequestMapping(value = { "/media/mediaImportAudit" })
+public class MediaImportAuditController extends MediaImportController {
 
 	@Autowired
 	private ConfigService configService;
@@ -69,7 +68,9 @@ public class MediaImportController extends AbstractImageController {
 		filters.add(new PropertyFilter("siteCode__EQ_S", AdminGlobal
 				.getSiteCode()));
 		filters.add(new PropertyFilter("auditStatus__EQ_S", ""
-				+ AuditStatusEnum.AUDIT_FIRST_PASS.getKey()));
+				+ AuditStatusEnum.EDIT.getKey() + ","
+				+ AuditStatusEnum.AUDIT_WAIT.getKey() + ","
+				+ AuditStatusEnum.AUDIT_NOT_PASS.getKey()));
 		if (SecurityUtils.getCpCode() != null) {
 			filters.add(new PropertyFilter("cpCode__INMASK_S", ""
 					+ SecurityUtils.getCpCode()));
@@ -85,10 +86,10 @@ public class MediaImportController extends AbstractImageController {
 		model.addAttribute("typeEnum", MediaImportTypeEnum.values());
 		model.addAttribute("yesNoEnum", YesNoEnum.values());
 
-		return "media/mediaImport/list";
+		return "media/mediaImportAudit/list";
 	}
 
-	@RequiresPermissions("media:media:batchImport")
+	@RequiresPermissions("media:mediaAudit:batchImport")
 	@RequestMapping(value = { "import/{type}" }, method = RequestMethod.GET)
 	public String toImport(Model model, @PathVariable("type") Integer type) {
 		MediaImport mediaImport = new MediaImport();
@@ -98,11 +99,11 @@ public class MediaImportController extends AbstractImageController {
 		model.addAttribute("typeEnum", MediaImportTypeEnum.values());
 		model.addAttribute("yesNoEnum", YesNoEnum.values());
 
-		return "media/mediaImport/edit";
+		return "media/mediaImportAudit/edit";
 	}
 
-	@OperationLogAnnotation(module = "媒资管理", subModule = "媒资管理", action = "批量导入", message = "批量导入")
-	@RequiresPermissions("media:media:batchImport")
+	@OperationLogAnnotation(module = "媒资审核", subModule = "媒资审核", action = "批量导入", message = "批量导入")
+	@RequiresPermissions("media:mediaAudit:batchImport")
 	@RequestMapping(value = { "import" }, method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult importMediaData(MultipartFile file,
@@ -112,8 +113,9 @@ public class MediaImportController extends AbstractImageController {
 			mediaImport.setFileName(fileName);
 			mediaImport.setSiteCode(AdminGlobal.getSiteCode());
 			mediaImport.setCpCode(SecurityUtils.getCpCode());
-			mediaImport.setAuditStatus(""
-					+ AuditStatusEnum.AUDIT_FIRST_PASS.getKey());
+			mediaImport.setAuditStatus("" + AuditStatusEnum.EDIT.getKey() + ","
+					+ AuditStatusEnum.AUDIT_WAIT.getKey() + ","
+					+ AuditStatusEnum.AUDIT_NOT_PASS.getKey());
 
 			int headerRowNum = 2;
 			ImportExcel importExcel = new ImportExcel(file, headerRowNum, 0);

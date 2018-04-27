@@ -42,6 +42,12 @@ public class MediaImport extends AbstractEntity {
 	@Column(name = "site_code")
 	private String siteCode;// 渠道代码
 
+	@Column(name = "audit_status")
+	private String auditStatus;// 审核状态
+
+	@Column(name = "cp_code")
+	private String cpCode; // 内容提供商代码
+
 	public Integer getType() {
 		return type;
 	}
@@ -112,6 +118,22 @@ public class MediaImport extends AbstractEntity {
 
 	public void setSiteCode(String siteCode) {
 		this.siteCode = siteCode;
+	}
+
+	public String getAuditStatus() {
+		return auditStatus;
+	}
+
+	public void setAuditStatus(String auditStatus) {
+		this.auditStatus = auditStatus;
+	}
+
+	public String getCpCode() {
+		return cpCode;
+	}
+
+	public void setCpCode(String cpCode) {
+		this.cpCode = cpCode;
 	}
 
 }

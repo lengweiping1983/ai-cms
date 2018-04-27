@@ -1,6 +1,7 @@
 package com.ai.cms.media.service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import com.ai.cms.media.entity.Series;
 import com.ai.cms.media.repository.MediaImportRepository;
 import com.ai.cms.media.repository.ProgramRepository;
 import com.ai.cms.media.repository.SeriesRepository;
+import com.ai.common.enums.AuditStatusEnum;
 import com.ai.common.enums.ContentTypeEnum;
 import com.ai.common.enums.ProgramTypeEnum;
 import com.ai.common.enums.SourceEnum;
@@ -159,9 +161,25 @@ public class ProgramImportService extends AbstractService<MediaImport, Long> {
 			Program program) {
 		if (program == null) {
 			if (mediaImport.getCreateMetadata() == YesNoEnum.YES.getKey()) {
+				if (StringUtils.isNotEmpty(log.getType())
+						&& ProgramTypeEnum.getKeyByValue(log.getType()) == ProgramTypeEnum.MOVIE
+								.getKey()) {
+					long existNum = programRepository
+							.countByName(log.getName());
+					if (existNum > 0) {
+						throw new ServiceException("节目[" + log.getName()
+								+ "]已存在！");
+					}
+				}
 				program = new Program();
 				program.setSource(SourceEnum.BATCH_IMPORT.getKey());
-
+				program.setCpCode(cpCode);
+				if (mediaImport.getAuditStatus().equals(
+						"" + AuditStatusEnum.AUDIT_FIRST_PASS.getKey())) {
+					program.setAuditStatus(AuditStatusEnum.AUDIT_FIRST_PASS
+							.getKey());
+					program.setStorageTime(new Date());
+				}
 				if (StringUtils.isNotEmpty(log.getType())
 						&& ProgramTypeEnum.getKeyByValue(log.getType()) == ProgramTypeEnum.TV
 								.getKey()
@@ -176,7 +194,35 @@ public class ProgramImportService extends AbstractService<MediaImport, Long> {
 			} else {
 				return;
 			}
+		} else {
+			if (StringUtils.isNotEmpty(log.getType())
+					&& ProgramTypeEnum.getKeyByValue(log.getType()) == ProgramTypeEnum.MOVIE
+							.getKey()) {
+				long existNum = programRepository.countByNameAndNotId(
+						log.getName(), program.getId());
+				if (existNum > 0) {
+					throw new ServiceException("节目[" + log.getName() + "]已存在！");
+				}
+			}
 		}
+		List<String> auditStatusList = Arrays.asList(mediaImport
+				.getAuditStatus().split(","));
+		if (!auditStatusList.contains("" + program.getAuditStatus())) {
+			throw new ServiceException("节目[" + log.getName() + "]不能导入！审核状态不一致！");
+		}
+		if (StringUtils.isNotEmpty(mediaImport.getCpCode())) {
+			if (StringUtils.isEmpty(program.getCpCode())) {
+				throw new ServiceException("节目[" + log.getName()
+						+ "]不能导入！内容不属于该提供商！");
+			}
+			List<String> cpCodeList = Arrays.asList(program.getCpCode().split(
+					","));
+			if (!cpCodeList.contains(mediaImport.getCpCode())) {
+				throw new ServiceException("节目[" + log.getName()
+						+ "]不能导入！内容不属于该提供商！");
+			}
+		}
+
 		if (StringUtils.isNotEmpty(log.getType())) {
 			program.setType(ProgramTypeEnum.getKeyByValue(log.getType()));
 		}

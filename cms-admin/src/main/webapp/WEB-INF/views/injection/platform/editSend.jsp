@@ -340,7 +340,10 @@
 													<c:if test="${! empty injectionPlatform.playCodeCustom && item.key eq injectionPlatform.playCodeCustom}"> selected="selected" </c:if>>${item.value}</option>
 											</c:forEach>
 										</select>
-										<p class="help-block">播放代码是否是全局代码.</p>
+										<p class="help-block">
+											<span class="badge badge-success">否</span>下平台不改变代码<br />
+											<span class="badge badge-success">是</span>下平台改变代码
+										</p>
 									</div>
 								</div>
 							</div>

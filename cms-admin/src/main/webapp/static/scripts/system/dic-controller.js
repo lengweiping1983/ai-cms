@@ -32,6 +32,24 @@ $(function () {
             })
         },
 
+        add: function () {
+            if (!$("#dic_edit_form").validationEngine("validate")) {
+                return false;
+            }
+            var json = $("#dic_edit_form").serializeObject();
+            var url = contextPath + "/system/dic/add";
+            $.common.ajaxAction({
+                url: url,
+                data: json,
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    $.common.hideModal();
+                    $.Page.refreshCurrentPage();
+                }
+            });
+        },
+        
         edit: function () {
             if (!$("#dic_edit_form").validationEngine("validate")) {
                 return false;

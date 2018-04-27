@@ -1,5 +1,6 @@
 package com.ai.cms.media.service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -182,6 +183,22 @@ public class MediaFileImportService extends AbstractService<MediaImport, Long> {
 		if (program == null || mediaFile == null) {
 			return;
 		}
+		List<String> auditStatusList = Arrays.asList(mediaImport
+				.getAuditStatus().split(","));
+		if (!auditStatusList.contains("" + program.getAuditStatus())) {
+			throw new ServiceException("节目[" + program.getName() + "]不能操作！");
+		}
+		if (StringUtils.isNotEmpty(mediaImport.getCpCode())) {
+			if (StringUtils.isEmpty(program.getCpCode())) {
+				throw new ServiceException("节目[" + program.getName() + "]不能操作！");
+			}
+			List<String> cpCodeList = Arrays.asList(program.getCpCode().split(
+					","));
+			if (!cpCodeList.contains(mediaImport.getCpCode())) {
+				throw new ServiceException("节目[" + program.getName() + "]不能操作！");
+			}
+		}
+
 		if (StringUtils.isNotEmpty(log.getDuration())) {
 			try {
 				mediaFile.setDuration(Integer.valueOf(log.getDuration()));

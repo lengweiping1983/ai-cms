@@ -1,6 +1,7 @@
 package com.ai.cms.media.service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.ai.cms.media.entity.Series;
 import com.ai.cms.media.repository.MediaImportRepository;
 import com.ai.cms.media.repository.ProgramRepository;
 import com.ai.cms.media.repository.SeriesRepository;
+import com.ai.common.enums.AuditStatusEnum;
 import com.ai.common.enums.ContentTypeEnum;
 import com.ai.common.enums.SeriesTypeEnum;
 import com.ai.common.enums.SourceEnum;
@@ -146,15 +148,51 @@ public class SeriesImportService extends AbstractService<MediaImport, Long> {
 
 	@Transactional(value = "slaveTransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void updateSeries(MediaImport mediaImport, int row,
-			SeriesImportLog log, Integer contentType, String cpCode, Series series) {
+			SeriesImportLog log, Integer contentType, String cpCode,
+			Series series) {
 		if (series == null) {
 			if (mediaImport.getCreateMetadata() == YesNoEnum.YES.getKey()) {
+				long existNum = seriesRepository.countByName(log.getName());
+				if (existNum > 0) {
+					throw new ServiceException("剧头[" + log.getName() + "]已存在！");
+				}
 				series = new Series();
 				series.setSource(SourceEnum.BATCH_IMPORT.getKey());
+				series.setCpCode(cpCode);
+				if (mediaImport.getAuditStatus().equals(
+						"" + AuditStatusEnum.AUDIT_FIRST_PASS.getKey())) {
+					series.setAuditStatus(AuditStatusEnum.AUDIT_FIRST_PASS
+							.getKey());
+					series.setStorageTime(new Date());
+				}
 			} else {
 				return;
 			}
+		} else {
+			long existNum = seriesRepository.countByNameAndNotId(log.getName(),
+					series.getId());
+			if (existNum > 0) {
+				throw new ServiceException("剧头[" + log.getName() + "]已存在！");
+			}
 		}
+		List<String> auditStatusList = Arrays.asList(mediaImport
+				.getAuditStatus().split(","));
+		if (!auditStatusList.contains("" + series.getAuditStatus())) {
+			throw new ServiceException("剧头[" + log.getName() + "]不能导入！审核状态不一致！");
+		}
+		if (StringUtils.isNotEmpty(mediaImport.getCpCode())) {
+			if (StringUtils.isEmpty(series.getCpCode())) {
+				throw new ServiceException("剧头[" + log.getName()
+						+ "]不能导入！内容不属于该提供商！");
+			}
+			List<String> cpCodeList = Arrays.asList(series.getCpCode().split(
+					","));
+			if (!cpCodeList.contains(mediaImport.getCpCode())) {
+				throw new ServiceException("剧头[" + log.getName()
+						+ "]不能导入！内容不属于该提供商！");
+			}
+		}
+
 		if (StringUtils.isNotEmpty(log.getType())) {
 			series.setType(SeriesTypeEnum.getKeyByValue(log.getType()));
 		}

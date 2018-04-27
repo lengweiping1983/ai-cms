@@ -109,7 +109,7 @@
 			</div>
 			<div class="modal-footer">
 				<button id="MediaImportSave" class="btn btn-outline green"
-					onclick="$.MediaImportController.edit('${ctx}/media/mediaImport/import');">
+					onclick="$.MediaImportController.edit('${ctx}/media/mediaImportAudit/import');">
 					<i class="fa fa-save"></i>确定导入
 				</button>
 				<button class="btn grey-salsa btn-outline" data-dismiss="modal"
