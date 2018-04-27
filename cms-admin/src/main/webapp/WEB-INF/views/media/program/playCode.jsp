@@ -7,7 +7,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
 					aria-hidden="true"></button>
-				<h4 class="modal-title">录入全局代码</h4>
+				<h4 class="modal-title">录入代码</h4>
 			</div>
 			<div class="modal-body">
 				<form id="editForm">
@@ -16,12 +16,24 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
-									<label class="control-label col-md-3">全局代码:
-									</label>
+									<label class="control-label col-md-3">全局代码: </label>
+
+									<div class="col-md-7">
+										<input type="text" name="globalCode"
+											value="${program.globalCode}" class="form-control"
+											placeholder="请输入全局代码">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label col-md-3">播放代码: </label>
 
 									<div class="col-md-7">
 										<input type="text" name="playCode" value="${program.playCode}"
-											class="form-control" placeholder="请输入全局代码">
+											class="form-control" placeholder="请输入播放代码">
 									</div>
 								</div>
 							</div>

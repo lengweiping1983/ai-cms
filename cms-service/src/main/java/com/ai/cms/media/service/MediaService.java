@@ -44,7 +44,7 @@ public class MediaService extends AbstractService<Series, Long> {
 
 	@Autowired
 	private MediaFileRepository mediaFileRepository;
-	
+
 	@Autowired
 	private MediaImageRepository mediaImageRepository;
 
@@ -88,7 +88,7 @@ public class MediaService extends AbstractService<Series, Long> {
 		}
 		return null;
 	}
-	
+
 	public MediaImage findMediaImageByCloudId(String cloudId) {
 		List<MediaImage> list = mediaImageRepository.findByCloudId(cloudId);
 		if (list != null && list.size() > 0) {
@@ -120,7 +120,7 @@ public class MediaService extends AbstractService<Series, Long> {
 		}
 		return null;
 	}
-	
+
 	public MediaImage findMediaImageByCloudCode(String cloudCode) {
 		List<MediaImage> list = mediaImageRepository.findByCloudCode(cloudCode);
 		if (list != null && list.size() > 0) {
@@ -147,8 +147,8 @@ public class MediaService extends AbstractService<Series, Long> {
 
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void updateCpCodeBySeriesId(Series series) {
-		programRepository
-				.updateCpCodeBySeriesId(series.getId(), series.getCpCode());
+		programRepository.updateCpCodeBySeriesId(series.getId(),
+				series.getCpCode());
 	}
 
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
@@ -187,7 +187,7 @@ public class MediaService extends AbstractService<Series, Long> {
 		setMediaFileSpec(mediaFile, mediaFile.getTemplateId());
 		mediaFileRepository.save(mediaFile);
 	}
-	
+
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void saveMediaImage(MediaImage mediaImage) {
 		mediaImageRepository.save(mediaImage);
@@ -242,7 +242,7 @@ public class MediaService extends AbstractService<Series, Long> {
 			updateProgramMediaStatus(mediaFile.getProgramId(), true);
 		}
 	}
-	
+
 	@Transactional(value = "slaveTransactionManager", readOnly = false)
 	public void deleteMediaImage(MediaImage mediaImage) {
 		if (mediaImage != null) {

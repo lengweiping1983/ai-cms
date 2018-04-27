@@ -107,8 +107,11 @@ public class MediaFile extends AbstractEntity {
 	@Column(name = "receive_code")
 	private String receiveCode;// 接收到的代码
 
+	@Column(name = "global_code")
+	private String globalCode;// 全局代码
+
 	@Column(name = "play_code")
-	private String playCode;// 全局代码
+	private String playCode;// 播放代码
 
 	@Column(name = "play_code_status")
 	private Integer playCodeStatus = PlayCodeStatusEnum.DEFAULT.getKey();// 播放代码状态
@@ -363,6 +366,14 @@ public class MediaFile extends AbstractEntity {
 
 	public void setReceiveCode(String receiveCode) {
 		this.receiveCode = receiveCode;
+	}
+
+	public String getGlobalCode() {
+		return globalCode;
+	}
+
+	public void setGlobalCode(String globalCode) {
+		this.globalCode = globalCode;
 	}
 
 	public String getPlayCode() {

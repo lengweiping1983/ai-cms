@@ -429,7 +429,6 @@ public class MediaFileController extends AbstractController {
 		MediaFile operationObjectList = null;
 		MediaFile mediaFileInfo = mediaFileRepository.findOne(id);
 		if (mediaFileInfo != null) {
-			mediaFileInfo.setPlayCode(imageBean.getData().getPlayCode());
 			if (StringUtils.isNotEmpty(imageBean.getData().getPlayCode())) {
 				mediaFileInfo.setPlayCodeStatus(PlayCodeStatusEnum.INPUT
 						.getKey());
@@ -437,6 +436,8 @@ public class MediaFileController extends AbstractController {
 				mediaFileInfo.setPlayCodeStatus(PlayCodeStatusEnum.DEFAULT
 						.getKey());
 			}
+			mediaFileInfo.setPlayCode(imageBean.getData().getPlayCode());
+			mediaFileInfo.setGlobalCode(imageBean.getData().getGlobalCode());
 			mediaService.saveMediaFileAndMediaStatus(mediaFileInfo,
 					mediaFileInfo.getFilePath(), mediaFileInfo.getTemplateId());
 			operationObjectList = mediaFileInfo;

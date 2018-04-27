@@ -673,8 +673,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			injectionObject.setItemId(series.getId());
 		}
 		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()
-				&& StringUtils.isNotEmpty(series.getPlayCode())) {
-			injectionObject.setPartnerItemCode(series.getPlayCode());
+				&& StringUtils.isNotEmpty(series.getGlobalCode())) {
+			injectionObject.setPartnerItemCode(series.getGlobalCode());
 		}
 		return injectionObject;
 	}
@@ -692,8 +692,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			injectionObject.setItemParentId(program.getSeriesId());
 		}
 		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()
-				&& StringUtils.isNotEmpty(program.getPlayCode())) {
-			injectionObject.setPartnerItemCode(program.getPlayCode());
+				&& StringUtils.isNotEmpty(program.getGlobalCode())) {
+			injectionObject.setPartnerItemCode(program.getGlobalCode());
 		}
 		return injectionObject;
 	}
@@ -711,8 +711,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			injectionObject.setItemParentId(mediaFile.getProgramId());
 		}
 		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()
-				&& StringUtils.isNotEmpty(mediaFile.getPlayCode())) {
-			injectionObject.setPartnerItemCode(mediaFile.getPlayCode());
+				&& StringUtils.isNotEmpty(mediaFile.getGlobalCode())) {
+			injectionObject.setPartnerItemCode(mediaFile.getGlobalCode());
 		}
 		return injectionObject;
 	}

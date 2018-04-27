@@ -864,6 +864,7 @@ public class ProgramController extends AbstractImageController {
 						.getKey());
 			}
 			programInfo.setPlayCode(imageBean.getData().getPlayCode());
+			programInfo.setGlobalCode(imageBean.getData().getGlobalCode());
 			mediaService.saveProgram(programInfo);
 			operationObjectList = programInfo;
 		} else {

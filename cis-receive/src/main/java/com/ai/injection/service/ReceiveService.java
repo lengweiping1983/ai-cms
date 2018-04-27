@@ -382,7 +382,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 		series.setReceiveCode(seriesBean.getCode());
 		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()) {
-			series.setPlayCode(seriesBean.getCode());
+			series.setGlobalCode(seriesBean.getCode());
 		}
 		try {
 			mediaService.saveSeries(series);
@@ -561,7 +561,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 		program.setReceiveCode(programBean.getCode());
 		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()) {
-			program.setPlayCode(programBean.getCode());
+			program.setGlobalCode(programBean.getCode());
 		}
 		try {
 			mediaService.saveProgram(program);
@@ -656,7 +656,7 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 
 		mediaFile.setReceiveCode(movieBean.getCode());
 		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()) {
-			mediaFile.setPlayCode(movieBean.getCode());
+			mediaFile.setGlobalCode(movieBean.getCode());
 		}
 		mediaService.saveMediaFile(mediaFile);
 

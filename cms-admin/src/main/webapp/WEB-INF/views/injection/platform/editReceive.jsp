@@ -217,7 +217,7 @@
 												</c:if>
 											</c:forEach>
 										</div>
-										<p class="help-block">等依赖平台都处理后，才回复消息.</p>
+										<p class="help-block">等待依赖平台都处理后，才回复通知消息.</p>
 									</div>
 								</div>
 							</div>
