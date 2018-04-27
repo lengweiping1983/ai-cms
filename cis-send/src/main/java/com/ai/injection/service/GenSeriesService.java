@@ -50,7 +50,7 @@ public class GenSeriesService extends GenCommonService {
 			throw new DataException("剧头不存在！");
 		}
 		InjectionObject seriesInjectionObject = injectionService
-				.getAndNewInjectionObject(series, sendTask.getPlatformId(),
+				.getAndNewInjectionObject(series, platform,
 						sendTask.getCategory());
 
 		// 如是业务系统，需要检查依赖平台是否都分发成功，如都分发成功才向业务系统发送

@@ -58,7 +58,7 @@ public class GenProgramService extends GenCommonService {
 			throw new DataException("节目不存在！");
 		}
 		InjectionObject programInjectionObject = injectionService
-				.getAndNewInjectionObject(program, sendTask.getPlatformId(),
+				.getAndNewInjectionObject(program, platform,
 						sendTask.getCategory());
 
 		// 如是业务系统，需要检查依赖平台是否都分发成功，如都分发成功才向业务系统发送
@@ -270,8 +270,7 @@ public class GenProgramService extends GenCommonService {
 			Series series = seriesRepository.findOne(program.getSeriesId());
 			if (series != null) {
 				InjectionObject seriesInjectionObject = injectionService
-						.getAndNewInjectionObject(series,
-								sendTask.getPlatformId(),
+						.getAndNewInjectionObject(series, platform,
 								sendTask.getCategory());
 				MappingBean mappingBean = genCreateSeriesMappingBean(series,
 						seriesInjectionObject, program, programInjectionObject);
@@ -407,8 +406,7 @@ public class GenProgramService extends GenCommonService {
 			Series series = seriesRepository.findOne(program.getSeriesId());
 			if (series != null) {
 				InjectionObject seriesInjectionObject = injectionService
-						.getAndNewInjectionObject(series,
-								sendTask.getPlatformId(),
+						.getAndNewInjectionObject(series, platform,
 								sendTask.getCategory());
 				MappingBean mappingBean = genCreateSeriesMappingBean(series,
 						seriesInjectionObject, program, programInjectionObject);
@@ -470,8 +468,7 @@ public class GenProgramService extends GenCommonService {
 			MediaFile mediaFile = mediaFileRepository.findOne(Long.valueOf(id));
 			if (mediaFile != null) {
 				InjectionObject mediaFileInjectionObject = injectionService
-						.getAndNewInjectionObject(mediaFile,
-								programInjectionObject.getPlatformId(),
+						.getAndNewInjectionObject(mediaFile, platform,
 								programInjectionObject.getCategory());
 				if (sendTask.getAction() == InjectionActionTypeEnum.CREATE
 						.getKey()) {

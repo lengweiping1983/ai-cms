@@ -122,7 +122,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		Integer injectionStatus = getInjectionObjectInjectionStatus(subInjectionObjectList);
 
 		InjectionObject programInjectionObject = getAndNewInjectionObject(
-				program, injectionPlatform.getId(), category);
+				program, injectionPlatform, category);
 		programInjectionObject.setInjectionStatus(injectionStatus);
 		injectionObjectRepository.save(programInjectionObject);
 
@@ -153,7 +153,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		Integer injectionStatus = getInjectionObjectInjectionStatus(subInjectionObjectList);
 
 		InjectionObject seriesInjectionObject = getAndNewInjectionObject(
-				series, injectionPlatform.getId(), category);
+				series, injectionPlatform, category);
 		seriesInjectionObject.setInjectionStatus(injectionStatus);
 		injectionObjectRepository.save(seriesInjectionObject);
 
@@ -649,13 +649,13 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	}
 
 	public InjectionObject getAndNewInjectionObject(Series series,
-			Long platformId, String category) {
+			InjectionPlatform platform, String category) {
 		InjectionObject injectionObject = injectionObjectRepository
-				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(platformId,
-						category, InjectionItemTypeEnum.SERIES.getKey(),
-						series.getId());
+				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(
+						platform.getId(), category,
+						InjectionItemTypeEnum.SERIES.getKey(), series.getId());
 		if (injectionObject == null) {
-			injectionObject = new InjectionObject(platformId, category);
+			injectionObject = new InjectionObject(platform.getId(), category);
 			injectionObject.setItemType(InjectionItemTypeEnum.SERIES.getKey());
 			injectionObject.setItemId(series.getId());
 		}
@@ -666,13 +666,13 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	}
 
 	public InjectionObject getAndNewInjectionObject(Program program,
-			Long platformId, String category) {
+			InjectionPlatform platform, String category) {
 		InjectionObject injectionObject = injectionObjectRepository
-				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(platformId,
-						category, InjectionItemTypeEnum.PROGRAM.getKey(),
-						program.getId());
+				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(
+						platform.getId(), category,
+						InjectionItemTypeEnum.PROGRAM.getKey(), program.getId());
 		if (injectionObject == null) {
-			injectionObject = new InjectionObject(platformId, category);
+			injectionObject = new InjectionObject(platform.getId(), category);
 			injectionObject.setItemType(InjectionItemTypeEnum.PROGRAM.getKey());
 			injectionObject.setItemId(program.getId());
 			injectionObject.setItemParentId(program.getSeriesId());
@@ -684,13 +684,13 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	}
 
 	public InjectionObject getAndNewInjectionObject(MediaFile mediaFile,
-			Long platformId, String category) {
+			InjectionPlatform platform, String category) {
 		InjectionObject injectionObject = injectionObjectRepository
-				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(platformId,
-						category, InjectionItemTypeEnum.MOVIE.getKey(),
-						mediaFile.getId());
+				.findOneByPlatformIdAndCategoryAndItemTypeAndItemId(
+						platform.getId(), category,
+						InjectionItemTypeEnum.MOVIE.getKey(), mediaFile.getId());
 		if (injectionObject == null) {
-			injectionObject = new InjectionObject(platformId, category);
+			injectionObject = new InjectionObject(platform.getId(), category);
 			injectionObject.setItemType(InjectionItemTypeEnum.MOVIE.getKey());
 			injectionObject.setItemId(mediaFile.getId());
 			injectionObject.setItemParentId(mediaFile.getProgramId());
@@ -795,7 +795,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			Map<String, String> categoryMap = getCategoryMapByTemplateIds(templateIds[i]);
 			for (String category : categoryMap.keySet()) {
 				InjectionObject seriesInjectionObject = getAndNewInjectionObject(
-						series, platformIds[i], category);
+						series, injectionPlatform, category);
 				inInjection(injectionPlatform, series, seriesInjectionObject,
 						category, categoryMap.get(category), prioritys[i],
 						cpCode);
@@ -840,13 +840,17 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 							.getIndirectPlatformId())) {
 				for (String indirectPlatformId : injectionPlatform
 						.getIndirectPlatformId().split(",")) {
-					InjectionObject tempInjectionObject = getAndNewInjectionObject(
-							series, Long.valueOf(indirectPlatformId),
-							seriesInjectionObject.getCategory());
-					tempInjectionObject
-							.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-									.getKey());
-					injectionObjectRepository.save(tempInjectionObject);
+					InjectionPlatform indirectPlatform = injectionPlatformRepository
+							.findOne(Long.valueOf(indirectPlatformId));
+					if (indirectPlatform != null) {
+						InjectionObject tempInjectionObject = getAndNewInjectionObject(
+								series, indirectPlatform,
+								seriesInjectionObject.getCategory());
+						tempInjectionObject
+								.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+										.getKey());
+						injectionObjectRepository.save(tempInjectionObject);
+					}
 				}
 			}
 		}
@@ -856,7 +860,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				.getId());
 		for (Program program : programList) {
 			InjectionObject programInjectionObject = getAndNewInjectionObject(
-					program, seriesInjectionObject.getPlatformId(),
+					program, injectionPlatform,
 					seriesInjectionObject.getCategory());
 			inInjection(injectionPlatform, series, seriesInjectionObject,
 					program, programInjectionObject, category, templateId,
@@ -885,7 +889,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				InjectionObject seriesInjectionObject = null;
 				if (series != null) {
 					seriesInjectionObject = getAndNewInjectionObject(series,
-							platformIds[i], category);
+							injectionPlatform, category);
 				}
 				Long preTaskId = null;
 				// 判断剧头是否有分发
@@ -904,7 +908,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				}
 
 				InjectionObject programInjectionObject = getAndNewInjectionObject(
-						program, platformIds[i], category);
+						program, injectionPlatform, category);
 				inInjection(injectionPlatform, series, seriesInjectionObject,
 						program, programInjectionObject, category,
 						categoryMap.get(category), prioritys[i], cpCode,
@@ -977,13 +981,17 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 							.getIndirectPlatformId())) {
 				for (String indirectPlatformId : injectionPlatform
 						.getIndirectPlatformId().split(",")) {
-					InjectionObject tempInjectionObject = getAndNewInjectionObject(
-							program, Long.valueOf(indirectPlatformId),
-							programInjectionObject.getCategory());
-					tempInjectionObject
-							.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-									.getKey());
-					injectionObjectRepository.save(tempInjectionObject);
+					InjectionPlatform indirectPlatform = injectionPlatformRepository
+							.findOne(Long.valueOf(indirectPlatformId));
+					if (indirectPlatform != null) {
+						InjectionObject tempInjectionObject = getAndNewInjectionObject(
+								program, indirectPlatform,
+								programInjectionObject.getCategory());
+						tempInjectionObject
+								.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+										.getKey());
+						injectionObjectRepository.save(tempInjectionObject);
+					}
 				}
 			}
 
@@ -991,7 +999,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 
 		for (MediaFile mediaFile : mediaFileList) {
 			InjectionObject mediaFileInjectionObject = getAndNewInjectionObject(
-					mediaFile, programInjectionObject.getPlatformId(),
+					mediaFile, injectionPlatform,
 					programInjectionObject.getCategory());
 			inInjection(injectionPlatform, series, program,
 					programInjectionObject, mediaFile,
@@ -1049,13 +1057,17 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 							.getIndirectPlatformId())) {
 				for (String indirectPlatformId : injectionPlatform
 						.getIndirectPlatformId().split(",")) {
-					InjectionObject tempInjectionObject = getAndNewInjectionObject(
-							mediaFile, Long.valueOf(indirectPlatformId),
-							mediaFileInjectionObject.getCategory());
-					tempInjectionObject
-							.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
-									.getKey());
-					injectionObjectRepository.save(tempInjectionObject);
+					InjectionPlatform indirectPlatform = injectionPlatformRepository
+							.findOne(Long.valueOf(indirectPlatformId));
+					if (indirectPlatform != null) {
+						InjectionObject tempInjectionObject = getAndNewInjectionObject(
+								mediaFile, indirectPlatform,
+								mediaFileInjectionObject.getCategory());
+						tempInjectionObject
+								.setInjectionStatus(InjectionStatusEnum.INJECTION_WAIT
+										.getKey());
+						injectionObjectRepository.save(tempInjectionObject);
+					}
 				}
 			}
 		}
@@ -1078,7 +1090,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			Map<String, String> categoryMap = getCategoryMapByTemplateIds(templateIds[i]);
 			for (String category : categoryMap.keySet()) {
 				InjectionObject seriesInjectionObject = getAndNewInjectionObject(
-						series, platformIds[i], category);
+						series, injectionPlatform, category);
 				outInjection(injectionPlatform, series, seriesInjectionObject,
 						category, categoryMap.get(category), prioritys[i],
 						cpCode);
@@ -1095,7 +1107,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				.getId());
 		for (Program program : programList) {
 			InjectionObject programInjectionObject = getAndNewInjectionObject(
-					program, seriesInjectionObject.getPlatformId(),
+					program, injectionPlatform,
 					seriesInjectionObject.getCategory());
 			outInjection(injectionPlatform, series, seriesInjectionObject,
 					program, programInjectionObject, category, templateId,
@@ -1128,13 +1140,17 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 							.getIndirectPlatformId())) {
 				for (String indirectPlatformId : injectionPlatform
 						.getIndirectPlatformId().split(",")) {
-					InjectionObject tempInjectionObject = getAndNewInjectionObject(
-							series, Long.valueOf(indirectPlatformId),
-							seriesInjectionObject.getCategory());
-					tempInjectionObject
-							.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
-									.getKey());
-					injectionObjectRepository.save(tempInjectionObject);
+					InjectionPlatform indirectPlatform = injectionPlatformRepository
+							.findOne(Long.valueOf(indirectPlatformId));
+					if (indirectPlatform != null) {
+						InjectionObject tempInjectionObject = getAndNewInjectionObject(
+								series, indirectPlatform,
+								seriesInjectionObject.getCategory());
+						tempInjectionObject
+								.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+										.getKey());
+						injectionObjectRepository.save(tempInjectionObject);
+					}
 				}
 			}
 		}
@@ -1160,11 +1176,11 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				InjectionObject seriesInjectionObject = null;
 				if (series != null) {
 					seriesInjectionObject = getAndNewInjectionObject(series,
-							platformIds[i], category);
+							injectionPlatform, category);
 				}
 
 				InjectionObject programInjectionObject = getAndNewInjectionObject(
-						program, platformIds[i], category);
+						program, injectionPlatform, category);
 
 				outInjection(injectionPlatform, series, seriesInjectionObject,
 						program, programInjectionObject, category,
@@ -1192,7 +1208,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 
 		for (MediaFile mediaFile : mediaFileList) {
 			InjectionObject mediaFileInjectionObject = getAndNewInjectionObject(
-					mediaFile, programInjectionObject.getPlatformId(),
+					mediaFile, injectionPlatform,
 					programInjectionObject.getCategory());
 			outInjection(injectionPlatform, series, program,
 					programInjectionObject, mediaFile,
@@ -1228,13 +1244,17 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 							.getIndirectPlatformId())) {
 				for (String indirectPlatformId : injectionPlatform
 						.getIndirectPlatformId().split(",")) {
-					InjectionObject tempInjectionObject = getAndNewInjectionObject(
-							program, Long.valueOf(indirectPlatformId),
-							programInjectionObject.getCategory());
-					tempInjectionObject
-							.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
-									.getKey());
-					injectionObjectRepository.save(tempInjectionObject);
+					InjectionPlatform indirectPlatform = injectionPlatformRepository
+							.findOne(Long.valueOf(indirectPlatformId));
+					if (indirectPlatform != null) {
+						InjectionObject tempInjectionObject = getAndNewInjectionObject(
+								program, indirectPlatform,
+								programInjectionObject.getCategory());
+						tempInjectionObject
+								.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+										.getKey());
+						injectionObjectRepository.save(tempInjectionObject);
+					}
 				}
 			}
 		}
@@ -1273,13 +1293,17 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 							.getIndirectPlatformId())) {
 				for (String indirectPlatformId : injectionPlatform
 						.getIndirectPlatformId().split(",")) {
-					InjectionObject tempInjectionObject = getAndNewInjectionObject(
-							mediaFile, Long.valueOf(indirectPlatformId),
-							mediaFileInjectionObject.getCategory());
-					tempInjectionObject
-							.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
-									.getKey());
-					injectionObjectRepository.save(tempInjectionObject);
+					InjectionPlatform indirectPlatform = injectionPlatformRepository
+							.findOne(Long.valueOf(indirectPlatformId));
+					if (indirectPlatform != null) {
+						InjectionObject tempInjectionObject = getAndNewInjectionObject(
+								mediaFile, indirectPlatform,
+								mediaFileInjectionObject.getCategory());
+						tempInjectionObject
+								.setInjectionStatus(InjectionStatusEnum.RECOVERY_WAIT
+										.getKey());
+						injectionObjectRepository.save(tempInjectionObject);
+					}
 				}
 			}
 		}
