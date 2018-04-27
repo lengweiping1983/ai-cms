@@ -343,7 +343,7 @@
 											</c:forEach>
 										</select>
 										<p class="help-block">
-											<span class="badge badge-success">否</span>代码根据规则生成，再发送给下平台<br />
+											<span class="badge badge-success">否</span>先根据规则生成代码，再发送给下平台<br />
 											<span class="badge badge-success">是</span>如全局代码存在时，直接使用全局代码发送给下平台
 										</p>
 									</div>
