@@ -309,7 +309,7 @@
 										</button> <shiro:hasPermission name="${permissionPrefix}playCode">
 											<button class="btn btn-default btn-sm btn-outline green"
 												onclick="$.ProgramController.toPlayCode('${contextPathPrefix}${t.id}/playCode',${t.id});">
-												<i class="fa fa-edit"></i>播放代码
+												<i class="fa fa-edit"></i>录入代码
 											</button>
 										</shiro:hasPermission></td>
 								</tr>

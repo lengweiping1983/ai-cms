@@ -104,8 +104,11 @@ public class MediaFile extends AbstractEntity {
 	@Column(name = "injection_status")
 	private String injectionStatus = "" + InjectionStatusEnum.DEFAULT.getKey();// 分发状态
 
+	@Column(name = "receive_code")
+	private String receiveCode;// 接收到的代码
+
 	@Column(name = "play_code")
-	private String playCode;// 运营商侧播放代码
+	private String playCode;// 全局代码
 
 	@Column(name = "play_code_status")
 	private Integer playCodeStatus = PlayCodeStatusEnum.DEFAULT.getKey();// 播放代码状态
@@ -352,6 +355,14 @@ public class MediaFile extends AbstractEntity {
 
 	public void setInjectionStatus(String injectionStatus) {
 		this.injectionStatus = injectionStatus;
+	}
+
+	public String getReceiveCode() {
+		return receiveCode;
+	}
+
+	public void setReceiveCode(String receiveCode) {
+		this.receiveCode = receiveCode;
 	}
 
 	public String getPlayCode() {

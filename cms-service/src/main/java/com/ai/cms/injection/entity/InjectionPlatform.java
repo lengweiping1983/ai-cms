@@ -109,6 +109,9 @@ public class InjectionPlatform extends AbstractEntity {
 	@Column(name = "template_filename")
 	private String templateFilename; // 模板文件名
 
+	@Column(name = "use_global_code")
+	private Integer useGlobalCode = YesNoEnum.YES.getKey();// 优先使用全局代码
+
 	@NotNull
 	@Column(name = "play_code_custom")
 	private Integer playCodeCustom = YesNoEnum.NO.getKey();// 自定义播放代码
@@ -332,6 +335,14 @@ public class InjectionPlatform extends AbstractEntity {
 
 	public void setTemplateFilename(String templateFilename) {
 		this.templateFilename = templateFilename;
+	}
+
+	public Integer getUseGlobalCode() {
+		return useGlobalCode;
+	}
+
+	public void setUseGlobalCode(Integer useGlobalCode) {
+		this.useGlobalCode = useGlobalCode;
 	}
 
 	public Integer getPlayCodeCustom() {

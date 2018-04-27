@@ -327,9 +327,31 @@
 									</div>
 								</div>
 							</div>
+						</div>
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">自定义播放代码(<span
+									<label class="control-label col-md-3">优先使用全局代码(<span
+										class="required">*</span>):
+									</label>
+
+									<div class="col-md-9">
+										<select name="useGlobalCode" class="form-control">
+											<c:forEach var="item" items="${yesNoEnum}">
+												<option value="${item.key}"
+													<c:if test="${! empty injectionPlatform.useGlobalCode && item.key eq injectionPlatform.useGlobalCode}"> selected="selected" </c:if>>${item.value}</option>
+											</c:forEach>
+										</select>
+										<p class="help-block">
+											<span class="badge badge-success">否</span>代码根据规则生成，再发送给下平台<br />
+											<span class="badge badge-success">是</span>如全局代码存在时，直接使用全局代码发送给下平台
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-md-3">下平台是否改变代码(<span
 										class="required">*</span>):
 									</label>
 
@@ -341,8 +363,8 @@
 											</c:forEach>
 										</select>
 										<p class="help-block">
-											<span class="badge badge-success">否</span>下平台不改变代码<br />
-											<span class="badge badge-success">是</span>下平台改变代码
+											<span class="badge badge-success">否</span>下平台不改变代码<br /> <span
+												class="badge badge-success">是</span>下平台改变代码
 										</p>
 									</div>
 								</div>
@@ -351,16 +373,15 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">播放代码前缀(<span
+									<label class="control-label col-md-3">代码前缀(<span
 										class="required">*</span>):
 									</label>
 
 									<div class="col-md-9">
 										<input type="text" name="codePrefix"
 											value="${injectionPlatform.codePrefix}"
-											class="form-control validate[required]"
-											placeholder="请输入播放代码前缀">
-										<p class="help-block">全局代码前8位.</p>
+											class="form-control validate[required]" placeholder="请输入代码前缀">
+										<p class="help-block">代码前8位.</p>
 									</div>
 								</div>
 							</div>

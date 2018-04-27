@@ -379,7 +379,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			series.setAuditStatus(AuditStatusEnum.AUDIT_FIRST_PASS.getKey());
 			series.setStorageTime(new Date());
 		}
-		if (platform.getPlayCodeCustom() == YesNoEnum.NO.getKey()) {
+
+		series.setReceiveCode(seriesBean.getCode());
+		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()) {
 			series.setPlayCode(seriesBean.getCode());
 		}
 		try {
@@ -557,7 +559,8 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 			program.setStorageTime(new Date());
 		}
 
-		if (platform.getPlayCodeCustom() == YesNoEnum.NO.getKey()) {
+		program.setReceiveCode(programBean.getCode());
+		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()) {
 			program.setPlayCode(programBean.getCode());
 		}
 		try {
@@ -650,7 +653,9 @@ public class ReceiveService extends AbstractService<ReceiveTask, Long> {
 				}
 			}
 		}
-		if (platform.getPlayCodeCustom() == YesNoEnum.NO.getKey()) {
+
+		mediaFile.setReceiveCode(movieBean.getCode());
+		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()) {
 			mediaFile.setPlayCode(movieBean.getCode());
 		}
 		mediaService.saveMediaFile(mediaFile);

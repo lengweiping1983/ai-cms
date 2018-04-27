@@ -140,8 +140,11 @@ public abstract class BaseMedia extends AbstractEntity {
 	@Column(name = "injection_status")
 	private String injectionStatus = "" + InjectionStatusEnum.DEFAULT.getKey();// 分发状态
 
+	@Column(name = "receive_code")
+	private String receiveCode;// 接收到的代码
+
 	@Column(name = "play_code")
-	private String playCode;// 运营商侧播放代码
+	private String playCode;// 全局代码
 
 	@Column(name = "play_code_status")
 	private Integer playCodeStatus = PlayCodeStatusEnum.DEFAULT.getKey();// 播放代码状态
@@ -464,7 +467,7 @@ public abstract class BaseMedia extends AbstractEntity {
 	public void setImage2Code(String image2Code) {
 		this.image2Code = image2Code;
 	}
-	
+
 	public String getImage3Code() {
 		return image3Code;
 	}
@@ -560,7 +563,7 @@ public abstract class BaseMedia extends AbstractEntity {
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
 	}
-	
+
 	public String getOriginalName() {
 		return originalName;
 	}
@@ -591,6 +594,14 @@ public abstract class BaseMedia extends AbstractEntity {
 
 	public void setInjectionStatus(String injectionStatus) {
 		this.injectionStatus = injectionStatus;
+	}
+
+	public String getReceiveCode() {
+		return receiveCode;
+	}
+
+	public void setReceiveCode(String receiveCode) {
+		this.receiveCode = receiveCode;
 	}
 
 	public String getPlayCode() {

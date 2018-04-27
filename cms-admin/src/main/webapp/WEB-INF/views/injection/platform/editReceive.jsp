@@ -315,20 +315,20 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">自定义播放代码(<span
+									<label class="control-label col-md-3">代码为全局代码(<span
 										class="required">*</span>):
 									</label>
 
 									<div class="col-md-9">
-										<select name="playCodeCustom" class="form-control">
+										<select name="useGlobalCode" class="form-control">
 											<c:forEach var="item" items="${yesNoEnum}">
 												<option value="${item.key}"
-													<c:if test="${! empty injectionPlatform.playCodeCustom && item.key eq injectionPlatform.playCodeCustom}"> selected="selected" </c:if>>${item.value}</option>
+													<c:if test="${! empty injectionPlatform.useGlobalCode && item.key eq injectionPlatform.useGlobalCode}"> selected="selected" </c:if>>${item.value}</option>
 											</c:forEach>
 										</select>
 										<p class="help-block">
-											<span class="badge badge-success">否</span>平台不改变代码，直接发给下平台<br />
-											<span class="badge badge-success">是</span>平台根据规则改变代码，再发给下平台
+											<span class="badge badge-success">否</span>平台根据规则生成全局代码<br />
+											<span class="badge badge-success">是</span>平台使用接收到的代码作为全局代码
 										</p>
 									</div>
 								</div>

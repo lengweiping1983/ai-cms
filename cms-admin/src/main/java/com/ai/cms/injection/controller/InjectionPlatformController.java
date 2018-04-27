@@ -138,7 +138,7 @@ public class InjectionPlatformController extends AbstractController {
 									+ ",needInjection,injectionPlatformId,indirectPlatformId,platformCode"
 									+ ",cspId,lspId,serviceUrl,liveServiceUrl,isWSDL,namespace"
 									+ ",templateId,description,direction,isCallback,status"
-									+ ",templateCustom,templateFilename,playCodeCustom,codePrefix,correlatePrefix"
+									+ ",templateCustom,templateFilename,useGlobalCode,playCodeCustom,codePrefix,correlatePrefix"
 									+ ",needImageObject,needPackingProgram,needDeleteMediaFile,separateChar");
 			injectionPlatformRepository.save(injectionPlatformInfo);
 		}

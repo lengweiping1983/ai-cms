@@ -21,6 +21,7 @@ import com.ai.cms.injection.enums.InjectionDirectionEnum;
 import com.ai.cms.injection.enums.InjectionItemTypeEnum;
 import com.ai.cms.injection.enums.InjectionObjectTypeEnum;
 import com.ai.cms.injection.enums.InjectionStatusEnum;
+import com.ai.cms.injection.enums.PlatformTypeEnum;
 import com.ai.cms.injection.enums.PlayCodeStatusEnum;
 import com.ai.cms.injection.enums.SendTaskStatusEnum;
 import com.ai.cms.injection.repository.InjectionObjectRepository;
@@ -496,6 +497,10 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		if (injectionPlatform != null
 				&& injectionPlatform.getPlayCodeCustom() == YesNoEnum.NO
 						.getKey()
+				&& injectionPlatform.getDirection() == InjectionDirectionEnum.SEND
+						.getKey()
+				&& injectionPlatform.getType() == PlatformTypeEnum.BUSINESS_SYSTEM
+						.getKey()
 				&& injectionStatus.equals(""
 						+ InjectionStatusEnum.INJECTION_SUCCESS.getKey())) {
 			if (injectionObjectList != null
@@ -538,6 +543,10 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		if (injectionPlatform != null
 				&& injectionPlatform.getPlayCodeCustom() == YesNoEnum.NO
 						.getKey()
+				&& injectionPlatform.getDirection() == InjectionDirectionEnum.SEND
+						.getKey()
+				&& injectionPlatform.getType() == PlatformTypeEnum.BUSINESS_SYSTEM
+						.getKey()
 				&& injectionStatus.equals(""
 						+ InjectionStatusEnum.INJECTION_SUCCESS.getKey())) {
 			if (injectionObjectList != null
@@ -579,6 +588,10 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		// 播放代码自定义
 		if (injectionPlatform != null
 				&& injectionPlatform.getPlayCodeCustom() == YesNoEnum.NO
+						.getKey()
+				&& injectionPlatform.getDirection() == InjectionDirectionEnum.SEND
+						.getKey()
+				&& injectionPlatform.getType() == PlatformTypeEnum.BUSINESS_SYSTEM
 						.getKey()
 				&& injectionStatus.equals(""
 						+ InjectionStatusEnum.INJECTION_SUCCESS.getKey())) {
@@ -659,7 +672,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			injectionObject.setItemType(InjectionItemTypeEnum.SERIES.getKey());
 			injectionObject.setItemId(series.getId());
 		}
-		if (StringUtils.isNotEmpty(series.getPlayCode())) {
+		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()
+				&& StringUtils.isNotEmpty(series.getPlayCode())) {
 			injectionObject.setPartnerItemCode(series.getPlayCode());
 		}
 		return injectionObject;
@@ -677,7 +691,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			injectionObject.setItemId(program.getId());
 			injectionObject.setItemParentId(program.getSeriesId());
 		}
-		if (StringUtils.isNotEmpty(program.getPlayCode())) {
+		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()
+				&& StringUtils.isNotEmpty(program.getPlayCode())) {
 			injectionObject.setPartnerItemCode(program.getPlayCode());
 		}
 		return injectionObject;
@@ -695,7 +710,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			injectionObject.setItemId(mediaFile.getId());
 			injectionObject.setItemParentId(mediaFile.getProgramId());
 		}
-		if (StringUtils.isNotEmpty(mediaFile.getPlayCode())) {
+		if (platform.getUseGlobalCode() == YesNoEnum.YES.getKey()
+				&& StringUtils.isNotEmpty(mediaFile.getPlayCode())) {
 			injectionObject.setPartnerItemCode(mediaFile.getPlayCode());
 		}
 		return injectionObject;
