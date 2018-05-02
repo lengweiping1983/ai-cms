@@ -35,10 +35,6 @@ public class MenuService extends AbstractService<Menu, Long> {
         return menuRepository;
     }
 
-    public List<Menu> findAllMenu() {
-        return menuRepository.findAllMenu();
-    }
-
     /**
      * 获取用户拥有的菜单与权限
      * 
@@ -70,7 +66,7 @@ public class MenuService extends AbstractService<Menu, Long> {
 			return new ArrayList<Menu>();
 		}
         if (user.isAdmin()) {
-            return findAllMenu();
+            return menuRepository.findAllShowMenu();
         }
         List<Menu> sourceList = findMenuFromUser(user);
         return findMenuTree(sourceList);
@@ -125,8 +121,8 @@ public class MenuService extends AbstractService<Menu, Long> {
         return menuList;
     }
 
-    public List<Menu> findSortMenu() {
-        List<Menu> allList = findAllMenu();
+    public List<Menu> findAllSortMenu() {
+        List<Menu> allList = menuRepository.findAllMenu();
         List<Menu> menuList = new ArrayList<Menu>();
         for (Menu menu : allList) {
             if (menu.getParent() == null) {
@@ -174,7 +170,7 @@ public class MenuService extends AbstractService<Menu, Long> {
      * @return
      */
     public List<JsTreeBean> findJsTreeMenu(boolean showPermission, Long filterId, List<Menu> selectList) {
-        List<Menu> allList = findAllMenu();
+        List<Menu> allList = menuRepository.findAllShowMenu();
         List<JsTreeBean> beanList = findJsTreeNode(allList, JsTreeBean.ROOT_NODE_ID, showPermission, filterId, selectList);
 
         return beanList;

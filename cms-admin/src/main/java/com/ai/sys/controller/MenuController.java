@@ -19,6 +19,7 @@ import com.ai.common.bean.BaseResult;
 import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.jstree.JsTreeBean;
 import com.ai.common.controller.AbstractController;
+import com.ai.common.enums.YesNoEnum;
 import com.ai.common.utils.BeanInfoUtil;
 import com.ai.env.handler.OperationLogAnnotation;
 import com.ai.sys.entity.Menu;
@@ -43,8 +44,9 @@ public class MenuController extends AbstractController {
 	@RequiresPermissions("system:menu:view")
 	@RequestMapping(value = { "" })
 	public String list(Model model) {
-		List<Menu> menuList = menuService.findSortMenu();
+		List<Menu> menuList = menuService.findAllSortMenu();
 		model.addAttribute("menuList", menuList);
+		model.addAttribute("yesNoEnum", YesNoEnum.values());
 		return "system/menu/list";
 	}
 
@@ -54,6 +56,7 @@ public class MenuController extends AbstractController {
 		Menu menu = new Menu();
 		menu.setType(type);
 		model.addAttribute("menu", menu);
+		model.addAttribute("yesNoEnum", YesNoEnum.values());
 		return "system/menu/edit";
 	}
 
@@ -70,6 +73,7 @@ public class MenuController extends AbstractController {
 	public String toEdit(Model model, @PathVariable("id") Long id) {
 		Menu menu = menuRepository.findOne(id);
 		model.addAttribute("menu", menu);
+		model.addAttribute("yesNoEnum", YesNoEnum.values());
 		return "system/menu/edit";
 	}
 
@@ -88,7 +92,7 @@ public class MenuController extends AbstractController {
 		} else {
 			menu = menuRepository.findOne(id);
 			BeanInfoUtil.bean2bean(paramMenu, menu,
-					"type,parentId,name,href,icon,sort,permission");
+					"type,parentId,name,href,icon,sort,isShow,permission");
 		}
 		menuRepository.save(menu);
 		operationObjectList = menu;
@@ -118,6 +122,7 @@ public class MenuController extends AbstractController {
 	public String view(Model model, @PathVariable("id") Long id) {
 		Menu menu = menuRepository.findOne(id);
 		model.addAttribute("menu", menu);
+		model.addAttribute("yesNoEnum", YesNoEnum.values());
 		return "system/menu/view";
 	}
 

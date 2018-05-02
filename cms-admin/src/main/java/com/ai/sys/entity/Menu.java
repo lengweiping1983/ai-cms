@@ -21,6 +21,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import com.ai.common.entity.AbstractEntity;
+import com.ai.common.enums.YesNoEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -30,144 +31,157 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @Entity
 @Table(name = "sys_menu")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Menu extends AbstractEntity implements Comparable<Menu> {
-    public static final long serialVersionUID = 1L;
+	public static final long serialVersionUID = 1L;
 
-    public static final int TYPE_MENU = 1;
-    public static final int TYPE_PERMISSION = 2;
+	public static final int TYPE_MENU = 1;
+	public static final int TYPE_PERMISSION = 2;
 
-    @Column(name = "type")
-    private Integer type = TYPE_MENU; // 类型（1=菜单、2=权限）
+	@Column(name = "type")
+	private Integer type = TYPE_MENU; // 类型（1=菜单、2=权限）
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
-    private Menu parent; // 父级菜单
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent_id", insertable = false, updatable = false)
+	private Menu parent; // 父级菜单
 
-    @Column(name = "parent_id")
-    private Long parentId;// 父级菜单Id
+	@Column(name = "parent_id")
+	private Long parentId;// 父级菜单Id
 
-    @NotNull
-    @Size(min = 1, max = 64)
-    private String name; // 名称
+	@NotNull
+	@Size(min = 1, max = 64)
+	private String name; // 名称
 
-    private String href; // 链接
+	private String href; // 链接
 
-    private String icon; // 图标
+	private String icon; // 图标
 
-    private Integer sort = 999; // 排序值
+	private Integer sort = 999; // 排序值
 
-    private String permission; // 权限标识
+	@Column(name = "is_show")
+	private Integer isShow = YesNoEnum.YES.getKey(); // 是否显示
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sys_role_rel_menu", joinColumns = {@JoinColumn(name = "menu_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    @Fetch(FetchMode.SUBSELECT)
-    @NotFound(action = NotFoundAction.IGNORE)
-    private List<Role> roleList = new ArrayList<Role>(); // 拥有角色列表
+	private String permission; // 权限标识
 
-    @Transient
-    private List<Menu> childList = new ArrayList<Menu>();// 拥有子菜单列表
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "sys_role_rel_menu", joinColumns = { @JoinColumn(name = "menu_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
+	@Fetch(FetchMode.SUBSELECT)
+	@NotFound(action = NotFoundAction.IGNORE)
+	private List<Role> roleList = new ArrayList<Role>(); // 拥有角色列表
 
-    @Transient
-    private String requestUrl; // 请求URL
+	@Transient
+	private List<Menu> childList = new ArrayList<Menu>();// 拥有子菜单列表
 
-    public Integer getType() {
-        return type;
-    }
+	@Transient
+	private String requestUrl; // 请求URL
 
-    public void setType(Integer type) {
-        this.type = type;
-    }
+	public Integer getType() {
+		return type;
+	}
 
-    public Menu getParent() {
-        return parent;
-    }
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
-    public void setParent(Menu parent) {
-        this.parent = parent;
-    }
+	public Menu getParent() {
+		return parent;
+	}
 
-    public Long getParentId() {
-        return parentId;
-    }
+	public void setParent(Menu parent) {
+		this.parent = parent;
+	}
 
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
+	public Long getParentId() {
+		return parentId;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getHref() {
-        return href;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+	public String getHref() {
+		return href;
+	}
 
-    public String getIcon() {
-        return icon;
-    }
+	public void setHref(String href) {
+		this.href = href;
+	}
 
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
+	public String getIcon() {
+		return icon;
+	}
 
-    public Integer getSort() {
-        return sort;
-    }
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
 
-    public void setSort(Integer sort) {
-        this.sort = sort;
-    }
+	public Integer getSort() {
+		return sort;
+	}
 
-    public String getPermission() {
-        return permission;
-    }
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
 
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
+	public Integer getIsShow() {
+		return isShow;
+	}
 
-    public List<Role> getRoleList() {
-        return roleList;
-    }
+	public void setIsShow(Integer isShow) {
+		this.isShow = isShow;
+	}
 
-    public void setRoleList(List<Role> roleList) {
-        this.roleList = roleList;
-    }
+	public String getPermission() {
+		return permission;
+	}
 
-    public List<Menu> getChildList() {
-        return childList;
-    }
+	public void setPermission(String permission) {
+		this.permission = permission;
+	}
 
-    public void setChildList(List<Menu> childList) {
-        this.childList = childList;
-    }
+	public List<Role> getRoleList() {
+		return roleList;
+	}
 
-    public String getRequestUrl() {
-        return requestUrl;
-    }
+	public void setRoleList(List<Role> roleList) {
+		this.roleList = roleList;
+	}
 
-    public void setRequestUrl(String requestUrl) {
-        this.requestUrl = requestUrl;
-    }
+	public List<Menu> getChildList() {
+		return childList;
+	}
 
-    @Override
-    public int compareTo(Menu o) {
-        return this.getSort().compareTo(o.getSort());
-    }
+	public void setChildList(List<Menu> childList) {
+		this.childList = childList;
+	}
 
-    @Override
-    public String toString() {
-        return "Menu{" + "id=" + id + ", permission='" + permission + '\'' + ", type=" + type + ", parent=" + parent + ", parentId=" + parentId + ", name='"
-                + name + '\'' + ", href='" + href + '\'' + ", icon='" + icon + '\'' + ", sort=" + sort + '}';
-    }
+	public String getRequestUrl() {
+		return requestUrl;
+	}
+
+	public void setRequestUrl(String requestUrl) {
+		this.requestUrl = requestUrl;
+	}
+
+	@Override
+	public int compareTo(Menu o) {
+		return this.getSort().compareTo(o.getSort());
+	}
+
+	@Override
+	public String toString() {
+		return "Menu{" + "id=" + id + ", permission='" + permission + '\''
+				+ ", type=" + type + ", parent=" + parent + ", parentId="
+				+ parentId + ", name='" + name + '\'' + ", href='" + href
+				+ '\'' + ", icon='" + icon + '\'' + ", sort=" + sort + '}';
+	}
 }

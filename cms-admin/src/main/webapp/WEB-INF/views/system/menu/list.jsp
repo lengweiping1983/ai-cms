@@ -6,11 +6,9 @@
 <script src="${ctx}/static/scripts/system/menu-tree-list.js" type="text/javascript"></script>
 <script src="${ctx}/static/scripts/system/menu-controller.js" type="text/javascript"></script>
 
-<!-- BEGIN CONTENT BODY -->
 <div class="page-content">
     <div class="row">
         <div class="col-md-12">
-            <!-- BEGIN EXAMPLE TABLE PORTLET-->
             <div class="portlet box green">
                 <div class="portlet-title">
                     <div class="caption">
@@ -35,10 +33,11 @@
                         <thead>
                         <tr>
                             <th width="20%">菜单名称</th>
-                            <th width="10%">菜单类型</th>
+                            <th width="8%">菜单类型</th>
                             <th width="20%">菜单链接</th>
                             <th width="15%">权限标识</th>
-                            <th width="10%">排序值</th>
+                            <th width="6%">排序值</th>
+                            <th width="6%">是否显示</th>
                             <shiro:hasAnyPermissions name="system:menu:edit,system:menu:delete">
                                 <th width="15%">操作</th>
                             </shiro:hasAnyPermissions>
@@ -51,6 +50,7 @@
                             <th>菜单链接</th>
                             <th>权限标识</th>
                             <th>排序值</th>
+                            <th width="6%">是否显示</th>
                             <shiro:hasAnyPermissions name="system:menu:edit,system:menu:delete">
                                 <th>操作</th>
                             </shiro:hasAnyPermissions>
@@ -74,6 +74,7 @@
                                 <td>${menu.href}</td>
                                 <td>${menu.permission}</td>
                                 <td>${menu.sort}</td>
+                                <td><tags:enum className='class="badge badge-success"' enumList="${yesNoEnum}" value="${menu.isShow}" /></td>
                                 <shiro:hasAnyPermissions name="system:menu:edit,system:menu:delete">
                                     <td>
                                         <shiro:hasPermission name="system:menu:edit">
@@ -97,11 +98,9 @@
                     </table>
                 </div>
             </div>
-            <!-- END EXAMPLE TABLE PORTLET-->
         </div>
     </div>
 </div>
-<!-- END CONTENT BODY -->
 
 <tags:contentModal/>
 

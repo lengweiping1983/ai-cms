@@ -93,6 +93,19 @@
 										</div>
 									</div>
 									<div class="form-group">
+										<label class="control-label col-md-3">是否显示(<span class="required">*</span>): </label>
+
+										<div class="col-md-8">
+											<select name="menu_isShow" id="menu_isShow" class="form-control">
+												<option value="">请选择</option>
+												<c:forEach var="item" items="${yesNoEnum}">
+													<option value="${item.key}"
+														<c:if test="${! empty menu.isShow && item.key eq menu.isShow}"> selected="selected" </c:if>>${item.value}</option>
+												</c:forEach>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
 										<label class="control-label col-md-3">菜单图标:</label>
 
 										<div class="col-md-8">
@@ -163,6 +176,19 @@
 											<div class="input_tip">
 												<input type="text" class="form-control validate[required,custom[integer]]" name="permission_sort" id="permission_sort" value="${menu.sort}" placeholder="排序值" />
 											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-md-3">是否显示(<span class="required">*</span>): </label>
+
+										<div class="col-md-8">
+											<select name="permission_isShow" id="permission_isShow" class="form-control">
+												<option value="">请选择</option>
+												<c:forEach var="item" items="${yesNoEnum}">
+													<option value="${item.key}"
+														<c:if test="${! empty menu.isShow && item.key eq menu.isShow}"> selected="selected" </c:if>>${item.value}</option>
+												</c:forEach>
+											</select>
 										</div>
 									</div>
 								</div>

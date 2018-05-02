@@ -84,23 +84,27 @@ $(function () {
                 var name = $("#menu_name").val();
                 var href = $("#menu_href").val();
                 var sort = $("#menu_sort").val();
+                var isShow = $("#menu_isShow").val();
                 var icon = $("#menu_icon").val();
 
                 json.type = MENU_TYPE.menu;
                 json.name = name;
                 json.href = href;
                 json.sort = sort;
+                json.isShow = isShow;
                 json.icon = icon;
 
             } else {
                 var name = $("#permission_name").val();
                 var permission = $("#permission_permission").val();
                 var sort = $("#permission_sort").val();
+                var isShow = $("#permission_isShow").val();
 
                 json.type = MENU_TYPE.permission;
                 json.name = name;
                 json.permission = permission;
                 json.sort = sort;
+                json.isShow = isShow;
             }
             return json;
         },

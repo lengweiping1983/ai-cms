@@ -18,6 +18,9 @@ public interface MenuRepository extends AbstractRepository<Menu, Long> {
 
     @Query(" select m from Menu m order by m.parent, m.sort ")
     List<Menu> findAllMenu();
+    
+    @Query(" select m from Menu m where m.isShow = 1 order by m.parent, m.sort ")
+    List<Menu> findAllShowMenu();
 
     @Query(" select m from Role r left join r.menuList m where r.id=:roleId and m.parentId=:menuId order by m.sort ")
     List<Menu> findMenusByRoleId(@Param("roleId") Long roleId, @Param("menuId") Long menuId);
