@@ -262,7 +262,7 @@
 						</shiro:hasPermission>
 						<shiro:hasPermission name="transcode:transcodeRequest:batchCopy">
 							<button class="btn btn-default btn-sm btn-outline green"
-								onclick="$.TranscodeRequestController.toBatch('${ctx}/transcode/transcodeRequest/batchCopy', 1101);">
+								onclick="$.TranscodeRequestController.toBatchCopy('${ctx}/transcode/transcodeRequest/batchCopy', 1101);">
 								<i class="fa fa-copy"></i>批量复制
 							</button>
 						</shiro:hasPermission>

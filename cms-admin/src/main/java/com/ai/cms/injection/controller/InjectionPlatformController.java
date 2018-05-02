@@ -21,6 +21,7 @@ import com.ai.cms.injection.enums.ProviderInterfaceModeEnum;
 import com.ai.cms.injection.enums.ProviderTypeEnum;
 import com.ai.cms.injection.repository.InjectionPlatformRepository;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.enums.ValidStatusEnum;
@@ -125,24 +126,34 @@ public class InjectionPlatformController extends AbstractController {
 	@ResponseBody
 	public BaseResult edit(@RequestBody InjectionPlatform injectionPlatform,
 			@PathVariable("id") Long id) {
+		String message = "";
+		InjectionPlatform operationObjectList = null;
+
 		if (id == null) {
 			injectionPlatformRepository.save(injectionPlatform);
+			operationObjectList = injectionPlatform;
 		} else {
 			InjectionPlatform injectionPlatformInfo = injectionPlatformRepository
 					.findOne(injectionPlatform.getId());
-			BeanInfoUtil
-					.bean2bean(
-							injectionPlatform,
-							injectionPlatformInfo,
-							"siteCode,name,type,dependPlatformId,provider,interfaceMode,needDownloadVideo,needAudit"
-									+ ",needInjection,injectionPlatformId,indirectPlatformId,platformCode"
-									+ ",cspId,lspId,serviceUrl,liveServiceUrl,isWSDL,namespace"
-									+ ",templateId,description,direction,isCallback,status"
-									+ ",templateCustom,templateFilename,useGlobalCode,playCodeCustom,codePrefix,correlatePrefix"
-									+ ",needImageObject,needPackingProgram,needDeleteMediaFile,separateChar");
-			injectionPlatformRepository.save(injectionPlatformInfo);
+			if (injectionPlatformInfo != null) {
+				BeanInfoUtil
+						.bean2bean(
+								injectionPlatform,
+								injectionPlatformInfo,
+								"siteCode,name,type,dependPlatformId,provider,interfaceMode,needDownloadVideo,needAudit"
+										+ ",needInjection,injectionPlatformId,indirectPlatformId,platformCode"
+										+ ",cspId,lspId,serviceUrl,liveServiceUrl,isWSDL,namespace"
+										+ ",templateId,description,direction,isCallback,status"
+										+ ",templateCustom,templateFilename,useGlobalCode,playCodeCustom,codePrefix,correlatePrefix"
+										+ ",needImageObject,needPackingProgram,needDeleteMediaFile,separateChar");
+				injectionPlatformRepository.save(injectionPlatformInfo);
+				operationObjectList = injectionPlatformInfo;
+			} else {
+				message = "分发平台不存在！";
+			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "分发平台管理", action = "删除", message = "删除分发平台")
@@ -150,7 +161,29 @@ public class InjectionPlatformController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
-		injectionPlatformRepository.delete(id);
-		return new BaseResult();
+		String message = "";
+		InjectionPlatform operationObjectList = null;
+
+		InjectionPlatform injectionPlatform = injectionPlatformRepository
+				.findOne(id);
+		if (injectionPlatform != null) {
+			injectionPlatformRepository.delete(injectionPlatform);
+			operationObjectList = injectionPlatform;
+		} else {
+			message = "分发平台不存在！";
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
+	}
+
+	public OperationObject transformOperationObject(
+			InjectionPlatform injectionPlatform) {
+		if (injectionPlatform == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(injectionPlatform.getId());
+		operationObject.setName(injectionPlatform.getName());
+		return operationObject;
 	}
 }

@@ -1,5 +1,6 @@
 package com.ai.cms.injection.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -29,4 +30,9 @@ public interface ReceiveTaskRepository extends
 			@Param("platformId") Long platformId,
 			@Param("correlateId") String correlateId);
 
+	@Query(" select t from ReceiveTask t where (t.status = 6) "
+			+ " and (t.nextCheckTime is null or t.nextCheckTime < :nextCheckTime) "
+			+ " order by priority desc, createTime ")
+	Page<ReceiveTask> findByNextCheckTime(
+			@Param("nextCheckTime") Date nextCheckTime, Pageable pageable);
 }

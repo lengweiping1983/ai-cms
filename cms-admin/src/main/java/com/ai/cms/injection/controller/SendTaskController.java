@@ -1,5 +1,6 @@
 package com.ai.cms.injection.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import com.ai.cms.injection.service.InjectionService;
 import com.ai.cms.media.bean.BatchPriorityBean;
 import com.ai.cms.media.bean.BatchStatusBean;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.bean.ResultCode;
 import com.ai.common.controller.AbstractImageController;
@@ -125,6 +127,9 @@ public class SendTaskController extends AbstractImageController {
 	@ResponseBody
 	public BaseResult edit(@RequestBody SendTask sendTask,
 			@PathVariable("id") Long id) {
+		String message = "";
+		SendTask operationObjectList = null;
+
 		SendTask sendTaskInfo = null;
 		if (id == null) {
 			sendTaskInfo = sendTask;
@@ -133,7 +138,9 @@ public class SendTaskController extends AbstractImageController {
 			BeanInfoUtil.bean2bean(sendTask, sendTaskInfo, "priority");
 		}
 		sendTaskRepository.save(sendTaskInfo);
-		return new BaseResult();
+		operationObjectList = sendTaskInfo;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "删除", message = "删除分发工单")
@@ -141,9 +148,16 @@ public class SendTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
+		String message = "";
+		SendTask operationObjectList = null;
+
 		SendTask sendTaskInfo = sendTaskRepository.findOne(id);
-		sendTaskRepository.delete(sendTaskInfo);
-		return new BaseResult();
+		if (sendTaskInfo != null) {
+			sendTaskRepository.delete(sendTaskInfo);
+			operationObjectList = sendTaskInfo;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "{id}/detail" }, method = RequestMethod.GET)
@@ -158,11 +172,18 @@ public class SendTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/reset" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult reset(@PathVariable("id") Long id) {
+		String message = "";
+		SendTask operationObjectList = null;
+
 		SendTask sendTask = sendTaskRepository.findOne(id);
-		sendTask.setRequestTimes(0);
-		sendTask.setStatus(SendTaskStatusEnum.WAIT.getKey());
-		sendTaskRepository.save(sendTask);
-		return new BaseResult();
+		if (sendTask != null) {
+			sendTask.setRequestTimes(0);
+			sendTask.setStatus(SendTaskStatusEnum.WAIT.getKey());
+			sendTaskRepository.save(sendTask);
+			operationObjectList = sendTask;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "暂停", message = "暂停工单")
@@ -170,13 +191,18 @@ public class SendTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/pause" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult pause(@PathVariable("id") Long id) {
+		String message = "";
+		SendTask operationObjectList = null;
+
 		SendTask sendTask = sendTaskRepository.findOne(id);
 		if (sendTask != null
 				&& (SendTaskStatusEnum.WAIT.getKey() == sendTask.getStatus())) {
 			sendTask.setStatus(SendTaskStatusEnum.PAUSE.getKey());
 			sendTaskRepository.save(sendTask);
+			operationObjectList = sendTask;
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "停止", message = "停止工单")
@@ -184,13 +210,18 @@ public class SendTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/stop" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult stop(@PathVariable("id") Long id) {
+		String message = "";
+		SendTask operationObjectList = null;
+
 		SendTask sendTask = sendTaskRepository.findOne(id);
 		if (sendTask != null
 				&& (SendTaskStatusEnum.WAIT.getKey() == sendTask.getStatus())) {
 			sendTask.setStatus(SendTaskStatusEnum.STOP.getKey());
 			sendTaskRepository.save(sendTask);
+			operationObjectList = sendTask;
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "批量重发", message = "批量重发工单")
@@ -203,6 +234,10 @@ public class SendTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<SendTask> operationObjectList = new ArrayList<SendTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -211,9 +246,11 @@ public class SendTaskController extends AbstractImageController {
 				sendTask.setRequestTimes(0);
 				sendTask.setStatus(SendTaskStatusEnum.WAIT.getKey());
 				sendTaskRepository.save(sendTask);
+				operationObjectList.add(sendTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "批量暂停", message = "批量暂停工单")
@@ -226,6 +263,10 @@ public class SendTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<SendTask> operationObjectList = new ArrayList<SendTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -235,9 +276,11 @@ public class SendTaskController extends AbstractImageController {
 							.getStatus())) {
 				sendTask.setStatus(SendTaskStatusEnum.PAUSE.getKey());
 				sendTaskRepository.save(sendTask);
+				operationObjectList.add(sendTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "分发工单查询", action = "批量停止", message = "批量停止工单")
@@ -250,6 +293,10 @@ public class SendTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<SendTask> operationObjectList = new ArrayList<SendTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -259,9 +306,11 @@ public class SendTaskController extends AbstractImageController {
 							.getStatus())) {
 				sendTask.setStatus(SendTaskStatusEnum.STOP.getKey());
 				sendTaskRepository.save(sendTask);
+				operationObjectList.add(sendTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "batchChangePriority" }, method = RequestMethod.GET)
@@ -286,6 +335,10 @@ public class SendTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<SendTask> operationObjectList = new ArrayList<SendTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -296,9 +349,35 @@ public class SendTaskController extends AbstractImageController {
 							.getStatus())) {
 				sendTask.setPriority(batchBean.getPriority());
 				sendTaskRepository.save(sendTask);
+				operationObjectList.add(sendTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
+	public List<OperationObject> transformOperationObject(
+			List<SendTask> sendTaskList) {
+		if (sendTaskList == null || sendTaskList.size() <= 0) {
+			return null;
+		}
+		List<OperationObject> list = new ArrayList<OperationObject>();
+		for (SendTask sendTask : sendTaskList) {
+			OperationObject operationObject = new OperationObject();
+			operationObject.setId(sendTask.getId());
+			operationObject.setName(sendTask.getName());
+			list.add(operationObject);
+		}
+		return list;
+	}
+
+	public OperationObject transformOperationObject(SendTask sendTask) {
+		if (sendTask == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(sendTask.getId());
+		operationObject.setName(sendTask.getName());
+		return operationObject;
+	}
 }

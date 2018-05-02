@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.repository.MediaTemplateRepository;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.enums.TranscodeModeEnum;
@@ -86,6 +87,9 @@ public class MediaTemplateController extends AbstractController {
 	@ResponseBody
 	public BaseResult edit(@RequestBody MediaTemplate mediaTemplate,
 			@PathVariable("id") Long id) {
+		String message = "";
+		MediaTemplate operationObjectList = null;
+
 		MediaTemplate mediaTemplateInfo = null;
 		if (id == null) {
 			mediaTemplateInfo = mediaTemplate;
@@ -100,7 +104,6 @@ public class MediaTemplateController extends AbstractController {
 									+ "vFormat,vBitrate,vMaxBitrate,vMinBitrate,"
 									+ "vFramerate,vGop,v2pass,vProfile,vProfileLevel,aCodec,aBitrate,"
 									+ "transcodeMode,externalCode,status");
-
 		}
 		// TS-CBR-H264-8000-1080P-25-MP2-128
 		String mediaSpec = mediaTemplate.getvFormat() + "-"
@@ -111,7 +114,9 @@ public class MediaTemplateController extends AbstractController {
 				+ mediaTemplate.getaCodec() + "-" + mediaTemplate.getaBitrate();
 		mediaTemplateInfo.setMediaSpec(mediaSpec);
 		mediaTemplateRepository.save(mediaTemplateInfo);
-		return new BaseResult();
+		operationObjectList = mediaTemplateInfo;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "配置管理", subModule = "码率模板管理", action = "删除", message = "删除码率模板")
@@ -119,8 +124,18 @@ public class MediaTemplateController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
-		mediaTemplateRepository.delete(id);
-		return new BaseResult();
+		String message = "";
+		MediaTemplate operationObjectList = null;
+
+		MediaTemplate mediaTemplate = mediaTemplateRepository.findOne(id);
+		if (mediaTemplate != null) {
+			mediaTemplateRepository.delete(mediaTemplate);
+			operationObjectList = mediaTemplate;
+		} else {
+			message = "码率模板不存在！";
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "check" }, produces = "application/json; charset=UTF-8")
@@ -156,6 +171,16 @@ public class MediaTemplateController extends AbstractController {
 			}
 		}
 		return exist;
+	}
+
+	public OperationObject transformOperationObject(MediaTemplate mediaTemplate) {
+		if (mediaTemplate == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(mediaTemplate.getId());
+		operationObject.setName(mediaTemplate.getTitle());
+		return operationObject;
 	}
 
 }

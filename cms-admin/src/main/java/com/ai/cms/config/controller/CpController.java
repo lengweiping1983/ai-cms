@@ -21,6 +21,7 @@ import com.ai.cms.config.repository.CpFtpRepository;
 import com.ai.cms.config.repository.CpRepository;
 import com.ai.cms.config.service.ConfigService;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.enums.CpTypeEnum;
@@ -87,15 +88,25 @@ public class CpController extends AbstractController {
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody Cp cp, @PathVariable("id") Long id) {
+		String message = "";
+		Cp operationObjectList = null;
+
 		if (id == null) {
 			cpRepository.save(cp);
+			operationObjectList = cp;
 		} else {
 			Cp cpInfo = cpRepository.findOne(cp.getId());
-			BeanInfoUtil.bean2bean(cp, cpInfo,
-					"type,code,name,shortName,status,description");
-			cpRepository.save(cpInfo);
+			if (cpInfo != null) {
+				BeanInfoUtil.bean2bean(cp, cpInfo,
+						"type,code,name,shortName,status,description");
+				cpRepository.save(cpInfo);
+				operationObjectList = cpInfo;
+			} else {
+				message = "提供商不存在！";
+			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "配置管理", subModule = "提供商管理", action = "删除", message = "删除提供商")
@@ -103,9 +114,18 @@ public class CpController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
+		String message = "";
+		Cp operationObjectList = null;
+		
 		Cp cp = cpRepository.findOne(id);
-		configService.deleteCp(cp);
-		return new BaseResult();
+		if (cp != null) {
+			configService.deleteCp(cp);
+			operationObjectList = cp;
+		} else {
+			message = "提供商不存在！";
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "check" }, produces = "application/json; charset=UTF-8")
@@ -165,8 +185,13 @@ public class CpController extends AbstractController {
 	@ResponseBody
 	public BaseResult editCpFtp(@RequestBody CpFtp cpFtp,
 			@PathVariable("cpCode") String cpCode) {
+		String message = "";
+		Cp operationObjectList = null;
+
+		Cp cp = null;
 		CpFtp cpFtpInfo = null;
 		if (StringUtils.isNotEmpty(cpCode)) {
+			cp = cpRepository.findOneByCode(cpCode);
 			cpFtpInfo = cpFtpRepository.findOneByCpCode(cpCode);
 			if (cpFtpInfo != null) {
 				BeanInfoUtil.bean2bean(cpFtp, cpFtpInfo, "cpCode,dirPath");
@@ -176,7 +201,19 @@ public class CpController extends AbstractController {
 			cpFtpInfo = cpFtp;
 		}
 		cpFtpRepository.save(cpFtpInfo);
-		return new BaseResult();
+		operationObjectList = cp;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
+	}
+
+	public OperationObject transformOperationObject(Cp cp) {
+		if (cp == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(cp.getId());
+		operationObject.setName(cp.getName());
+		return operationObject;
 	}
 
 }

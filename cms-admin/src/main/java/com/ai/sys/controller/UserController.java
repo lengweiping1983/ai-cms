@@ -85,6 +85,9 @@ public class UserController extends AbstractController {
 	@ResponseBody
 	public BaseResult edit(@PathVariable("id") Long id,
 			@RequestBody IdsBean<User> bean) {
+		String message = "";
+		User operationObjectList = null;
+
 		User paramUser = bean.getData();
 		Long[] roleIds = bean.getIds();
 		boolean exist = checkLoginName(id, paramUser.getLoginName());
@@ -117,8 +120,9 @@ public class UserController extends AbstractController {
 
 		beanValidator(user);
 		userService.save(user);
-
-		return new BaseResult();
+		operationObjectList = user;
+		return new BaseResult().setMessage(message).addOperationObject(
+				userService.transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "系统管理", subModule = "用户管理", action = "删除", message = "删除用户")
@@ -126,8 +130,16 @@ public class UserController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
-		userService.deleteById(id);
-		return new BaseResult();
+		String message = "";
+		User operationObjectList = null;
+
+		User user = userRepository.findOne(id);
+		if (user != null) {
+			userService.delete(user);
+			operationObjectList = user;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				userService.transformOperationObject(operationObjectList));
 	}
 
 	@RequiresPermissions("system:user:editPassword")
@@ -144,13 +156,20 @@ public class UserController extends AbstractController {
 	@ResponseBody
 	public BaseResult editPassword(@PathVariable("id") Long id,
 			@RequestBody PasswordBean bean) {
-		User user = userRepository.findOne(id);
-		user.setPassword(UserAuthorizingRealm.entryptPassword(bean
-				.getPassword()));
+		String message = "";
+		User operationObjectList = null;
 
-		beanValidator(user);
-		userRepository.save(user);
-		return new BaseResult();
+		User user = userRepository.findOne(id);
+		if (user != null) {
+			user.setPassword(UserAuthorizingRealm.entryptPassword(bean
+					.getPassword()));
+
+			beanValidator(user);
+			userRepository.save(user);
+			operationObjectList = user;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				userService.transformOperationObject(operationObjectList));
 	}
 
 	private boolean checkLoginName(Long id, String loginName) {
@@ -218,5 +237,4 @@ public class UserController extends AbstractController {
 		jsTreeBean.setChildren(jsTreeBeans);
 		return jsTreeBean;
 	}
-
 }

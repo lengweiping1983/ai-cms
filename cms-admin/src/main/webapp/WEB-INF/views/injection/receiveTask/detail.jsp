@@ -39,11 +39,11 @@
 													<p class="form-control-static">
 														<c:forEach var="item" items="${statusEnum}">
 															<c:if
-																test="${item.key eq receiveTask.status && item.key eq 1}">
+																test="${item.key eq receiveTask.status && item.key eq 0}">
 																<span class="badge badge-info">${item.value}</span>
 															</c:if>
 															<c:if
-																test="${item.key eq receiveTask.status && item.key eq 2}">
+																test="${item.key eq receiveTask.status && (item.key eq 1 || item.key eq 2 || item.key eq 6)}">
 																<span class="badge badge-primary">${item.value}</span>
 															</c:if>
 															<c:if

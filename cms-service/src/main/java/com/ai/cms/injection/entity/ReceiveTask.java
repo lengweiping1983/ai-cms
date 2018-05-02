@@ -114,6 +114,10 @@ public class ReceiveTask extends AbstractEntity {
 	@Column(name = "cp_code")
 	private String cpCode; // 内容提供商代码,多个使用','分割
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "next_check_time")
+	private Date nextCheckTime;// 下一次检查时间
+
 	public ReceiveTask() {
 
 	}
@@ -340,6 +344,14 @@ public class ReceiveTask extends AbstractEntity {
 
 	public void setCpCode(String cpCode) {
 		this.cpCode = cpCode;
+	}
+
+	public Date getNextCheckTime() {
+		return nextCheckTime;
+	}
+
+	public void setNextCheckTime(Date nextCheckTime) {
+		this.nextCheckTime = nextCheckTime;
 	}
 
 }

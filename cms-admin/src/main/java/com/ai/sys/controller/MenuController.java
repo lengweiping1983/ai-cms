@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.jstree.JsTreeBean;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.utils.BeanInfoUtil;
@@ -78,6 +79,9 @@ public class MenuController extends AbstractController {
 	@ResponseBody
 	public BaseResult edit(@PathVariable("id") Long id,
 			@RequestBody Menu paramMenu) {
+		String message = "";
+		Menu operationObjectList = null;
+
 		Menu menu = null;
 		if (null == id) {
 			menu = paramMenu;
@@ -87,7 +91,9 @@ public class MenuController extends AbstractController {
 					"type,parentId,name,href,icon,sort,permission");
 		}
 		menuRepository.save(menu);
-		return new BaseResult();
+		operationObjectList = menu;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "系统管理", subModule = "菜单管理", action = "删除", message = "删除菜单")
@@ -95,9 +101,16 @@ public class MenuController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
+		String message = "";
+		Menu operationObjectList = null;
+
 		Menu menu = menuRepository.findOne(id);
-		menuService.delete(menu);
-		return new BaseResult();
+		if (menu != null) {
+			menuService.delete(menu);
+			operationObjectList = menu;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequiresPermissions("system:menu:view")
@@ -177,6 +190,16 @@ public class MenuController extends AbstractController {
 	public List<Menu> findChild(@PathVariable("id") Long id) {
 		List<Menu> menuList = menuRepository.findByParentId(id);
 		return menuList;
+	}
+
+	public OperationObject transformOperationObject(Menu menu) {
+		if (menu == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(menu.getId());
+		operationObject.setName(menu.getName());
+		return operationObject;
 	}
 
 }

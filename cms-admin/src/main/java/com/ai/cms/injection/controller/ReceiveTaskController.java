@@ -1,5 +1,6 @@
 package com.ai.cms.injection.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import com.ai.cms.injection.enums.ReceiveTaskStatusEnum;
 import com.ai.cms.injection.repository.ReceiveTaskRepository;
 import com.ai.cms.injection.service.InjectionService;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractImageController;
 import com.ai.common.jpa.PropertyFilter;
@@ -108,6 +110,9 @@ public class ReceiveTaskController extends AbstractImageController {
 	@ResponseBody
 	public BaseResult edit(@RequestBody ReceiveTask receiveTask,
 			@PathVariable("id") Long id) {
+		String message = "";
+		ReceiveTask operationObjectList = null;
+
 		ReceiveTask receiveTaskInfo = null;
 		if (id == null) {
 			receiveTaskInfo = receiveTask;
@@ -117,15 +122,24 @@ public class ReceiveTaskController extends AbstractImageController {
 			BeanInfoUtil.bean2bean(receiveTask, receiveTaskInfo, "priority");
 		}
 		receiveTaskRepository.save(receiveTaskInfo);
-		return new BaseResult();
+		operationObjectList = receiveTaskInfo;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
+		String message = "";
+		ReceiveTask operationObjectList = null;
+
 		ReceiveTask receiveTaskInfo = receiveTaskRepository.findOne(id);
-		receiveTaskRepository.delete(receiveTaskInfo);
-		return new BaseResult();
+		if (receiveTaskInfo != null) {
+			receiveTaskRepository.delete(receiveTaskInfo);
+			operationObjectList = receiveTaskInfo;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "{id}/detail" }, method = RequestMethod.GET)
@@ -136,6 +150,31 @@ public class ReceiveTaskController extends AbstractImageController {
 		setModel(model);
 
 		return "injection/receiveTask/detail";
+	}
+
+	public List<OperationObject> transformOperationObject(
+			List<ReceiveTask> receiveTaskList) {
+		if (receiveTaskList == null || receiveTaskList.size() <= 0) {
+			return null;
+		}
+		List<OperationObject> list = new ArrayList<OperationObject>();
+		for (ReceiveTask receiveTask : receiveTaskList) {
+			OperationObject operationObject = new OperationObject();
+			operationObject.setId(receiveTask.getId());
+			operationObject.setName("" + receiveTask.getId());
+			list.add(operationObject);
+		}
+		return list;
+	}
+
+	public OperationObject transformOperationObject(ReceiveTask receiveTask) {
+		if (receiveTask == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(receiveTask.getId());
+		operationObject.setName("" + receiveTask.getId());
+		return operationObject;
 	}
 
 }

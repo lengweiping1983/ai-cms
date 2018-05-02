@@ -1,5 +1,6 @@
 package com.ai.cms.transcode.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import com.ai.cms.transcode.repository.TranscodeRequestRepository;
 import com.ai.cms.transcode.repository.TranscodeTaskRepository;
 import com.ai.cms.transcode.service.TranscodeService;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.bean.ResultCode;
 import com.ai.common.controller.AbstractImageController;
@@ -124,6 +126,9 @@ public class TranscodeTaskController extends AbstractImageController {
 	@ResponseBody
 	public BaseResult edit(@RequestBody TranscodeTask transcodeTask,
 			@PathVariable("id") Long id) {
+		String message = "";
+		TranscodeTask operationObjectList = null;
+
 		TranscodeTask transcodeTaskInfo = null;
 		if (id == null) {
 			transcodeTaskInfo = transcodeTask;
@@ -134,7 +139,9 @@ public class TranscodeTaskController extends AbstractImageController {
 					.bean2bean(transcodeTask, transcodeTaskInfo, "priority");
 		}
 		transcodeTaskRepository.save(transcodeTaskInfo);
-		return new BaseResult();
+		operationObjectList = transcodeTaskInfo;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "删除", message = "删除任务")
@@ -142,9 +149,16 @@ public class TranscodeTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
+		String message = "";
+		TranscodeTask operationObjectList = null;
+
 		TranscodeTask transcodeTask = transcodeTaskRepository.findOne(id);
-		transcodeService.deleteTranscodeTask(transcodeTask);
-		return new BaseResult();
+		if (transcodeTask != null) {
+			transcodeService.deleteTranscodeTask(transcodeTask);
+			operationObjectList = transcodeTask;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "{id}/detail" }, method = RequestMethod.GET)
@@ -173,6 +187,9 @@ public class TranscodeTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/reset" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult reset(@PathVariable("id") Long id) {
+		String message = "";
+		TranscodeTask operationObjectList = null;
+
 		TranscodeTask transcodeTask = transcodeTaskRepository.findOne(id);
 		if (transcodeTask.getStatus() == TranscodeTaskStatusEnum.PROCESSING
 				.getKey()
@@ -183,8 +200,10 @@ public class TranscodeTaskController extends AbstractImageController {
 				|| transcodeTask.getStatus() == TranscodeTaskStatusEnum.TIMEOUT
 						.getKey()) {
 			transcodeService.resetTranscodeTask(transcodeTask);
+			operationObjectList = transcodeTask;
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资生产", subModule = "转码任务管理", action = "发送", message = "发送指令")
@@ -192,6 +211,9 @@ public class TranscodeTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/send" }, method = { RequestMethod.GET })
 	@ResponseBody
 	public BaseResult send(@PathVariable("id") Long id) {
+		String message = "";
+		TranscodeTask operationObjectList = null;
+
 		TranscodeTask transcodeTask = transcodeTaskRepository.findOne(id);
 		if (transcodeTask.getStatus() == TranscodeTaskStatusEnum.WAIT.getKey()) {
 			int taskType = transcodeTask.getType();
@@ -200,12 +222,15 @@ public class TranscodeTaskController extends AbstractImageController {
 			switch (taskTypeEnum) {
 			case OFFLINE_UPLOAD:
 				transcodeService.offlineUpload(transcodeTask);
+				operationObjectList = transcodeTask;
 				break;
 			case TRANSCODE:
 				transcodeService.transcode(transcodeTask);
+				operationObjectList = transcodeTask;
 				break;
 			case IMAGE:
 				transcodeService.image(transcodeTask);
+				operationObjectList = transcodeTask;
 				break;
 			case AFTER:
 				// 后续添加后处理的逻辑，暂时不需要
@@ -214,7 +239,8 @@ public class TranscodeTaskController extends AbstractImageController {
 				break;
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "batchChangePriority" }, method = RequestMethod.GET)
@@ -239,6 +265,10 @@ public class TranscodeTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<TranscodeTask> operationObjectList = new ArrayList<TranscodeTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -249,8 +279,35 @@ public class TranscodeTaskController extends AbstractImageController {
 							.getStatus())) {
 				transcodeTask.setPriority(batchBean.getPriority());
 				transcodeTaskRepository.save(transcodeTask);
+				operationObjectList.add(transcodeTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
+	}
+
+	public List<OperationObject> transformOperationObject(
+			List<TranscodeTask> transcodeTaskList) {
+		if (transcodeTaskList == null || transcodeTaskList.size() <= 0) {
+			return null;
+		}
+		List<OperationObject> list = new ArrayList<OperationObject>();
+		for (TranscodeTask transcodeTask : transcodeTaskList) {
+			OperationObject operationObject = new OperationObject();
+			operationObject.setId(transcodeTask.getId());
+			operationObject.setName(transcodeTask.getName());
+			list.add(operationObject);
+		}
+		return list;
+	}
+
+	public OperationObject transformOperationObject(TranscodeTask transcodeTask) {
+		if (transcodeTask == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(transcodeTask.getId());
+		operationObject.setName(transcodeTask.getName());
+		return operationObject;
 	}
 }

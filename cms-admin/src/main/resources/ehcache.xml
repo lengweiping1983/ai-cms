@@ -8,6 +8,9 @@
 		timeToIdleSeconds="1" timeToLiveSeconds="15" overflowToDisk="true"
 		maxEntriesLocalDisk="100000" />
 
+	<cache name="TranscodeRequestController.transcodeRequestCache"
+		maxEntriesLocalHeap="100" eternal="false" timeToIdleSeconds="360000"
+		timeToLiveSeconds="360000" overflowToDisk="true" maxEntriesLocalDisk="100000" />
 	<cache name="FileManageController.UserAccessPath"
 		maxEntriesLocalHeap="100" eternal="false" timeToIdleSeconds="360000"
 		timeToLiveSeconds="360000" overflowToDisk="true" maxEntriesLocalDisk="100000" />

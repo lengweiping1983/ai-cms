@@ -30,6 +30,16 @@ public interface SendTaskRepository extends AbstractRepository<SendTask, Long> {
 	Page<SendTask> findByRequestTimes(
 			@Param("requestTimes") Integer requestTimes, Pageable pageable);
 
+	@Query(" select t from SendTask t where t.platformId = :platformId "
+			+ " and t.category = :category " + " and t.type = :type "
+			+ " and t.itemType = :itemType " + " and t.itemId = :itemId "
+			+ " order by createTime desc ")
+	Page<SendTask> findByPlatformIdAndCategoryAndTypeAndItemTypeAndItemId(
+			@Param("platformId") Long platformId,
+			@Param("category") String category, @Param("type") Integer type,
+			@Param("itemType") Integer itemType, @Param("itemId") Long itemId,
+			Pageable pageable);
+
 	List<SendTask> findByCorrelateId(String correlateId);
 
 	@Query(" select count(t) from SendTask t where t.lastRequestTime >= :lastRequestTime ")

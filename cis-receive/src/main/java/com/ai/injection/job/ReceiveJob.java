@@ -16,6 +16,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.types.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ import com.ai.cms.injection.enums.ReceiveResponseStatusEnum;
 import com.ai.cms.injection.enums.ReceiveTaskStatusEnum;
 import com.ai.cms.injection.repository.InjectionPlatformRepository;
 import com.ai.cms.injection.repository.ReceiveTaskRepository;
-import com.ai.common.exception.DataException;
+import com.ai.cms.injection.service.DownloadService;
+import com.ai.common.exception.ServiceException;
 import com.ai.common.utils.FtpUtils;
 import com.ai.injection.service.ReceiveService;
 import com.ai.injection.service.XMLGenerator;
@@ -65,12 +67,22 @@ public class ReceiveJob {
 	private ReceiveService receiveService;
 
 	@Autowired
+	private DownloadService downloadService;
+
+	@Autowired
 	private XMLGenerator xmlGenerator;
 
 	@Scheduled(cron = "${injection.task.schedule:0 0/5 * * * ?}")
 	public void execute() {
 		logger.info("ReceiveJob begin.");
 		long startTime = System.currentTimeMillis();
+
+		try {
+			checkInjectionTask();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
 		try {
 			handleTask();
 		} catch (Exception e) {
@@ -84,6 +96,53 @@ public class ReceiveJob {
 		}
 		logger.info("ReceiveJob end run("
 				+ (System.currentTimeMillis() - startTime) / 1000 + ")s.");
+	}
+
+	private void checkInjectionTask() {
+		if (taskMaxNum <= 0) {
+			return;
+		}
+		PageRequest pageRequest = new PageRequest(0, taskMaxNum);
+		Page<ReceiveTask> page = receiveTaskRepository.findByNextCheckTime(
+				new Date(), pageRequest);
+		List<ReceiveTask> taskList = page.getContent();
+		for (ReceiveTask receiveTask : taskList) {
+			checkInjectionTask(receiveTask);
+		}
+	}
+
+	private void checkInjectionTask(ReceiveTask receiveTask) {
+		logger.info("check injection task begin... CorrelateId={"
+				+ receiveTask.getCorrelateId() + "}");
+		InjectionPlatform platform = null;
+		try {
+			// 1.检查参数
+			if (receiveTask.getPlatformId() == null) {
+				// 属于数据异常
+				throw new ServiceException("数据错误！");
+			}
+			platform = injectionPlatformRepository.findOne(receiveTask
+					.getPlatformId());
+			if (platform == null) {
+				throw new ServiceException("配置错误！");
+			}
+			boolean result = downloadService.autoInjectionTask(receiveTask,
+					platform);
+			if (!result) {
+				downloadService.checkInjectionTask(receiveTask, platform);
+			}
+		} catch (ServiceException e) {
+			logger.error(e.getMessage());
+			// 等待5分钟
+			receiveTask.setNextCheckTime(DateUtils.addMinutes(new Date(), 2));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			// 等待5分钟
+			receiveTask.setNextCheckTime(DateUtils.addMinutes(new Date(), 2));
+		}
+		receiveService.saveReceiveTask(receiveTask);
+		logger.info("check injection task end. CorrelateId={"
+				+ receiveTask.getCorrelateId() + "}");
 	}
 
 	public String getXmlFileContent(ADI adi) {
@@ -126,16 +185,16 @@ public class ReceiveJob {
 		try {
 			// 1.检查参数
 			if (StringUtils.isEmpty(receiveTask.getCmdFileURL())) {
-				throw new DataException("XML文件地址为空！");
+				throw new ServiceException("XML文件地址为空！");
 			}
 			if (receiveTask.getPlatformId() == null) {
 				// 属于数据异常
-				throw new DataException("数据错误！");
+				throw new ServiceException("数据错误！");
 			}
 			platform = injectionPlatformRepository.findOne(receiveTask
 					.getPlatformId());
 			if (platform == null) {
-				throw new DataException("配置错误！");
+				throw new ServiceException("配置错误！");
 			}
 
 			String dirPath = "/receive/"
@@ -163,7 +222,7 @@ public class ReceiveJob {
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 				if (receiveTask.getDownloadTimes() >= taskMaxRequestTimes) {
-					throw new DataException("XML文件下载失败！");
+					throw new ServiceException("XML文件下载失败！");
 				}
 			}
 
@@ -175,7 +234,7 @@ public class ReceiveJob {
 				receiveTask.setRequestXmlFileContent(getXmlFileContent(adi));
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
-				throw new DataException("XML文件解析出错！");
+				throw new ServiceException("XML文件解析出错！");
 			}
 
 			// 4.保存元数据
@@ -184,16 +243,9 @@ public class ReceiveJob {
 			receiveTask.setReplyResult(0);
 			receiveTask.setReplyErrorDescription("SUCCESS");
 
-			if (receiveTask.getDownloadFail() > 0) {
-				receiveTask.setStatus(ReceiveTaskStatusEnum.FAIL.getKey());
-			} else if (receiveTask.getDownloadTotal() == receiveTask
-					.getDownloadSuccess()) {
-				receiveTask.setStatus(ReceiveTaskStatusEnum.SUCCESS.getKey());
-			} else {
-				receiveTask
-						.setStatus(ReceiveTaskStatusEnum.PROCESSING.getKey());
-			}
-		} catch (DataException e) {
+			downloadService.checkTaskStatus(receiveTask);
+
+		} catch (ServiceException e) {
 			logger.error(e.getMessage(), e);
 
 			receiveTask.setReplyResult(-1);
@@ -239,12 +291,12 @@ public class ReceiveJob {
 			// 1.验证数据
 			if (receiveTask.getPlatformId() == null) {
 				// 属于数据异常
-				throw new DataException("数据错误！");
+				throw new ServiceException("数据错误！");
 			}
 			platform = injectionPlatformRepository.findOne(receiveTask
 					.getPlatformId());
 			if (platform == null) {
-				throw new DataException("配置错误！");
+				throw new ServiceException("配置错误！");
 			}
 
 			// 2.生成结果XML
@@ -259,7 +311,7 @@ public class ReceiveJob {
 				// .readTxtFile(AdminGlobal.getXmlUploadPath(resultFileURL)));
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
-				throw new DataException("生成结果XML错误！");
+				throw new ServiceException("生成结果XML错误！");
 			}
 
 			// 3.发送结果
@@ -290,9 +342,9 @@ public class ReceiveJob {
 
 				receiveTask.setResponseStatus(ReceiveResponseStatusEnum.FAIL
 						.getKey());// 发送失败
-				throw new DataException("发送结果失败！");
+				throw new ServiceException("发送结果失败！");
 			}
-		} catch (DataException e) {
+		} catch (ServiceException e) {
 			logger.error(e.getMessage(), e);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

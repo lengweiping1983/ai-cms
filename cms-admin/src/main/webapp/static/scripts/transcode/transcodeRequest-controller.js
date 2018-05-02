@@ -197,6 +197,30 @@ $(function () {
             });
         },
 
+        toBatchCopy: function (path, itemType) {
+        	var itemIds = $.TranscodeRequestController.getItemIds();
+            if (itemIds == null || itemIds.length == 0) {
+            	var alertMessage = "请选择" + $.TranscodeRequestController.getItemTypeName(itemType) + "!";
+                var json = {
+                    body: alertMessage,
+                };
+                $.common.showAlertModal(json);
+                return;
+            }
+       
+            var requestPath = path + "?itemType=" + itemType + "&itemIds=" + itemIds;
+
+            $.common.showModal({
+                url: requestPath,
+                type: "POST",
+                dataType: "text",
+                contentType: "default",
+                success: function (data) {
+                	$("input:checkbox[name='templateId']").uniform();
+                }
+            });
+        },
+        
         toBatchProduce: function (path, itemType) {
         	var itemIds = $.TranscodeRequestController.getItemIds();
             if (itemIds == null || itemIds.length == 0) {

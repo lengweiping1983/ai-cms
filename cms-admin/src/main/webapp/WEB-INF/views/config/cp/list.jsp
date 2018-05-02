@@ -116,10 +116,10 @@
 											</shiro:hasPermission> <c:forEach var="item" items="${statusEnum}">
 												<c:if test="${item.key eq t.status && item.key eq 0}">
 													<shiro:hasPermission name="config:cp:delete">
-<!-- 														<button class="btn btn-default btn-sm btn-outline green" -->
-<%-- 															onclick="$.CpController.toDelete('${ctx}/config/cp/${t.id}/delete','${t.name}');"> --%>
-<!-- 															<i class="fa fa-remove"></i>删除 -->
-<!-- 														</button> -->
+														<button class="btn btn-default btn-sm btn-outline green"
+															onclick="$.CpController.toDelete('${ctx}/config/cp/${t.id}/delete','${t.name}');">
+															<i class="fa fa-remove"></i>删除
+														</button>
 													</shiro:hasPermission>
 												</c:if>
 												<c:if test="${item.key eq t.status && item.key eq 1}">

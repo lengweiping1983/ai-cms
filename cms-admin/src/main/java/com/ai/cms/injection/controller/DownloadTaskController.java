@@ -1,6 +1,7 @@
 package com.ai.cms.injection.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import com.ai.cms.media.bean.BatchPriorityBean;
 import com.ai.cms.media.bean.BatchStatusBean;
 import com.ai.cms.media.entity.Program;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.bean.ResultCode;
 import com.ai.common.controller.AbstractImageController;
@@ -109,6 +111,9 @@ public class DownloadTaskController extends AbstractImageController {
 	@ResponseBody
 	public BaseResult edit(@RequestBody DownloadTask downloadTask,
 			@PathVariable("id") Long id) {
+		String message = "";
+		DownloadTask operationObjectList = null;
+
 		DownloadTask downloadTaskInfo = null;
 		if (id == null) {
 			downloadTaskInfo = downloadTask;
@@ -118,7 +123,9 @@ public class DownloadTaskController extends AbstractImageController {
 			BeanInfoUtil.bean2bean(downloadTask, downloadTaskInfo, "priority");
 		}
 		downloadTaskRepository.save(downloadTaskInfo);
-		return new BaseResult();
+		operationObjectList = downloadTaskInfo;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "删除", message = "删除下载任务")
@@ -126,9 +133,14 @@ public class DownloadTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
+		String message = "";
+		DownloadTask operationObjectList = null;
+
 		DownloadTask downloadTaskInfo = downloadTaskRepository.findOne(id);
 		downloadTaskRepository.delete(downloadTaskInfo);
-		return new BaseResult();
+		operationObjectList = downloadTaskInfo;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "{id}/detail" }, method = RequestMethod.GET)
@@ -146,13 +158,18 @@ public class DownloadTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/reset" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult reset(@PathVariable("id") Long id) {
+		String message = "";
+		DownloadTask operationObjectList = null;
+
 		DownloadTask downloadTask = downloadTaskRepository.findOne(id);
 		if (downloadTask != null
 				&& (DownloadTaskStatusEnum.SUCCESS.getKey() != downloadTask
 						.getStatus())) {
 			downloadService.resetDownloadTask(downloadTask);
+			operationObjectList = downloadTask;
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "暂停", message = "暂停下载")
@@ -160,14 +177,19 @@ public class DownloadTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/pause" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult pause(@PathVariable("id") Long id) {
+		String message = "";
+		DownloadTask operationObjectList = null;
+
 		DownloadTask downloadTask = downloadTaskRepository.findOne(id);
 		if (downloadTask != null
 				&& (DownloadTaskStatusEnum.SUCCESS.getKey() != downloadTask
 						.getStatus())) {
 			downloadTask.setStatus(DownloadTaskStatusEnum.PAUSE.getKey());
 			downloadTaskRepository.save(downloadTask);
+			operationObjectList = downloadTask;
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "停止", message = "停止下载")
@@ -175,6 +197,9 @@ public class DownloadTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/stop" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult stop(@PathVariable("id") Long id) {
+		String message = "";
+		DownloadTask operationObjectList = null;
+
 		DownloadTask downloadTask = downloadTaskRepository.findOne(id);
 		if (downloadTask != null
 				&& (DownloadTaskStatusEnum.SUCCESS.getKey() != downloadTask
@@ -191,8 +216,10 @@ public class DownloadTaskController extends AbstractImageController {
 					file.delete();
 				}
 			}
+			operationObjectList = downloadTask;
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "重新", message = "重新下载")
@@ -200,6 +227,9 @@ public class DownloadTaskController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/renew" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult renew(@PathVariable("id") Long id) {
+		String message = "";
+		DownloadTask operationObjectList = null;
+
 		DownloadTask downloadTask = downloadTaskRepository.findOne(id);
 		if (downloadTask != null
 				&& (DownloadTaskStatusEnum.DEFAULT.getKey() != downloadTask
@@ -208,8 +238,10 @@ public class DownloadTaskController extends AbstractImageController {
 			downloadTask.setRequestTimes(0);
 			downloadTask.setStatus(DownloadTaskStatusEnum.REDOWNLOAD.getKey());
 			downloadTaskRepository.save(downloadTask);
+			operationObjectList = downloadTask;
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量继续", message = "批量继续下载")
@@ -222,6 +254,10 @@ public class DownloadTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<DownloadTask> operationObjectList = new ArrayList<DownloadTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -230,9 +266,11 @@ public class DownloadTaskController extends AbstractImageController {
 					&& (DownloadTaskStatusEnum.SUCCESS.getKey() != downloadTask
 							.getStatus())) {
 				downloadService.resetDownloadTask(downloadTask);
+				operationObjectList.add(downloadTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量暂停", message = "批量暂停下载")
@@ -245,6 +283,10 @@ public class DownloadTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<DownloadTask> operationObjectList = new ArrayList<DownloadTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -254,9 +296,11 @@ public class DownloadTaskController extends AbstractImageController {
 							.getStatus())) {
 				downloadTask.setStatus(DownloadTaskStatusEnum.PAUSE.getKey());
 				downloadTaskRepository.save(downloadTask);
+				operationObjectList.add(downloadTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量停止", message = "批量停止下载")
@@ -269,6 +313,10 @@ public class DownloadTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<DownloadTask> operationObjectList = new ArrayList<DownloadTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -288,9 +336,11 @@ public class DownloadTaskController extends AbstractImageController {
 						file.delete();
 					}
 				}
+				operationObjectList.add(downloadTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资分发", subModule = "下载任务管理", action = "批量重新", message = "批量重新下载")
@@ -303,6 +353,10 @@ public class DownloadTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<DownloadTask> operationObjectList = new ArrayList<DownloadTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -315,9 +369,11 @@ public class DownloadTaskController extends AbstractImageController {
 				downloadTask.setStatus(DownloadTaskStatusEnum.REDOWNLOAD
 						.getKey());
 				downloadTaskRepository.save(downloadTask);
+				operationObjectList.add(downloadTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "batchChangePriority" }, method = RequestMethod.GET)
@@ -342,6 +398,10 @@ public class DownloadTaskController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<DownloadTask> operationObjectList = new ArrayList<DownloadTask>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -352,8 +412,36 @@ public class DownloadTaskController extends AbstractImageController {
 							.getKey() != downloadTask.getStatus())) {
 				downloadTask.setPriority(batchBean.getPriority());
 				downloadTaskRepository.save(downloadTask);
+				operationObjectList.add(downloadTask);
 			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
+
+	public List<OperationObject> transformOperationObject(
+			List<DownloadTask> downloadTaskList) {
+		if (downloadTaskList == null || downloadTaskList.size() <= 0) {
+			return null;
+		}
+		List<OperationObject> list = new ArrayList<OperationObject>();
+		for (DownloadTask downloadTask : downloadTaskList) {
+			OperationObject operationObject = new OperationObject();
+			operationObject.setId(downloadTask.getId());
+			operationObject.setName(downloadTask.getName());
+			list.add(operationObject);
+		}
+		return list;
+	}
+
+	public OperationObject transformOperationObject(DownloadTask downloadTask) {
+		if (downloadTask == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(downloadTask.getId());
+		operationObject.setName(downloadTask.getName());
+		return operationObject;
+	}
+
 }

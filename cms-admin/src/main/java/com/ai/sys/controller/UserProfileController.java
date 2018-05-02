@@ -18,10 +18,14 @@ import com.ai.sys.entity.User;
 import com.ai.sys.repository.UserRepository;
 import com.ai.sys.security.SecurityUtils;
 import com.ai.sys.security.UserAuthorizingRealm;
+import com.ai.sys.service.UserService;
 
 @Controller
 @RequestMapping(value = { "/system/user/profile" })
 public class UserProfileController extends AbstractController {
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -69,18 +73,25 @@ public class UserProfileController extends AbstractController {
 	@RequestMapping(value = { "editPassword" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult editPassword(@RequestBody PasswordBean bean) {
+		String message = "";
+		User operationObjectList = null;
+
 		User sessionUser = SecurityUtils.getUser();
 		User user = userRepository.findOne(sessionUser.getId());
-		if (!UserAuthorizingRealm.validatePassword(bean.getPlainPassword(),
-				user.getPassword())) {
-			throw new RestException("请输入正确的原密码!");
+		if (user != null) {
+			if (!UserAuthorizingRealm.validatePassword(bean.getPlainPassword(),
+					user.getPassword())) {
+				throw new RestException("请输入正确的原密码!");
+			}
+
+			user.setPassword(UserAuthorizingRealm.entryptPassword(bean
+					.getPassword()));
+
+			beanValidator(user);
+			userRepository.save(user);
+			operationObjectList = user;
 		}
-
-		user.setPassword(UserAuthorizingRealm.entryptPassword(bean
-				.getPassword()));
-
-		beanValidator(user);
-		userRepository.save(user);
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				userService.transformOperationObject(operationObjectList));
 	}
 }

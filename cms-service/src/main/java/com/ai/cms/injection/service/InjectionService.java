@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.cms.injection.entity.InjectionObject;
@@ -798,13 +800,14 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 	 * 分发剧头
 	 */
 	public synchronized void inInjection(Series series, Long[] platformIds,
-			String[] templateIds, Integer[] prioritys, String cpCode) {
+			String[] templateIds, Integer[] prioritys, String cpCode,
+			boolean injectionProgram) {
 		if (series == null || platformIds == null || templateIds == null) {
 			return;
 		}
 		for (int i = 0; i < platformIds.length; i++) {
 			InjectionPlatform injectionPlatform = injectionPlatformRepository
-					.getOne(platformIds[i]);
+					.findOne(platformIds[i]);
 			if (injectionPlatform == null) {
 				continue;
 			}
@@ -814,7 +817,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 						series, injectionPlatform, category);
 				inInjection(injectionPlatform, series, seriesInjectionObject,
 						category, categoryMap.get(category), prioritys[i],
-						cpCode);
+						cpCode, injectionProgram);
 			}
 		}
 		updateInjectionStatus(null, series, true);
@@ -822,7 +825,8 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 
 	private synchronized Long inInjection(InjectionPlatform injectionPlatform,
 			Series series, InjectionObject seriesInjectionObject,
-			String category, String templateId, Integer priority, String cpCode) {
+			String category, String templateId, Integer priority,
+			String cpCode, boolean injectionProgram) {
 		Long taskId = null;
 		if (!isInjection(seriesInjectionObject.getInjectionStatus())) {
 			SendTask sendTask = new SendTask(seriesInjectionObject);
@@ -871,16 +875,18 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 			}
 		}
 
-		// 节目后分发
-		List<Program> programList = programRepository.findBySeriesId(series
-				.getId());
-		for (Program program : programList) {
-			InjectionObject programInjectionObject = getAndNewInjectionObject(
-					program, injectionPlatform,
-					seriesInjectionObject.getCategory());
-			inInjection(injectionPlatform, series, seriesInjectionObject,
-					program, programInjectionObject, category, templateId,
-					priority, cpCode, taskId);
+		if (injectionProgram) {
+			// 节目后分发
+			List<Program> programList = programRepository.findBySeriesId(series
+					.getId());
+			for (Program program : programList) {
+				InjectionObject programInjectionObject = getAndNewInjectionObject(
+						program, injectionPlatform,
+						seriesInjectionObject.getCategory());
+				inInjection(injectionPlatform, series, seriesInjectionObject,
+						program, programInjectionObject, category, templateId,
+						priority, cpCode, taskId);
+			}
 		}
 		return taskId;
 	}
@@ -896,7 +902,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		}
 		for (int i = 0; i < platformIds.length; i++) {
 			InjectionPlatform injectionPlatform = injectionPlatformRepository
-					.getOne(platformIds[i]);
+					.findOne(platformIds[i]);
 			if (injectionPlatform == null) {
 				continue;
 			}
@@ -910,19 +916,26 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				Long preTaskId = null;
 				// 判断剧头是否有分发
 				if (program.getType() == ProgramTypeEnum.TV.getKey()
-						&& program.getSeriesId() != null
-						&& series != null
-						&& seriesInjectionObject != null
-						&& !isInjection(seriesInjectionObject
-								.getInjectionStatus())
-						&& !isInjected(seriesInjectionObject
-								.getInjectionStatus())) {
-					// 剧头没有分发，先分发剧头
-					preTaskId = inInjection(injectionPlatform, series,
-							seriesInjectionObject, category,
-							categoryMap.get(category), prioritys[i], cpCode);
+						&& program.getSeriesId() != null && series != null
+						&& seriesInjectionObject != null) {
+					if (!isInjection(seriesInjectionObject.getInjectionStatus())
+							&& !isInjected(seriesInjectionObject
+									.getInjectionStatus())) {
+						// 剧头没有分发，先分发剧头
+						preTaskId = inInjection(injectionPlatform, series,
+								seriesInjectionObject, category,
+								categoryMap.get(category), prioritys[i],
+								cpCode, false);
+					} else if (isInjection(seriesInjectionObject
+							.getInjectionStatus())) {
+						// 获取正在分发的任务Id
+						preTaskId = getPreTaskId(
+								seriesInjectionObject.getPlatformId(),
+								seriesInjectionObject.getCategory(),
+								seriesInjectionObject.getItemType(),
+								seriesInjectionObject.getItemId());
+					}
 				}
-
 				InjectionObject programInjectionObject = getAndNewInjectionObject(
 						program, injectionPlatform, category);
 				inInjection(injectionPlatform, series, seriesInjectionObject,
@@ -1099,7 +1112,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		}
 		for (int i = 0; i < platformIds.length; i++) {
 			InjectionPlatform injectionPlatform = injectionPlatformRepository
-					.getOne(platformIds[i]);
+					.findOne(platformIds[i]);
 			if (injectionPlatform == null) {
 				continue;
 			}
@@ -1183,7 +1196,7 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 		}
 		for (int i = 0; i < platformIds.length; i++) {
 			InjectionPlatform injectionPlatform = injectionPlatformRepository
-					.getOne(platformIds[i]);
+					.findOne(platformIds[i]);
 			if (injectionPlatform == null) {
 				continue;
 			}
@@ -1323,6 +1336,21 @@ public class InjectionService extends AbstractService<SendTask, Long> {
 				}
 			}
 		}
+	}
+
+	public Long getPreTaskId(Long platformId, String category,
+			Integer itemType, Long itemId) {
+		PageRequest pageRequest = new PageRequest(0, 1);
+		Page<SendTask> page = sendTaskRepository
+				.findByPlatformIdAndCategoryAndTypeAndItemTypeAndItemId(
+						platformId, category,
+						InjectionObjectTypeEnum.OBJECT.getKey(), itemType,
+						itemId, pageRequest);
+		if (page != null && page.getContent() != null
+				&& page.getContent().size() > 0) {
+			return page.getContent().get(0).getId();
+		}
+		return null;
 	}
 
 }

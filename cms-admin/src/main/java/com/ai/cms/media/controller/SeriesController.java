@@ -700,7 +700,7 @@ public class SeriesController extends AbstractImageController {
 			if (series != null) {
 				injectionService.inInjection(series, batchBean.getPlatformId(),
 						batchBean.getTemplateId(), batchBean.getPriority(),
-						SecurityUtils.getCpCode());
+						SecurityUtils.getCpCode(), true);
 				operationObjectList.add(series);
 			}
 		}

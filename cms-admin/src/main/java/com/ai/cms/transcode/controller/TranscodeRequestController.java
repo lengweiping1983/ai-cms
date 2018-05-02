@@ -2,7 +2,6 @@ package com.ai.cms.transcode.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.Cache.ValueWrapper;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ai.cms.config.entity.Cp;
+import com.ai.cms.config.entity.CpFtp;
 import com.ai.cms.config.entity.MediaTemplate;
 import com.ai.cms.config.service.ConfigService;
 import com.ai.cms.media.bean.BatchBean;
@@ -39,6 +42,7 @@ import com.ai.cms.transcode.enums.TranscodeRequestTypeEnum;
 import com.ai.cms.transcode.repository.TranscodeRequestRepository;
 import com.ai.cms.transcode.service.TranscodeService;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.bean.ResultCode;
 import com.ai.common.controller.AbstractImageController;
@@ -51,15 +55,11 @@ import com.ai.common.jpa.PropertyFilter;
 import com.ai.common.jpa.SpecificationUtils;
 import com.ai.common.utils.BeanInfoUtil;
 import com.ai.env.handler.OperationLogAnnotation;
-import com.ai.sys.entity.User;
 import com.ai.sys.security.SecurityUtils;
 
 @Controller
 @RequestMapping(value = { "/transcode/transcodeRequest" })
 public class TranscodeRequestController extends AbstractImageController {
-
-	public static Map<Long, String> mediaTemplateMap = new HashMap<Long, String>();
-
 	String PAGE_LIST = "transcode/transcodeRequest/list";
 
 	String PAGE_EDIT = "transcode/transcodeRequest/edit";
@@ -74,6 +74,39 @@ public class TranscodeRequestController extends AbstractImageController {
 
 	@Autowired
 	private ConfigService configService;
+
+	private CacheManager cacheManager;
+
+	private Cache transcodeRequestCache;
+
+	public CacheManager getCacheManager(CpFtp cpFtp) {
+		return cacheManager;
+	}
+
+	@Autowired
+	public void setCacheManager(CacheManager cacheManager) {
+		this.cacheManager = cacheManager;
+		this.transcodeRequestCache = cacheManager
+				.getCache("TranscodeRequestController.transcodeRequestCache");
+	}
+
+	public TranscodeRequest getCacheTranscodeRequest() {
+		String cacheKey = SecurityUtils.getUserId() + "-"
+				+ StringUtils.trimToEmpty(SecurityUtils.getCpCode());
+		ValueWrapper valueWrapper = transcodeRequestCache.get(cacheKey);
+		if (valueWrapper != null) {
+			TranscodeRequest transcodeRequest = (TranscodeRequest) valueWrapper
+					.get();
+			return transcodeRequest;
+		}
+		return null;
+	}
+
+	public void putCacheTranscodeRequest(TranscodeRequest transcodeRequest) {
+		String cacheKey = SecurityUtils.getUserId() + "-"
+				+ StringUtils.trimToEmpty(SecurityUtils.getCpCode());
+		transcodeRequestCache.put(cacheKey, transcodeRequest);
+	}
 
 	private void setModel(Model model) {
 		model.addAttribute("statusEnum", TranscodeRequestStatusEnum.values());
@@ -128,10 +161,13 @@ public class TranscodeRequestController extends AbstractImageController {
 
 		transcodeRequest.setType(type);
 
-		User user = SecurityUtils.getUser();
-		String templateId = mediaTemplateMap.get(user.getId());
-		if (StringUtils.isNotEmpty(templateId)) {
-			transcodeRequest.setTemplateId(templateId);
+		TranscodeRequest cacheTranscodeRequest = getCacheTranscodeRequest();
+		if (cacheTranscodeRequest != null) {
+			transcodeRequest.setTemplateId(cacheTranscodeRequest
+					.getTemplateId());
+			transcodeRequest.setGenTask(cacheTranscodeRequest.getGenTask());
+			transcodeRequest.setGenProgramNameRule(cacheTranscodeRequest
+					.getGenProgramNameRule());
 		}
 
 		setModel(model);
@@ -196,14 +232,15 @@ public class TranscodeRequestController extends AbstractImageController {
 	@RequestMapping(value = { "edit" }, method = { RequestMethod.POST }, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody TranscodeRequest transcodeRequest) {
-		transcodeService.updateTranscodeRequest(transcodeRequest, false);
+		String message = "";
+		TranscodeRequest operationObjectList = null;
 
-		User user = SecurityUtils.getUser();
-		String templateId = transcodeRequest.getTemplateId();
-		if (StringUtils.isNotEmpty(templateId)) {
-			mediaTemplateMap.put(user.getId(), templateId);
-		}
-		return new BaseResult();
+		transcodeService.updateTranscodeRequest(transcodeRequest, false);
+		operationObjectList = transcodeRequest;
+		putCacheTranscodeRequest(transcodeRequest);
+
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "执行", message = "执行工单")
@@ -213,16 +250,17 @@ public class TranscodeRequestController extends AbstractImageController {
 	public BaseResult produce(@RequestBody TranscodeRequest transcodeRequest) {
 		long startTime = System.currentTimeMillis();
 
-		transcodeService.updateTranscodeRequest(transcodeRequest, true);
+		String message = "";
+		TranscodeRequest operationObjectList = null;
 
-		User user = SecurityUtils.getUser();
-		String templateId = transcodeRequest.getTemplateId();
-		if (StringUtils.isNotEmpty(templateId)) {
-			mediaTemplateMap.put(user.getId(), templateId);
-		}
+		transcodeService.updateTranscodeRequest(transcodeRequest, true);
+		operationObjectList = transcodeRequest;
+		putCacheTranscodeRequest(transcodeRequest);
+
 		logger.info("produce run time="
 				+ (System.currentTimeMillis() - startTime) + "ms.");
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "批量执行", message = "批量执行工单")
@@ -236,16 +274,22 @@ public class TranscodeRequestController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<TranscodeRequest> operationObjectList = new ArrayList<TranscodeRequest>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
 			TranscodeRequest transcodeRequest = transcodeRequestRepository
 					.findOne(itemId);
 			transcodeService.updateTranscodeRequest(transcodeRequest, true);
+			operationObjectList.add(transcodeRequest);
 		}
 		logger.info("batch produce run time="
 				+ (System.currentTimeMillis() - startTime) + "ms.");
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "媒资生产", subModule = "转码工单管理", action = "删除", message = "删除工单")
@@ -253,10 +297,18 @@ public class TranscodeRequestController extends AbstractImageController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
+		String message = "";
+		TranscodeRequest operationObjectList = null;
+
 		TranscodeRequest transcodeRequest = transcodeRequestRepository
 				.findOne(id);
-		transcodeService.deleteTranscodeRequest(transcodeRequest);
-		return new BaseResult();
+		if (transcodeRequest != null) {
+			transcodeService.deleteTranscodeRequest(transcodeRequest);
+			operationObjectList = transcodeRequest;
+		}
+
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "batchCopy" }, method = RequestMethod.GET)
@@ -282,6 +334,10 @@ public class TranscodeRequestController extends AbstractImageController {
 		if (itemType == null || StringUtils.isEmpty(itemIds)) {
 			return new BaseResult(ResultCode.ILLEGAL_ARGUMENT.value());
 		}
+
+		String message = "";
+		List<TranscodeRequest> operationObjectList = new ArrayList<TranscodeRequest>();
+
 		String[] itemIdArr = itemIds.split(",");
 		for (String itemIdStr : itemIdArr) {
 			Long itemId = Long.valueOf(itemIdStr);
@@ -289,8 +345,10 @@ public class TranscodeRequestController extends AbstractImageController {
 					.findOne(itemId);
 			transcodeService.copyTranscodeRequest(transcodeRequest,
 					batchBean.getTemplateId());
+			operationObjectList.add(transcodeRequest);
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequiresPermissions("transcode:transcodeRequest:batchExport")
@@ -379,4 +437,29 @@ public class TranscodeRequestController extends AbstractImageController {
 		return true;
 	}
 
+	public List<OperationObject> transformOperationObject(
+			List<TranscodeRequest> transcodeRequestList) {
+		if (transcodeRequestList == null || transcodeRequestList.size() <= 0) {
+			return null;
+		}
+		List<OperationObject> list = new ArrayList<OperationObject>();
+		for (TranscodeRequest transcodeRequest : transcodeRequestList) {
+			OperationObject operationObject = new OperationObject();
+			operationObject.setId(transcodeRequest.getId());
+			operationObject.setName(transcodeRequest.getName());
+			list.add(operationObject);
+		}
+		return list;
+	}
+
+	public OperationObject transformOperationObject(
+			TranscodeRequest transcodeRequest) {
+		if (transcodeRequest == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(transcodeRequest.getId());
+		operationObject.setName(transcodeRequest.getName());
+		return operationObject;
+	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ai.cms.config.entity.Site;
 import com.ai.cms.config.repository.SiteRepository;
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.enums.ValidStatusEnum;
@@ -79,15 +80,25 @@ public class SiteController extends AbstractController {
 	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult edit(@RequestBody Site site, @PathVariable("id") Long id) {
+		String message = "";
+		Site operationObjectList = null;
+
 		if (id == null) {
 			siteRepository.save(site);
+			operationObjectList = site;
 		} else {
 			Site siteInfo = siteRepository.findOne(site.getId());
-			BeanInfoUtil.bean2bean(site, siteInfo,
-					"name,code,status,description");
-			siteRepository.save(siteInfo);
+			if (siteInfo != null) {
+				BeanInfoUtil.bean2bean(site, siteInfo,
+						"name,code,status,description");
+				siteRepository.save(siteInfo);
+				operationObjectList = siteInfo;
+			} else {
+				message = "渠道不存在！";
+			}
 		}
-		return new BaseResult();
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "配置管理", subModule = "渠道管理", action = "删除", message = "删除渠道")
@@ -95,8 +106,18 @@ public class SiteController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
-		siteRepository.delete(id);
-		return new BaseResult();
+		String message = "";
+		Site operationObjectList = null;
+
+		Site site = siteRepository.findOne(id);
+		if (site != null) {
+			siteRepository.delete(site);
+			operationObjectList = site;
+		} else {
+			message = "渠道不存在！";
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "check" }, produces = "application/json; charset=UTF-8")
@@ -133,4 +154,13 @@ public class SiteController extends AbstractController {
 		return exist;
 	}
 
+	public OperationObject transformOperationObject(Site site) {
+		if (site == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(site.getId());
+		operationObject.setName(site.getName());
+		return operationObject;
+	}
 }

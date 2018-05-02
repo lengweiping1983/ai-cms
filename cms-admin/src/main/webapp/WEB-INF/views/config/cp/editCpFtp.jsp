@@ -73,7 +73,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-outline green"
-					onclick="$.CpController.edit('${ctx}/config/cp/${cp.id}/editCpFtp');">
+					onclick="$.CpController.edit('${ctx}/config/cp/${cp.code}/editCpFtp');">
 					<i class="fa fa-save"></i>保存
 				</button>
 				<button class="btn grey-salsa btn-outline" data-dismiss="modal"

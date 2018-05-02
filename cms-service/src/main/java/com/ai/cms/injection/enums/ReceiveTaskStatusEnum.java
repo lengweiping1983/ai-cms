@@ -6,7 +6,8 @@ package com.ai.cms.injection.enums;
  */
 public enum ReceiveTaskStatusEnum {
 	DEFAULT(0, "未处理"), WAIT(1, "等待处理..."), PROCESSING(2, "正在处理..."), SUCCESS(3,
-			"处理成功"), FAIL(4, "处理失败"), TIMEOUT(5, "处理超时"), ;
+			"处理成功"), FAIL(4, "处理失败"), TIMEOUT(5, "处理超时"), WAIT_INJECTION(6,
+			"等待分发...");
 
 	int key;
 	String value;

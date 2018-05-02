@@ -172,10 +172,10 @@
 										onclick="$.ReceiveTaskController.detail('${t.id}');"><fmt:formatDate
 												value="${t.receiveTime}" pattern="yyyy-MM-dd HH:mm:ss" /></a></td>
 									<td><c:forEach var="item" items="${statusEnum}">
-											<c:if test="${item.key eq t.status && item.key eq 1}">
+											<c:if test="${item.key eq t.status && item.key eq 0}">
 												<span class="badge badge-info">${item.value}</span>
 											</c:if>
-											<c:if test="${item.key eq t.status && item.key eq 2}">
+											<c:if test="${item.key eq t.status && (item.key eq 1 || item.key eq 2 || item.key eq 6)}">
 												<span class="badge badge-primary">${item.value}</span>
 											</c:if>
 											<c:if test="${item.key eq t.status && item.key eq 3}">

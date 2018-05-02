@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
 import com.ai.common.utils.BeanInfoUtil;
@@ -74,6 +75,9 @@ public class RoleController extends AbstractController {
 	@ResponseBody
 	public BaseResult edit(@PathVariable("id") Long id,
 			@RequestBody IdsBean<Role> bean) {
+		String message = "";
+		Role operationObjectList = null;
+
 		Role paramRole = bean.getData();
 		Long[] menuIds = bean.getIds();
 
@@ -98,7 +102,9 @@ public class RoleController extends AbstractController {
 		role.setMenuList(menuList);
 
 		roleRepository.save(role);
-		return new BaseResult();
+		operationObjectList = role;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "系统管理", subModule = "角色管理", action = "删除", message = "删除角色")
@@ -106,8 +112,16 @@ public class RoleController extends AbstractController {
 	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable("id") Long id) {
-		roleRepository.delete(id);
-		return new BaseResult();
+		String message = "";
+		Role operationObjectList = null;
+
+		Role role = roleRepository.findOne(id);
+		if (role != null) {
+			roleRepository.delete(role);
+			operationObjectList = role;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "{roleId}/menu/{menuId}" }, method = { RequestMethod.GET })
@@ -118,6 +132,16 @@ public class RoleController extends AbstractController {
 		List<Menu> menuList = menuRepository.findMenusByRoleId(roleId, menuId);
 
 		return menuList;
+	}
+
+	public OperationObject transformOperationObject(Role role) {
+		if (role == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(role.getId());
+		operationObject.setName(role.getName());
+		return operationObject;
 	}
 
 }

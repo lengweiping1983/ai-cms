@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ai.common.bean.BaseResult;
+import com.ai.common.bean.OperationObject;
 import com.ai.common.bean.PageInfo;
 import com.ai.common.controller.AbstractController;
 import com.ai.env.handler.OperationLogAnnotation;
@@ -60,7 +61,7 @@ public class DicController extends AbstractController {
 	@RequiresPermissions("system:dic:add")
 	@RequestMapping(value = "add", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
-	public Dic add(@RequestBody Dic dic) {
+	public BaseResult add(@RequestBody Dic dic) {
 		return edit(dic);
 	}
 
@@ -68,11 +69,16 @@ public class DicController extends AbstractController {
 	@RequiresPermissions("system:dic:edit")
 	@RequestMapping(value = "edit", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
 	@ResponseBody
-	public Dic edit(@RequestBody Dic dic) {
+	public BaseResult edit(@RequestBody Dic dic) {
+		String message = "";
+		Dic operationObjectList = null;
+
 		if (null != dic) {
 			dicRepository.save(dic);
+			operationObjectList = dic;
 		}
-		return dic;
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = "{id}/item/edit", method = RequestMethod.GET)
@@ -103,9 +109,16 @@ public class DicController extends AbstractController {
 	@RequestMapping(value = "{id}/delete", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult delete(@PathVariable(value = "id") Long id) {
+		String message = "";
+		Dic operationObjectList = null;
+
 		Dic dic = dicRepository.findOne(id);
-		dicRepository.delete(dic);
-		return new BaseResult();
+		if (dic != null) {
+			dicRepository.delete(dic);
+			operationObjectList = dic;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@OperationLogAnnotation(module = "系统管理", subModule = "字典管理", action = "删除", message = "删除字典项")
@@ -113,8 +126,16 @@ public class DicController extends AbstractController {
 	@RequestMapping(value = "value/{id}/delete", produces = "application/json; charset=UTF-8")
 	@ResponseBody
 	public BaseResult valueDelete(@PathVariable(value = "id") Long id) {
-		dicItemRepository.delete(id);
-		return new BaseResult();
+		String message = "";
+		DicItem operationObjectList = null;
+
+		DicItem dicItem = dicItemRepository.findOne(id);
+		if (dicItem != null) {
+			dicItemRepository.delete(dicItem);
+			operationObjectList = dicItem;
+		}
+		return new BaseResult().setMessage(message).addOperationObject(
+				transformOperationObject(operationObjectList));
 	}
 
 	@RequestMapping(value = { "check" }, produces = "application/json; charset=UTF-8")
@@ -162,4 +183,23 @@ public class DicController extends AbstractController {
 		return jsonValidateReturn;
 	}
 
+	public OperationObject transformOperationObject(Dic dic) {
+		if (dic == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(dic.getId());
+		operationObject.setName(dic.getName());
+		return operationObject;
+	}
+
+	public OperationObject transformOperationObject(DicItem dicItem) {
+		if (dicItem == null) {
+			return null;
+		}
+		OperationObject operationObject = new OperationObject();
+		operationObject.setId(dicItem.getId());
+		operationObject.setName(dicItem.getName());
+		return operationObject;
+	}
 }

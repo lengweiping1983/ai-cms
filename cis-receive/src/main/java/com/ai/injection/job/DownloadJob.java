@@ -152,9 +152,15 @@ public class DownloadJob {
 			downloadTask.setRequestTimes(downloadTask.getRequestTimes() + 1);
 			downloadTask.setRequestTotalTimes(downloadTask
 					.getRequestTotalTimes() + 1);
+			boolean resumeBroken = true;
+			if (downloadTask.getStatus() == DownloadTaskStatusEnum.REDOWNLOAD
+					.getKey()) {
+				resumeBroken = false;
+			}
 			downloadTask.setStatus(DownloadTaskStatusEnum.DOWNLOADING.getKey());
 			downloadService.saveDownloadTask(downloadTask);
-			DownloadThread downloadThread = new DownloadThread(downloadTask);
+			DownloadThread downloadThread = new DownloadThread(downloadTask,
+					resumeBroken);
 			downloadThread.start();
 		}
 	}
@@ -247,17 +253,15 @@ public class DownloadJob {
 		private Long downloadTaskId;
 		private String inputFilePath;
 		private String outputFilePath;
-		private boolean resumeBroken = true;
+		private boolean resumeBroken;
 
-		public DownloadThread(DownloadTask downloadTask) {
+		public DownloadThread(DownloadTask downloadTask, boolean resumeBroken) {
 			downloadTaskId = downloadTask.getId();
+
 			inputFilePath = downloadTask.getInputFilePath();
 			outputFilePath = AdminGlobal.getVideoUploadPath(downloadTask
 					.getOutputFilePath());
-			if (downloadTask.getStatus() == DownloadTaskStatusEnum.REDOWNLOAD
-					.getKey()) {
-				resumeBroken = false;
-			}
+			this.resumeBroken = resumeBroken;
 		}
 
 		@Override
