@@ -6,6 +6,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.ai.common.entity.AbstractEntity;
+import com.ai.common.enums.AppTypeEnum;
 import com.ai.common.enums.ValidStatusEnum;
 import com.ai.common.enums.YesNoEnum;
 
@@ -18,7 +19,7 @@ public class App extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
 	@NotNull
-	private Integer type;// APP类型
+	private Integer type = AppTypeEnum.PORTAL.getKey();// APP类型
 
 	@NotNull
 	private String code;// APP代码
@@ -35,11 +36,11 @@ public class App extends AbstractEntity {
 	@Column(name = "alone_order_page")
 	private Integer aloneOrderPage = YesNoEnum.NO.getKey();// 独立订购页
 
-	@Column(name = "access_cp_id")
-	private String accessCpId;// 可访问的内容提供商，使用','分割
+	@Column(name = "access_cp_code")
+	private String accessCpCode;// 可访问的内容提供商，使用','分割
 
-	@Column(name = "access_app")
-	private String accessApp;// 可访问的应用，使用','分割
+	@Column(name = "access_app_code")
+	private String accessAppCode;// 可访问的应用，使用','分割
 
 	@Column(name = "status")
 	private Integer status = ValidStatusEnum.INVALID.getKey(); // 状态:0=失效,1=生效
@@ -94,20 +95,20 @@ public class App extends AbstractEntity {
 		this.aloneOrderPage = aloneOrderPage;
 	}
 
-	public String getAccessCpId() {
-		return accessCpId;
+	public String getAccessCpCode() {
+		return accessCpCode;
 	}
 
-	public void setAccessCpId(String accessCpId) {
-		this.accessCpId = accessCpId;
+	public void setAccessCpCode(String accessCpCode) {
+		this.accessCpCode = accessCpCode;
 	}
 
-	public String getAccessApp() {
-		return accessApp;
+	public String getAccessAppCode() {
+		return accessAppCode;
 	}
 
-	public void setAccessApp(String accessApp) {
-		this.accessApp = accessApp;
+	public void setAccessAppCode(String accessAppCode) {
+		this.accessAppCode = accessAppCode;
 	}
 
 	public Integer getStatus() {

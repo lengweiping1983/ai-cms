@@ -1,9 +1,9 @@
 $(function () {
-    $.AppConfigController = function (elm, config) {
+    $.EntryController = function (elm, config) {
 
     }
 
-    $.extend(true, $.AppConfigController, $.BaseController, {
+    $.extend(true, $.EntryController, $.BaseController, {
 
         toEdit: function (path, id) {
             if (id == undefined) {
@@ -14,7 +14,7 @@ $(function () {
                 success: function () {
                     $.extend($.validationEngineLanguage.allRules, {
                         "ajaxCodeCheck": {
-                            "url": contextPath + "/config/appConfig/check?id=" + id,
+                            "url": contextPath + "/config/entry/check?id=" + id,
                             "extraData": "dt=" + (new Date()).getTime(),
                             "alertText": "代码不能使用!",
                             "alertTextLoad": "验证中，请稍候..."
@@ -49,7 +49,7 @@ $(function () {
             var json = {};
             json.title = "删除操作";
             json.body = "您确认要删除[" + name + "]吗?";
-            json.event = "$.AppConfigController._delete('" + path + "')";
+            json.event = "$.EntryController._delete('" + path + "')";
             $.common.showConfirmModal(json);
         },
 

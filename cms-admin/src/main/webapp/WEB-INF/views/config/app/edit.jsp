@@ -16,7 +16,7 @@
 							<c:set var="methodDesc" value="修改" />
 						</c:otherwise>
 					</c:choose>
-					${methodDesc}APP
+					${methodDesc}应用
 				</h4>
 			</div>
 			<div class="modal-body">
@@ -45,7 +45,7 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">APP代码(<span
+									<label class="control-label col-md-3">应用代码(<span
 										class="required">*</span>):
 									</label>
 
@@ -55,12 +55,12 @@
 												<input type="text" id="code" name="code" value="${app.code}"
 													onkeyup="this.value=this.value.toUpperCase()"
 													class="form-control validate[required,custom[onlyLetterNumberUnderline],ajax[ajaxCodeCheck],maxSize[8]]"
-													placeholder="请输入APP代码">
+													placeholder="请输入应用代码">
 											</c:when>
 											<c:otherwise>
 												<input type="text" id="code" name="code" value="${app.code}"
 													onkeyup="this.value=this.value.toUpperCase()"
-													class="form-control" placeholder="请输入APP代码"
+													class="form-control" placeholder="请输入应用代码"
 													readonly="readonly">
 											</c:otherwise>
 										</c:choose>
@@ -69,14 +69,13 @@
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label col-md-3">APP名称(<span
+									<label class="control-label col-md-3">应用名称(<span
 										class="required">*</span>):
 									</label>
 
 									<div class="col-md-9">
 										<input type="text" name="name" value="${app.name}"
-											class="form-control validate[required]"
-											placeholder="请输入APP名称">
+											class="form-control validate[required]" placeholder="请输入应用名称">
 									</div>
 								</div>
 							</div>
@@ -90,7 +89,8 @@
 									</label>
 
 									<div class="col-md-9">
-										<select name="aloneCharge" class="form-control" onchange="$.AppController.changeAloneCharge(this.value);">
+										<select name="aloneCharge" class="form-control"
+											onchange="$.AppController.changeAloneCharge(this.value);">
 											<c:forEach var="item" items="${yesNoEnum}">
 												<option value="${item.key}"
 													<c:if test="${! empty app.aloneCharge && item.key eq app.aloneCharge}"> selected="selected" </c:if>>${item.value}</option>
@@ -121,7 +121,6 @@
 									</div>
 								</div>
 							</div>
-							<!--
 							<div class="col-md-6">
 								<div class="form-group">
 									<label class="control-label col-md-3">独立订购页(<span
@@ -138,7 +137,6 @@
 									</div>
 								</div>
 							</div>
-							-->
 						</div>
 
 						<div class="row">
@@ -147,29 +145,31 @@
 									<label class="control-label col-md-3">可访问的内容提供商(<span
 										class="required">*</span>):
 									</label>
-									
+
 									<div class="col-md-9">
 										<div class="checkbox-list">
 											<c:set var="cpCodeAllSelected" value="0" />
-											<c:if test="${empty app.cpCodes}">
+											<c:if test="${empty app.accessCpCode && !empty app.id}">
 												<c:set var="cpCodeAllSelected" value="1" />
 											</c:if>
-											<label><input name="cpCodes"
-													<c:if test="${cpCodeAllSelected eq 1 }"> checked </c:if>
-													class="validate[required]" type="checkbox" value="" id="cpCodeAll" onClick="$.AppController.clickCpCodes()">全部</label>
+											<label><input name="accessCpCode"
+												<c:if test="${cpCodeAllSelected eq 1 }"> checked </c:if>
+												class="validate[required]" type="checkbox" value=""
+												id="cpCodeAll" onClick="$.AppController.clickCpCodeAll()">全部</label>
 											<c:forEach var="item" items="${cpList}">
 												<c:set var="cpCodeSelected" value="" />
-												<c:forEach var="cpCode" items="${app.cpCodes}">
+												<c:forEach var="cpCode" items="${app.accessCpCode}">
 													<c:if test="${item.code eq cpCode }">
 														<c:set var="cpCodeSelected" value="1" />
 													</c:if>
 												</c:forEach>
-												<c:if test="${empty app.cpCodes}">
+												<c:if test="${empty app.accessCpCode && !empty app.id}">
 													<c:set var="cpCodeSelected" value="0" />
 												</c:if>
-												<label><input name="cpCodes"
+												<label><input name="accessCpCode"
 													<c:if test="${cpCodeSelected eq 1 || cpCodeAllSelected eq 1}"> checked </c:if>
-													class="validate[required]" type="checkbox" value="${item.code}">${item.name}</label>
+													class="validate[required]" type="checkbox"
+													value="${item.code}">${item.name}</label>
 											</c:forEach>
 										</div>
 									</div>
@@ -180,31 +180,32 @@
 									<label class="control-label col-md-3">可访问的应用(<span
 										class="required">*</span>):
 									</label>
-									
+
 									<div class="col-md-9">
 										<div class="checkbox-list">
 											<c:set var="appCodeAllSelected" value="0" />
-											<c:if test="${empty app.appCodes}">
+											<c:if test="${empty app.accessAppCode && !empty app.id}">
 												<c:set var="appCodeAllSelected" value="1" />
 											</c:if>
-											<label><input name="appCodes"
-													<c:if test="${appCodeAllSelected eq 1 }"> checked </c:if>
-													class="validate[required]" type="checkbox" value="" id="appCodeAll" onClick="$.AppController.clickAppCodes()">全部</label>
+											<label><input name="accessAppCode"
+												<c:if test="${appCodeAllSelected eq 1 }"> checked </c:if>
+												class="validate[required]" type="checkbox" value=""
+												id="appCodeAll" onClick="$.AppController.clickAppCodeAll()">全部</label>
 											<c:forEach var="item" items="${appList}">
 												<c:set var="appCodeSelected" value="" />
-												<c:forEach var="appCode" items="${app.appCodes}">
+												<c:forEach var="appCode" items="${app.accessAppCode}">
 													<c:if test="${item.code eq appCode }">
 														<c:set var="appCodeSelected" value="1" />
 													</c:if>
 												</c:forEach>
-												<c:if test="${empty app.appCodes}">
+												<c:if test="${empty app.accessAppCode && !empty app.id}">
 													<c:set var="appCodeSelected" value="0" />
 												</c:if>
-												<label>
-												<c:if test="${app.code ne item.code}">
-													<input name="appCodes"
-														<c:if test="${appCodeSelected eq 1 || appCodeAllSelected eq 1}"> checked </c:if>
-														class="validate[required]" type="checkbox" value="${item.code}">${item.name}
+												<label> <c:if test="${app.code ne item.code}">
+														<input name="accessAppCode"
+															<c:if test="${appCodeSelected eq 1 || appCodeAllSelected eq 1}"> checked </c:if>
+															class="validate[required]" type="checkbox"
+															value="${item.code}">${item.name}
 												</c:if>
 												</label>
 											</c:forEach>
@@ -248,13 +249,13 @@
 				<c:choose>
 					<c:when test="${empty app.id}">
 						<button class="btn btn-outline green"
-							onclick="$.AppController.edit('${ctx}/app/app/add');">
+							onclick="$.AppController.edit('${ctx}/config/app/add');">
 							<i class="fa fa-save"></i>保存
 						</button>
 					</c:when>
 					<c:otherwise>
 						<button class="btn btn-outline green"
-							onclick="$.AppController.edit('${ctx}/app/app/${app.id}/edit');">
+							onclick="$.AppController.edit('${ctx}/config/app/${app.id}/edit');">
 							<i class="fa fa-save"></i>保存
 						</button>
 					</c:otherwise>

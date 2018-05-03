@@ -3,7 +3,7 @@ $(function () {
 
     }
 
-    $.extend($.AppController, {
+    $.extend(true, $.AppController, $.BaseController, {
 
         toEdit: function (path, id) {
             if (id == undefined) {
@@ -14,7 +14,7 @@ $(function () {
                 success: function () {
                     $.extend($.validationEngineLanguage.allRules, {
                         "ajaxCodeCheck": {
-                            "url": contextPath + "/app/app/check?id=" + id,
+                            "url": contextPath + "/config/app/check?id=" + id,
                             "extraData": "dt=" + (new Date()).getTime(),
                             "alertText": "代码不能使用!",
                             "alertTextLoad": "验证中，请稍候..."
@@ -23,6 +23,9 @@ $(function () {
                     $("#editForm").validationEngine({
                         ajaxFormValidationMethod: 'post',
                     });
+                    
+                    // $("input:checkbox[name='accessCpCode']").uniform();
+                    // $("input:checkbox[name='accessAppCode']").uniform();
                 },
             });
         },
@@ -31,8 +34,8 @@ $(function () {
             if (!$("#editForm").validationEngine("validate")) return false;
 
             var json = $("#editForm").serializeObject();
-            json.cpCodes = $.AppController.getCpCodes();
-            json.appCodes = $.AppController.getAppCodes();
+            json.accessCpCode = $.AppController.getAccessCpCode();
+            json.accessAppCode = $.AppController.getAccessAppCode();
 
             $.common.ajaxAction({
                 url: path,
@@ -70,57 +73,57 @@ $(function () {
             $.common.focus({id: "code"});
         },
         
-        getCpCodes: function () {
-            var cpCodes = "";
-            $('input:checkbox[name=cpCodes]:checked').each(function (i) {
-                if($(this).val() == "" || cpCodes == "*") {
-            		cpCodes = '*';
+        getAccessCpCode: function () {
+            var accessCpCode = "";
+            $('input:checkbox[name=accessCpCode]:checked').each(function (i) {
+                if($(this).val() == "" || accessCpCode == "*") {
+            		accessCpCode = '*';
             	} else {
             		if (0 == i) {
-                        cpCodes = $(this).val();
+                        accessCpCode = $(this).val();
                     } else {
-                        cpCodes += ("," + $(this).val());
+                        accessCpCode += ("," + $(this).val());
                     }
             	}
             });
-            if (cpCodes == "*") {
-            	cpCodes = "";
+            if (accessCpCode == "*") {
+            	accessCpCode = "";
             }
-            return cpCodes;
+            return accessCpCode;
         },
         
-        clickCpCodes: function () {
+        clickCpCodeAll: function () {
         	if ($("#cpCodeAll").prop("checked")) {   
-    	        $("input:checkbox[name=cpCodes]").prop("checked", true);  
+    	        $("input:checkbox[name=accessCpCode]").prop("checked", true);  
     	    } else {   
-    	    	$("input:checkbox[name=cpCodes]").prop("checked", false);
+    	    	$("input:checkbox[name=accessCpCode]").prop("checked", false);
     	    }
         },
         
-        getAppCodes: function () {
-            var appCodes = "";
-            $('input:checkbox[name=appCodes]:checked').each(function (i) {
-                if($(this).val() == "" || appCodes == "*") {
-            		appCodes = '*';
+        getAccessAppCode: function () {
+            var accessAppCode = "";
+            $('input:checkbox[name=accessAppCode]:checked').each(function (i) {
+                if($(this).val() == "" || accessAppCode == "*") {
+            		accessAppCode = '*';
             	} else {
             		if (0 == i) {
-                        appCodes = $(this).val();
+                        accessAppCode = $(this).val();
                     } else {
-                        appCodes += ("," + $(this).val());
+                        accessAppCode += ("," + $(this).val());
                     }
             	}
             });
-            if (appCodes == "*") {
-            	appCodes = "";
+            if (accessAppCode == "*") {
+            	accessAppCode = "";
             }
-            return appCodes;
+            return accessAppCode;
         },
         
-        clickAppCodes: function () {
+        clickAppCodeAll: function () {
         	if ($("#appCodeAll").prop("checked")) {   
-    	        $("input:checkbox[name=appCodes]").prop("checked", true);  
+    	        $("input:checkbox[name=accessAppCode]").prop("checked", true);  
     	    } else {   
-    	    	$("input:checkbox[name=appCodes]").prop("checked", false);
+    	    	$("input:checkbox[name=accessAppCode]").prop("checked", false);
     	    }
         },
 

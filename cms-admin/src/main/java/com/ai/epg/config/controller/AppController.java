@@ -31,155 +31,169 @@ import com.ai.sys.entity.Menu;
 import com.ai.sys.repository.MenuRepository;
 
 @Controller
-@RequestMapping(value = {"/config/app"})
+@RequestMapping(value = { "/config/app" })
 public class AppController extends AbstractController {
 
-    @Autowired
-    private AppRepository appRepository;
-    
-    @Autowired
-    private CpRepository cpRepository;
+	@Autowired
+	private AppRepository appRepository;
 
-    @Autowired
-    private MenuRepository menuRepository;
-    
-    private void setModel(Model model) {
-    	model.addAttribute("statusEnum", ValidStatusEnum.values());
-        model.addAttribute("typeEnum", AppTypeEnum.values());
-        model.addAttribute("yesNoEnum", YesNoEnum.values());
-        List<Cp> cpList = cpRepository.findAll();
-        model.addAttribute("cpList", cpList);
-        
-        List<App> appList = appRepository.findAll();
-        model.addAttribute("appList", appList);
-    }
-    
-    @RequestMapping(value = {""})
-    public String list(Model model, HttpServletRequest request, PageInfo pageInfo) {
-        Page<App> page = find(request, pageInfo, appRepository);
-        model.addAttribute("page", page);
+	@Autowired
+	private CpRepository cpRepository;
 
-        setModel(model);
+	@Autowired
+	private MenuRepository menuRepository;
 
-        return "config/app/list";
-    }
+	private void setModel(Model model) {
+		model.addAttribute("statusEnum", ValidStatusEnum.values());
+		model.addAttribute("typeEnum", AppTypeEnum.values());
+		model.addAttribute("yesNoEnum", YesNoEnum.values());
 
-    @RequestMapping(value = {"add"}, method = RequestMethod.GET)
-    public String toAdd(Model model) {
-    	setModel(model);
+		List<Cp> cpList = cpRepository.findAll();
+		model.addAttribute("cpList", cpList);
 
-        return "config/app/edit";
-    }
+		List<App> appList = appRepository.findAll();
+		model.addAttribute("appList", appList);
+	}
 
-    @RequestMapping(value = {"add"}, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public BaseResult add(@RequestBody App app) {
-        return edit(app, null);
-    }
+	@RequestMapping(value = { "" })
+	public String list(Model model, HttpServletRequest request,
+			PageInfo pageInfo) {
+		Page<App> page = find(request, pageInfo, appRepository);
+		model.addAttribute("page", page);
 
-    @RequestMapping(value = {"{id}/edit"}, method = RequestMethod.GET)
-    public String toEdit(Model model, @PathVariable("id") Long id) {
-        App app = appRepository.findOne(id);
-        model.addAttribute("app", app);
+		setModel(model);
 
-        setModel(model);
-        
-        return "config/app/edit";
-    }
+		return "config/app/list";
+	}
 
-    @RequestMapping(value = {"{id}/edit"}, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public BaseResult edit(@RequestBody App app, @PathVariable("id") Long id) {
-    	app.setCode(StringUtils.upperCase(app.getCode()));
-        if (id == null) {
-            appRepository.save(app);
-        } else {
-            App appInfo = appRepository.findOne(app.getId());
-            BeanInfoUtil.bean2bean(app, appInfo, "type,name,code,aloneCharge,chargeAppCode,aloneOrderPage,cpCodes,appCodes,status,description");
-            appRepository.save(appInfo);
-        }
+	@RequestMapping(value = { "add" }, method = RequestMethod.GET)
+	public String toAdd(Model model) {
+		setModel(model);
+
+		return "config/app/edit";
+	}
+
+	@RequestMapping(value = { "add" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BaseResult add(@RequestBody App app) {
+		return edit(app, null);
+	}
+
+	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.GET)
+	public String toEdit(Model model, @PathVariable("id") Long id) {
+		App app = appRepository.findOne(id);
+		model.addAttribute("app", app);
+
+		setModel(model);
+
+		return "config/app/edit";
+	}
+
+	@RequestMapping(value = { "{id}/edit" }, method = RequestMethod.POST, consumes = "application/json; charset=UTF-8", produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BaseResult edit(@RequestBody App app, @PathVariable("id") Long id) {
+		app.setCode(StringUtils.upperCase(app.getCode()));
+		if (id == null) {
+			appRepository.save(app);
+		} else {
+			App appInfo = appRepository.findOne(app.getId());
+			BeanInfoUtil
+					.bean2bean(
+							app,
+							appInfo,
+							"type,code,name,aloneCharge,chargeAppCode,aloneOrderPage,accessCpCode,accessAppCode,status,description");
+			appRepository.save(appInfo);
+		}
+
 		if (id == null) {// 创建菜单
 			Menu parentMenu = new Menu();
 			parentMenu.setType(Menu.TYPE_MENU);
-			parentMenu.setName(app.getName()+"管理");
+			parentMenu.setName(app.getName() + "管理");
 			parentMenu.setHref("#");
 			menuRepository.save(parentMenu);
-			
+
 			Menu widgetMenu = new Menu();
 			widgetMenu.setType(Menu.TYPE_MENU);
 			widgetMenu.setName("推荐位管理");
-			widgetMenu.setHref("/widget/widget/?appCode="+StringUtils.trimToEmpty(app.getCode()));
+			widgetMenu.setHref("/widget/widget/?appCode="
+					+ StringUtils.trimToEmpty(app.getCode()));
 			widgetMenu.setParent(parentMenu);
 			widgetMenu.setParentId(parentMenu.getId());
 			widgetMenu.setSort(1);
 			menuRepository.save(widgetMenu);
-			
-			Menu categoryMenu = new Menu();
-			categoryMenu.setType(Menu.TYPE_MENU);
-			categoryMenu.setName("栏目管理");
-			categoryMenu.setHref("/category/?appCode="+StringUtils.trimToEmpty(app.getCode()));
-			categoryMenu.setParent(parentMenu);
-			categoryMenu.setParentId(parentMenu.getId());
-			categoryMenu.setSort(2);
-			menuRepository.save(categoryMenu);
-			
+
+			Menu uriMenu = new Menu();
+			uriMenu.setType(Menu.TYPE_MENU);
+			uriMenu.setName("页面管理");
+			uriMenu.setHref("/uri/uri/?appCode="
+					+ StringUtils.trimToEmpty(app.getCode()));
+			uriMenu.setParent(parentMenu);
+			uriMenu.setParentId(parentMenu.getId());
+			uriMenu.setSort(2);
+			menuRepository.save(uriMenu);
+
 			Menu albumMenu = new Menu();
 			albumMenu.setType(Menu.TYPE_MENU);
 			albumMenu.setName("专题管理");
-			albumMenu.setHref("/album/album/?appCode="+StringUtils.trimToEmpty(app.getCode()));
+			albumMenu.setHref("/album/album/?appCode="
+					+ StringUtils.trimToEmpty(app.getCode()));
 			albumMenu.setParent(parentMenu);
 			albumMenu.setParentId(parentMenu.getId());
 			albumMenu.setSort(3);
 			menuRepository.save(albumMenu);
-			
-			Menu uriMenu = new Menu();
-			uriMenu.setType(Menu.TYPE_MENU);
-			uriMenu.setName("页面管理");
-			uriMenu.setHref("/uri/uri/?appCode="+StringUtils.trimToEmpty(app.getCode()));
-			uriMenu.setParent(parentMenu);
-			uriMenu.setParentId(parentMenu.getId());
-			uriMenu.setSort(4);
-			menuRepository.save(uriMenu);
+
+			Menu categoryMenu = new Menu();
+			categoryMenu.setType(Menu.TYPE_MENU);
+			categoryMenu.setName("栏目管理");
+			categoryMenu.setHref("/category/?appCode="
+					+ StringUtils.trimToEmpty(app.getCode()));
+			categoryMenu.setParent(parentMenu);
+			categoryMenu.setParentId(parentMenu.getId());
+			categoryMenu.setSort(4);
+			menuRepository.save(categoryMenu);
 		}
-        return new BaseResult();
-    }
+		return new BaseResult();
+	}
 
-    @RequestMapping(value = {"{id}/delete"}, produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public BaseResult delete(@PathVariable("id") Long id) {
-        appRepository.delete(id);
-        return new BaseResult();
-    }
+	@RequestMapping(value = { "{id}/delete" }, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public BaseResult delete(@PathVariable("id") Long id) {
+		appRepository.delete(id);
+		return new BaseResult();
+	}
 
-    @RequestMapping(value = {"check"}, produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public Object[] check(@RequestParam(value = "id", required = false) Long id, @RequestParam(value = "fieldId") String fieldId,
-            @RequestParam(value = "fieldValue") String fieldValue) {
-        boolean exist = checkCode(id, fieldValue);
+	@RequestMapping(value = { "check" }, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public Object[] check(
+			@RequestParam(value = "id", required = false) Long id,
+			@RequestParam(value = "fieldId") String fieldId,
+			@RequestParam(value = "fieldValue") String fieldValue) {
+		boolean exist = checkCode(id, fieldValue);
 
-        Object[] jsonValidateReturn = new Object[3];
-        jsonValidateReturn[0] = fieldId;
-        jsonValidateReturn[1] = !exist;
-        if (!exist) {
-            jsonValidateReturn[2] = "可以使用!";
-        } else {
-            jsonValidateReturn[2] = "代码" + StringUtils.trim(fieldValue) + "已使用!";
-        }
-        return jsonValidateReturn;
-    }
+		Object[] jsonValidateReturn = new Object[3];
+		jsonValidateReturn[0] = fieldId;
+		jsonValidateReturn[1] = !exist;
+		if (!exist) {
+			jsonValidateReturn[2] = "可以使用!";
+		} else {
+			jsonValidateReturn[2] = "代码" + StringUtils.trim(fieldValue)
+					+ "已使用!";
+		}
+		return jsonValidateReturn;
+	}
 
-    private boolean checkCode(Long id, String code) {
-        boolean exist = false;
-        App app = null;
-        if (StringUtils.isNotEmpty(code)) {
-            app = appRepository.findOneByCode(code);
-        }
-        if (app != null) {
-            if (id == null || id == -1 || app.getId().longValue() != id) {
-                exist = true;
-            }
-        }
-        return exist;
-    }
+	private boolean checkCode(Long id, String code) {
+		boolean exist = false;
+		App app = null;
+		if (StringUtils.isNotEmpty(code)) {
+			app = appRepository.findOneByCode(code);
+		}
+		if (app != null) {
+			if (id == null || id == -1 || app.getId().longValue() != id) {
+				exist = true;
+			}
+		}
+		return exist;
+	}
 
 }
